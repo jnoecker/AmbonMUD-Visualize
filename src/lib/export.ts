@@ -5,7 +5,7 @@ import {
   mkdir,
   copyFile,
 } from "@tauri-apps/plugin-fs";
-import { join } from "@tauri-apps/api/path";
+import { join, dirname } from "@tauri-apps/api/path";
 import type { ProjectFile, ZoneData } from "../types/project";
 import { getImagePath } from "./project-io";
 
@@ -15,18 +15,19 @@ export interface ExportProgress {
   currentFile: string | null;
 }
 
+/**
+ * Export approved images and updated YAML directly into the AmbonMUD world directory.
+ *
+ * - Modifies each zone's source YAML in-place, inserting `image:` fields
+ * - Copies approved PNGs to `images/{zone}/{bareId}.png` alongside the YAML files
+ * - YAML `image:` values are relative paths like `wesleyalis/clearing.png`
+ *   (the Ktor server prepends `/images/`)
+ */
 export async function exportProject(
   projectDir: string,
   project: ProjectFile,
-  exportDir: string,
   onProgress?: (progress: ExportProgress) => void
 ): Promise<void> {
-  // Create export directories
-  const yamlDir = await join(exportDir, "yaml");
-  const imagesDir = await join(exportDir, "images");
-  await mkdir(yamlDir, { recursive: true });
-  await mkdir(imagesDir, { recursive: true });
-
   // Count total work
   let totalFiles = 0;
   for (const zone of Object.values(project.zones)) {
@@ -45,37 +46,36 @@ export async function exportProject(
   };
 
   for (const zone of Object.values(project.zones)) {
-    // Export modified YAML
-    progress.currentFile = `${zone.zoneName}.yaml`;
-    onProgress?.(progress);
+    // The world directory is where the source YAML lives
+    const worldDir = await dirname(zone.sourceYamlPath);
+    const imagesBaseDir = await join(worldDir, "images");
 
-    await exportZoneYaml(projectDir, zone, yamlDir);
-    progress.completed++;
+    // Create zone images directory: world/images/{zoneName}/
+    const zoneImgDir = await join(imagesBaseDir, zone.zoneName);
+    await mkdir(zoneImgDir, { recursive: true });
 
-    // Export approved images
-    const zoneImgDir = await join(imagesDir, zone.zoneName);
-
+    // Copy approved images
     for (const asset of Object.values(zone.assets)) {
       if (asset.approvedVariantIndex === null) continue;
 
       const variant = asset.variants[asset.approvedVariantIndex];
       if (!variant) continue;
 
-      // Organize by type
-      const typeDir = await join(zoneImgDir, `${asset.entityType}s`);
-      await mkdir(typeDir, { recursive: true });
+      // Use bare ID (strip zone prefix) for the filename
+      const bareId = asset.entityId.includes(":")
+        ? asset.entityId.split(":").pop()!
+        : asset.entityId;
 
-      const safeId = asset.entityId.replace(/:/g, "_");
       const srcPath = await getImagePath(
         projectDir,
         zone.zoneName,
         asset.entityId,
         variant.filename
       );
-      const destPath = await join(typeDir, `${safeId}.png`);
+      const destPath = await join(zoneImgDir, `${bareId}.png`);
 
-      progress.currentFile = `${safeId}.png`;
-      onProgress?.(progress);
+      progress.currentFile = `${bareId}.png`;
+      onProgress?.({ ...progress });
 
       const srcExists = await exists(srcPath);
       if (srcExists) {
@@ -84,57 +84,77 @@ export async function exportProject(
 
       progress.completed++;
     }
+
+    // Modify YAML in-place with image fields
+    progress.currentFile = `${zone.zoneName}.yaml`;
+    onProgress?.({ ...progress });
+
+    await exportZoneYaml(projectDir, zone);
+    progress.completed++;
   }
 
   progress.currentFile = null;
-  onProgress?.(progress);
+  onProgress?.({ ...progress });
 }
 
 async function exportZoneYaml(
   _projectDir: string,
-  zone: ZoneData,
-  yamlDir: string
+  zone: ZoneData
 ): Promise<void> {
   // Read original YAML
   let yaml: string;
   try {
     yaml = await readTextFile(zone.sourceYamlPath);
   } catch {
-    // If original file can't be read, skip
     return;
   }
 
-  // String-based insertion of image fields and prompt comments
+  // Build a lookup: bareId -> relative image path
+  const imageMap = new Map<string, string>();
+  for (const asset of Object.values(zone.assets)) {
+    if (asset.approvedVariantIndex === null) continue;
+    const variant = asset.variants[asset.approvedVariantIndex];
+    if (!variant) continue;
+
+    const bareId = asset.entityId.includes(":")
+      ? asset.entityId.split(":").pop()!
+      : asset.entityId;
+
+    // Relative path: {zone}/{bareId}.png
+    // The server prepends /images/ to get the full URL
+    imageMap.set(bareId, `${zone.zoneName}/${bareId}.png`);
+  }
+
+  if (imageMap.size === 0) return;
+
+  // String-based insertion of image fields
   const lines = yaml.split("\n");
   const output: string[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    output.push(lines[i]);
+    const line = lines[i];
+    output.push(line);
 
-    // Check if this line is an entity ID key (rooms, mobs, items)
-    // Pattern: "  entityId:" at proper indentation
-    for (const asset of Object.values(zone.assets)) {
-      if (asset.approvedVariantIndex === null) continue;
+    // Match entity ID keys at 2-space indent: "  bareId:"
+    const trimmed = line.trimEnd();
+    const match = trimmed.match(/^  (\w+):$/);
+    if (!match) continue;
 
-      const variant = asset.variants[asset.approvedVariantIndex];
-      if (!variant) continue;
+    const bareId = match[1];
+    const imgPath = imageMap.get(bareId);
+    if (!imgPath) continue;
 
-      // Extract bare ID (after the colon in zone:id)
-      const bareId = asset.entityId.includes(":")
-        ? asset.entityId.split(":").pop()!
-        : asset.entityId;
-
-      // Match "  bareId:" pattern
-      const trimmed = lines[i].trimEnd();
-      if (trimmed === `  ${bareId}:`) {
-        const safeId = asset.entityId.replace(/:/g, "_");
-        const imgPath = `${asset.entityType}s/${safeId}.png`;
-        output.push(`    # Image prompt: ${variant.prompt.split("\n")[0].substring(0, 80)}...`);
-        output.push(`    image: ${imgPath}`);
-      }
+    // Check if next line already has an image field (avoid duplicates on re-export)
+    const nextLine = i + 1 < lines.length ? lines[i + 1] : "";
+    if (nextLine.trimStart().startsWith("image:")) {
+      // Replace existing image line
+      lines[i + 1] = `    image: ${imgPath}`;
+    } else {
+      // Insert image field as first property under the entity
+      output.push(`    image: ${imgPath}`);
     }
   }
 
-  const destPath = await join(yamlDir, `${zone.zoneName}.yaml`);
-  await writeTextFile(destPath, output.join("\n"));
+  // Write modified YAML back to the source file
+  await writeTextFile(zone.sourceYamlPath, output.join("\n"));
 }
