@@ -18,8 +18,17 @@ interface SpriteGridProps {
 
 const TIER_LABELS: Record<number, string> = {
   1: "Novice",
-  25: "Veteran",
+  10: "Apprentice",
+  20: "Journeyman",
+  30: "Expert",
+  40: "Master",
   50: "Legendary",
+};
+
+const GENDER_LABELS: Record<string, string> = {
+  male: "Male",
+  female: "Female",
+  enby: "Nonbinary",
 };
 
 function capitalize(s: string) {
@@ -36,6 +45,7 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
   } = useProject();
   const { getJob } = useGeneration();
 
+  const [activeGender, setActiveGender] = useState(spriteConfig.genders[0]);
   const [activeClass, setActiveClass] = useState(spriteConfig.classes[0]);
   const [detailEntityId, setDetailEntityId] = useState<string | null>(null);
 
@@ -45,13 +55,13 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
     [entities, spriteConfig]
   );
 
-  // Filter groups for active class
+  // Filter groups for active gender + class
   const visibleGroups = useMemo(
-    () => groups.filter((g) => g.playerClass === activeClass),
-    [groups, activeClass]
+    () => groups.filter((g) => g.gender === activeGender && g.playerClass === activeClass),
+    [groups, activeGender, activeClass]
   );
 
-  // Entity IDs visible in current class tab
+  // Entity IDs visible in current gender + class tab
   const visibleEntityIds = useMemo(
     () => visibleGroups.flatMap((g) => Object.values(g.entityIds)),
     [visibleGroups]
@@ -109,6 +119,19 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
         onTemplateGenerated={handleTemplateGenerated}
       />
 
+      {/* Gender tabs */}
+      <div className="sprite-gender-tabs">
+        {spriteConfig.genders.map((gender) => (
+          <button
+            key={gender}
+            className={`sprite-gender-tab${gender === activeGender ? " sprite-gender-tab--active" : ""}`}
+            onClick={() => setActiveGender(gender)}
+          >
+            {GENDER_LABELS[gender] || capitalize(gender)}
+          </button>
+        ))}
+      </div>
+
       {/* Class tabs */}
       <div className="sprite-class-tabs">
         {spriteConfig.classes.map((cls) => (
@@ -120,7 +143,7 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
             {capitalize(cls)}
             <span className="sprite-class-tab-count">
               {groups
-                .filter((g) => g.playerClass === cls)
+                .filter((g) => g.gender === activeGender && g.playerClass === cls)
                 .reduce((n, g) => n + Object.keys(g.entityIds).length, 0)}
             </span>
           </button>
@@ -142,7 +165,7 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
 
         {/* Rows */}
         {visibleGroups.map((group) => (
-          <div key={`${group.race}-${group.playerClass}`} className="sprite-grid-row">
+          <div key={`${group.race}-${group.gender}-${group.playerClass}`} className="sprite-grid-row">
             <div className="sprite-grid-row-header">
               {capitalize(group.race)}
             </div>

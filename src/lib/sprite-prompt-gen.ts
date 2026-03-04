@@ -7,7 +7,7 @@ const FORMAT_SPEC =
 
 /**
  * Generate a sprite prompt template with a single Claude call.
- * Returns a template string with {race}, {class}, {tier_description} placeholders,
+ * Returns a template string with {race}, {gender}, {class}, {tier_description} placeholders,
  * plus per-tier description strings.
  */
 export async function generateSpriteTemplate(
@@ -31,7 +31,7 @@ export async function generateSpriteTemplate(
     system: `You are an expert image prompt engineer for AI image generators. You create prompts for fantasy RPG character sprites.
 
 Your task: produce a JSON object with two fields:
-1. "template" — a single image generation prompt template using these exact placeholders: {race}, {class}, {tier_description}. The template must produce a genderless/androgynous fantasy character portrait. The character should look like the SAME person at different stages of their career across tiers — same racial features and build, but different equipment and aura of power.
+1. "template" — a single image generation prompt template using these exact placeholders: {race}, {gender}, {class}, {tier_description}. The template must produce a fantasy character portrait matching the specified gender. Each unique race+gender+class combination is its own character — a dwarf female warrior and a human male warrior should look completely different. Consistency only matters WITHIN a single progression path (the same race+gender+class across tiers should look like the same person at different career stages, with different equipment and aura of power). Use {gender} to describe the character's presentation (e.g. "a {gender} {race} {class}").
 2. "tierDescriptions" — an object mapping each tier number to a description string that captures that tier's power level, equipment quality, and visual presence.
 
 The template, when filled in, should be a complete image generation prompt. Do NOT include the style suffix — it will be appended automatically.
@@ -44,6 +44,7 @@ Output ONLY valid JSON — no markdown fences, no commentary.`,
 
 Races: ${config.races.join(", ")}
 Classes: ${config.classes.join(", ")}
+Genders: ${config.genders.join(", ")}
 
 Tier progression (with sample names):
 ${tierList}
@@ -90,6 +91,7 @@ export function fillSpriteTemplate(
 
   const prompt = template.template
     .replace(/\{race\}/g, dimensions.race)
+    .replace(/\{gender\}/g, dimensions.gender)
     .replace(/\{class\}/g, dimensions.playerClass)
     .replace(/\{tier_description\}/g, tierDesc)
     .replace(/\{name\}/g, entityName);

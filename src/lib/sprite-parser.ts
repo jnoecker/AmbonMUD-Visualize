@@ -2,10 +2,10 @@ import type { Entity } from "../types/entities";
 import type { SpriteConfig, SpriteDimensions, SpriteGroup } from "../types/sprites";
 
 /**
- * Regex for sprite mob IDs: {race}_{class}_l{tier}
- * The ID may be zone-prefixed (e.g. "player_sprites:human_warrior_l1").
+ * Regex for sprite mob IDs: {race}_{gender}_{class}_l{tier}
+ * The ID may be zone-prefixed (e.g. "player_sprites:human_male_warrior_l1").
  */
-const SPRITE_ID_RE = /(?:^|:)([a-z]+)_([a-z]+)_l(\d+)$/;
+const SPRITE_ID_RE = /(?:^|:)([a-z]+)_([a-z]+)_([a-z]+)_l(\d+)$/;
 
 /**
  * Parse a sprite entity ID into its dimensions.
@@ -16,8 +16,9 @@ export function parseSpriteId(entityId: string): SpriteDimensions | null {
   if (!m) return null;
   return {
     race: m[1],
-    playerClass: m[2],
-    tier: Number(m[3]),
+    gender: m[2],
+    playerClass: m[3],
+    tier: Number(m[4]),
   };
 }
 
@@ -30,6 +31,7 @@ export function detectSpriteZone(entities: Entity[]): SpriteConfig | null {
   if (mobs.length < 4) return null;
 
   const races = new Set<string>();
+  const genders = new Set<string>();
   const classes = new Set<string>();
   const tiers = new Set<number>();
   let matched = 0;
@@ -39,6 +41,7 @@ export function detectSpriteZone(entities: Entity[]): SpriteConfig | null {
     if (dims) {
       matched++;
       races.add(dims.race);
+      genders.add(dims.gender);
       classes.add(dims.playerClass);
       tiers.add(dims.tier);
     }
@@ -48,13 +51,14 @@ export function detectSpriteZone(entities: Entity[]): SpriteConfig | null {
 
   return {
     races: [...races].sort(),
+    genders: [...genders].sort(),
     classes: [...classes].sort(),
     tiers: [...tiers].sort((a, b) => a - b),
   };
 }
 
 /**
- * Group sprite entities by race + class, indexed by tier.
+ * Group sprite entities by race + gender + class, indexed by tier.
  */
 export function groupSprites(
   entities: Entity[],
@@ -63,22 +67,25 @@ export function groupSprites(
   const groups: SpriteGroup[] = [];
 
   for (const race of config.races) {
-    for (const cls of config.classes) {
-      const group: SpriteGroup = {
-        race,
-        playerClass: cls,
-        entityIds: {},
-      };
+    for (const gender of config.genders) {
+      for (const cls of config.classes) {
+        const group: SpriteGroup = {
+          race,
+          gender,
+          playerClass: cls,
+          entityIds: {},
+        };
 
-      for (const entity of entities) {
-        const dims = parseSpriteId(entity.id);
-        if (dims && dims.race === race && dims.playerClass === cls) {
-          group.entityIds[dims.tier] = entity.id;
+        for (const entity of entities) {
+          const dims = parseSpriteId(entity.id);
+          if (dims && dims.race === race && dims.gender === gender && dims.playerClass === cls) {
+            group.entityIds[dims.tier] = entity.id;
+          }
         }
-      }
 
-      if (Object.keys(group.entityIds).length > 0) {
-        groups.push(group);
+        if (Object.keys(group.entityIds).length > 0) {
+          groups.push(group);
+        }
       }
     }
   }
