@@ -1,5 +1,15 @@
-import OpenAI from "openai";
+import OpenAI, { BadRequestError } from "openai";
 import type { EntityType } from "../types/entities";
+
+export class ContentPolicyError extends Error {
+  constructor(entityDescription?: string) {
+    const msg = entityDescription
+      ? `Image generation was blocked by the safety filter for "${entityDescription}". Try editing the prompt to use less specific or suggestive language.`
+      : "Image generation was blocked by the safety filter. Try editing the prompt to use less specific language.";
+    super(msg);
+    this.name = "ContentPolicyError";
+  }
+}
 
 interface GenerateOptions {
   aspectRatio: "16:9" | "1:1";
@@ -27,14 +37,22 @@ export async function generateImage(
 
   const size = SIZE_MAP[options.aspectRatio];
 
-  const response = await client.images.generate({
-    model: "dall-e-3",
-    prompt,
-    n: 1,
-    size,
-    quality: "standard",
-    response_format: "b64_json",
-  });
+  let response;
+  try {
+    response = await client.images.generate({
+      model: "dall-e-3",
+      prompt,
+      n: 1,
+      size,
+      quality: "standard",
+      response_format: "b64_json",
+    });
+  } catch (err) {
+    if (err instanceof BadRequestError && /content_policy/i.test(String(err.message))) {
+      throw new ContentPolicyError();
+    }
+    throw err;
+  }
 
   const b64 = response.data?.[0]?.b64_json;
   if (!b64) {

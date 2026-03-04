@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { generateEntityPrompt } from "../../lib/prompt-gen";
-import { generateImage, getAspectRatio } from "../../lib/image-gen";
+import { generateImage, getAspectRatio, ContentPolicyError } from "../../lib/image-gen";
 import { ImagePreview } from "./ImagePreview";
 import { PromptEditor } from "./PromptEditor";
 import { ActionBar } from "./ActionBar";
@@ -92,7 +92,11 @@ export function DetailPanel() {
       });
       await addVariant(selectedZone, entity.id, imageData, asset.currentPrompt);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate image");
+      if (err instanceof ContentPolicyError) {
+        setError(err.message);
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to generate image");
+      }
     } finally {
       setGeneratingImage(false);
     }
