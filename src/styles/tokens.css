@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Nunito+Sans:wght@400;600;700;800&display=swap");
+
+:root {
+  /* Primary palette */
+  --color-primary-lavender: #a897d2;
+  --color-primary-pale-blue: #8caec9;
+  --color-primary-dusty-rose: #b88faa;
+  --color-primary-moss-green: #8da97b;
+  --color-primary-soft-gold: #bea873;
+
+  /* Neutrals */
+  --color-neutral-deep-mist: #22293c;
+  --color-neutral-soft-fog: #6f7da1;
+  --color-neutral-cloud: #d8def1;
+
+  /* Semantic */
+  --color-success: var(--color-primary-moss-green);
+  --color-warning: var(--color-primary-dusty-rose);
+  --color-error: #c5a8a8;
+  --color-info: var(--color-primary-pale-blue);
+
+  /* Text */
+  --text-primary: #dbe3f8;
+  --text-secondary: #aebada;
+  --text-disabled: #7f89a8;
+
+  /* Lines & edges */
+  --line-soft: rgb(151 166 204 / 36%);
+  --line-faint: rgb(140 154 193 / 24%);
+  --glass-edge: rgb(236 242 255 / 18%);
+
+  /* Surfaces */
+  --surface-panel-a: rgb(54 63 90 / 95%);
+  --surface-panel-b: rgb(43 53 79 / 92%);
+  --surface-subpanel: rgb(50 60 88 / 94%);
+  --surface-chip: rgb(62 74 108 / 90%);
+  --surface-input: rgb(45 56 84 / 96%);
+
+  /* Backgrounds */
+  --bg-primary: #2a3149;
+  --bg-secondary: #262f47;
+  --bg-elevated: #313a56;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 7px rgb(8 10 18 / 30%);
+  --shadow-md: 0 10px 26px rgb(8 10 18 / 36%);
+  --shadow-lg: 0 16px 40px rgb(8 10 18 / 44%);
+  --shadow-glow: 0 0 22px rgb(103 116 170 / 28%);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Border radius */
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Easing */
+  --ease-in-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-soft: cubic-bezier(0.33, 0.66, 0.66, 1);
+  --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Typography */
+  --font-display: "Cormorant Garamond", "Georgia", serif;
+  --font-body: "Nunito Sans", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}

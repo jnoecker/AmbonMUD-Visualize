@@ -1,0 +1,107 @@
+import type { Entity } from "../types/entities";
+import type { AssetEntry } from "../types/project";
+
+export interface BatchProgress {
+  total: number;
+  completed: number;
+  currentEntity: string | null;
+  errors: Array<{ entityId: string; error: string }>;
+}
+
+export interface BatchOptions {
+  entities: Entity[];
+  assets: Record<string, AssetEntry>;
+  zoneVibe: string;
+  concurrency: number;
+  skipGenerated: boolean;
+  generatePrompt: (entity: Entity, vibe: string) => Promise<string>;
+  generateImage: (prompt: string, entity: Entity) => Promise<Uint8Array>;
+  onSaveImage: (entityId: string, data: Uint8Array, prompt: string) => Promise<void>;
+  onProgress: (progress: BatchProgress) => void;
+  abortSignal?: AbortSignal;
+}
+
+export async function runBatch(options: BatchOptions): Promise<BatchProgress> {
+  const {
+    entities,
+    assets,
+    zoneVibe,
+    concurrency,
+    skipGenerated,
+    generatePrompt,
+    generateImage,
+    onSaveImage,
+    onProgress,
+    abortSignal,
+  } = options;
+
+  // Filter entities based on options
+  const toProcess = entities.filter((entity) => {
+    const asset = assets[entity.id];
+    if (!asset) return true;
+    if (skipGenerated && asset.variants.length > 0) return false;
+    return true;
+  });
+
+  const progress: BatchProgress = {
+    total: toProcess.length,
+    completed: 0,
+    currentEntity: null,
+    errors: [],
+  };
+
+  onProgress({ ...progress });
+
+  // Process with concurrency limit
+  let index = 0;
+
+  async function processNext(): Promise<void> {
+    while (index < toProcess.length) {
+      if (abortSignal?.aborted) return;
+
+      const entity = toProcess[index++];
+      progress.currentEntity = entity.title;
+      onProgress({ ...progress });
+
+      try {
+        // Generate prompt if needed
+        const asset = assets[entity.id];
+        let prompt = asset?.currentPrompt;
+        if (!prompt) {
+          prompt = await generatePrompt(entity, zoneVibe);
+        }
+
+        if (abortSignal?.aborted) return;
+
+        // Generate image
+        const imageData = await generateImage(prompt, entity);
+
+        if (abortSignal?.aborted) return;
+
+        // Save
+        await onSaveImage(entity.id, imageData, prompt);
+      } catch (err) {
+        progress.errors.push({
+          entityId: entity.id,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+
+      progress.completed++;
+      onProgress({ ...progress });
+    }
+  }
+
+  // Launch concurrent workers
+  const workers = Array.from(
+    { length: Math.min(concurrency, toProcess.length) },
+    () => processNext()
+  );
+
+  await Promise.all(workers);
+
+  progress.currentEntity = null;
+  onProgress({ ...progress });
+
+  return progress;
+}
