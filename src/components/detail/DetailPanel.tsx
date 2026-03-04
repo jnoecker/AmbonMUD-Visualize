@@ -6,10 +6,12 @@ import { ImagePreview } from "./ImagePreview";
 import { PromptEditor } from "./PromptEditor";
 import { ActionBar } from "./ActionBar";
 import { VariantStrip } from "./VariantStrip";
+import { SpriteGrid } from "../sprites/SpriteGrid";
 
 export function DetailPanel() {
   const {
     project,
+    parsedZones,
     selectedEntityId,
     selectedZone,
     getEntity,
@@ -105,6 +107,19 @@ export function DetailPanel() {
     },
     [selectedZone, selectedEntityId, getImageDataUrl]
   );
+
+  // If selected zone is a sprite zone, show SpriteGrid
+  if (selectedZone && project?.zones[selectedZone]?.spriteConfig && parsedZones[selectedZone]) {
+    const zone = project.zones[selectedZone];
+    return (
+      <SpriteGrid
+        zoneKey={selectedZone}
+        zone={zone}
+        entities={parsedZones[selectedZone].entities}
+        spriteConfig={zone.spriteConfig!}
+      />
+    );
+  }
 
   if (!entity || !asset) {
     return (

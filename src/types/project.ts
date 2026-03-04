@@ -1,4 +1,5 @@
 import type { EntityType } from "./entities";
+import type { SpriteConfig, SpritePromptTemplate } from "./sprites";
 
 export type EntityStatus = "pending" | "generated" | "approved";
 
@@ -34,6 +35,8 @@ export interface ZoneData {
     item: DefaultImageEntry;
   } | null;
   assets: Record<string, AssetEntry>;
+  spriteConfig?: SpriteConfig | null;
+  spriteTemplate?: SpritePromptTemplate | null;
 }
 
 export interface ProjectFile {

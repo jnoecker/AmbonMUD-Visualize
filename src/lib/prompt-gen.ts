@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Entity, EntityType } from "../types/entities";
 
-const STYLE_SUFFIX = `Rendered in the Surreal Gentle Magic style (surreal_softmagic_v1), featuring:
+export const STYLE_SUFFIX = `Rendered in the Surreal Gentle Magic style (surreal_softmagic_v1), featuring:
 - Soft lavender and pale blue undertones
 - Ambient diffused lighting (no harsh shadows, no spotlighting)
 - Gentle atmospheric haze with floating motes of light

@@ -8,6 +8,8 @@ import {
 } from "react";
 import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry } from "../types/project";
 import type { Entity, EntityType, ParsedZone } from "../types/entities";
+import type { SpritePromptTemplate } from "../types/sprites";
+import { detectSpriteZone } from "../lib/sprite-parser";
 import {
   createProject,
   openProject,
@@ -62,6 +64,8 @@ interface ProjectContextValue {
 
   batchApprove: () => Promise<number>;
 
+  updateSpriteTemplate: (zoneKey: string, template: SpritePromptTemplate) => Promise<void>;
+
   getEntity: (entityId: string) => Entity | undefined;
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
   getImageDataUrl: (zoneKey: string, entityId: string, filename: string) => Promise<string>;
@@ -100,15 +104,42 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const parseAllZones = useCallback(async (proj: ProjectFile) => {
     const parsed: Record<string, ParsedZone> = {};
+    let projUpdated = false;
+    let updatedProj = { ...proj, zones: { ...proj.zones } };
+
     for (const zone of Object.values(proj.zones)) {
       try {
         const yamlContent = await readTextFile(zone.sourceYamlPath);
-        parsed[zone.zoneName] = parseZone(yamlContent);
+        const parsedZone = parseZone(yamlContent);
+        parsed[zone.zoneName] = parsedZone;
+
+        // Auto-detect sprite zones
+        if (!zone.spriteConfig) {
+          const config = detectSpriteZone(parsedZone.entities);
+          if (config) {
+            updatedProj.zones[zone.zoneName] = {
+              ...updatedProj.zones[zone.zoneName],
+              spriteConfig: config,
+            };
+            projUpdated = true;
+          }
+        }
       } catch {
         // Zone file might not be accessible
       }
     }
+
     setParsedZones(parsed);
+
+    // Persist sprite config detection
+    if (projUpdated) {
+      projectRef.current = updatedProj;
+      setProject(updatedProj);
+      const dir = projectDirRef.current;
+      if (dir) {
+        await saveProject(dir, updatedProj);
+      }
+    }
   }, []);
 
   const createNewProject = useCallback(
@@ -338,6 +369,24 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     return count;
   }, [commitProject]);
 
+  const updateSpriteTemplate = useCallback(
+    async (zoneKey: string, template: SpritePromptTemplate) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+      const next = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: { ...zone, spriteTemplate: template },
+        },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
   const updateDefaultImage = useCallback(
     async (
       zoneKey: string,
@@ -478,6 +527,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         addVariant,
         approveVariant,
         batchApprove,
+        updateSpriteTemplate,
         updateDefaultImage,
         getDefaultImageDataUrl,
         setViewingVariant: setViewingVariantIndex,
