@@ -8,8 +8,8 @@ import {
   writeFile,
 } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
-import type { ProjectFile, AssetEntry } from "../types/project";
-import type { Entity } from "../types/entities";
+import type { ProjectFile, AssetEntry, DefaultImageEntry } from "../types/project";
+import type { Entity, EntityType } from "../types/entities";
 import { parseZone } from "./yaml-parser";
 
 const PROJECT_FILE = "project.json";
@@ -58,6 +58,7 @@ export async function createProject(
       zoneName: parsed.zoneName,
       sourceYamlPath: yamlPath,
       vibe: null,
+      defaultImages: null,
       assets,
     };
   }
@@ -72,7 +73,16 @@ export async function createProject(
 export async function openProject(projectDir: string): Promise<ProjectFile> {
   const projectPath = await join(projectDir, PROJECT_FILE);
   const content = await readTextFile(projectPath);
-  return JSON.parse(content) as ProjectFile;
+  const project = JSON.parse(content) as ProjectFile;
+
+  // Backfill defaultImages for older project files
+  for (const zone of Object.values(project.zones)) {
+    if (!("defaultImages" in zone)) {
+      (zone as any).defaultImages = null;
+    }
+  }
+
+  return project;
 }
 
 export async function saveProject(
@@ -215,8 +225,55 @@ export async function reconcileImages(
       }
     }
 
+    // Reconcile default images (default_room, default_mob, default_item dirs)
+    const DEFAULT_TYPES: EntityType[] = ["room", "mob", "item"];
+    let updatedDefaults = zone.defaultImages;
+    for (const entityType of DEFAULT_TYPES) {
+      const dirName = `default_${entityType}`;
+      const defaultDir = await join(zoneImagesDir, dirName);
+      const defaultDirExists = await exists(defaultDir);
+      if (!defaultDirExists) continue;
+
+      let imageFiles: { name: string | undefined }[];
+      try {
+        imageFiles = (await readDir(defaultDir)) as { name: string | undefined }[];
+      } catch {
+        continue;
+      }
+
+      const pngFiles = imageFiles
+        .filter((f) => f.name && /^v\d+\.png$/.test(f.name))
+        .sort((a, b) => {
+          const va = parseInt(a.name!.match(/^v(\d+)/)?.[1] ?? "0", 10);
+          const vb = parseInt(b.name!.match(/^v(\d+)/)?.[1] ?? "0", 10);
+          return va - vb;
+        });
+
+      if (pngFiles.length === 0) continue;
+
+      // Use the latest file as the default image
+      const latestFile = pngFiles[pngFiles.length - 1].name!;
+      const currentEntry = updatedDefaults?.[entityType];
+
+      if (!currentEntry || currentEntry.filename !== latestFile) {
+        changed = true;
+        if (!updatedDefaults) {
+          const emptyEntry: DefaultImageEntry = { prompt: null, filename: null, generatedAt: null };
+          updatedDefaults = { room: { ...emptyEntry }, mob: { ...emptyEntry }, item: { ...emptyEntry } };
+        }
+        updatedDefaults = {
+          ...updatedDefaults,
+          [entityType]: {
+            ...updatedDefaults[entityType],
+            filename: latestFile,
+            generatedAt: updatedDefaults[entityType].generatedAt || new Date().toISOString(),
+          },
+        };
+      }
+    }
+
     if (changed) {
-      updated.zones[zoneKey] = { ...zone, assets: updatedAssets };
+      updated.zones[zoneKey] = { ...zone, assets: updatedAssets, defaultImages: updatedDefaults };
     }
   }
 

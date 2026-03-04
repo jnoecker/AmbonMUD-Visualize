@@ -46,6 +46,54 @@ export async function generateZoneVibe(
   throw new Error("Unexpected response format from Claude");
 }
 
+const DEFAULT_DESCRIPTION_BY_TYPE: Record<EntityType, string> = {
+  room: "a generic room scene that captures the zone's atmosphere",
+  mob: "a generic creature or character silhouette that fits the zone's atmosphere",
+  item: "a generic magical item or artifact that fits the zone's atmosphere",
+};
+
+export async function generateDefaultImagePrompt(
+  apiKey: string,
+  entityType: EntityType,
+  zoneName: string,
+  zoneVibe: string
+): Promise<string> {
+  const client = new Anthropic({
+    apiKey,
+    dangerouslyAllowBrowser: true,
+  });
+
+  const formatSpec = FORMAT_BY_TYPE[entityType];
+  const description = DEFAULT_DESCRIPTION_BY_TYPE[entityType];
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-5-20250929",
+    max_tokens: 500,
+    system:
+      "You are an expert image prompt engineer for AI image generators. Generate a fallback/default image prompt for this zone. The image should be atmospheric and representative of the zone without depicting any specific named entity. Output ONLY the prompt text — no labels, no markdown, no commentary.",
+    messages: [
+      {
+        role: "user",
+        content: `Format: ${formatSpec}
+
+Generate a default ${entityType} image: ${description}
+
+Zone: ${zoneName}
+Zone atmosphere: ${zoneVibe}
+
+Required style suffix (include verbatim at the end):
+${STYLE_SUFFIX}`,
+      },
+    ],
+  });
+
+  const block = response.content[0];
+  if (block.type === "text") {
+    return block.text;
+  }
+  throw new Error("Unexpected response format from Claude");
+}
+
 export async function generateEntityPrompt(
   apiKey: string,
   entity: Entity,

@@ -6,8 +6,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { ProjectFile, AssetEntry, ImageVariant } from "../types/project";
-import type { Entity, ParsedZone } from "../types/entities";
+import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry } from "../types/project";
+import type { Entity, EntityType, ParsedZone } from "../types/entities";
 import {
   createProject,
   openProject,
@@ -51,6 +51,14 @@ interface ProjectContextValue {
   approveVariant: (zoneKey: string, entityId: string, variantIndex: number) => Promise<void>;
   setViewingVariant: (index: number) => void;
   viewingVariantIndex: number;
+
+  updateDefaultImage: (
+    zoneKey: string,
+    entityType: EntityType,
+    imageData: Uint8Array,
+    prompt: string
+  ) => Promise<void>;
+  getDefaultImageDataUrl: (zoneKey: string, entityType: EntityType) => Promise<string | null>;
 
   getEntity: (entityId: string) => Entity | undefined;
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
@@ -289,6 +297,77 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     [commitProject]
   );
 
+  const updateDefaultImage = useCallback(
+    async (
+      zoneKey: string,
+      entityType: EntityType,
+      imageData: Uint8Array,
+      prompt: string
+    ) => {
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const entityId = `default_${entityType}`;
+      const filename = await saveImage(dir, zoneKey, entityId, imageData);
+
+      // Cache the data URL
+      const key = cacheKey(zoneKey, entityId, filename);
+      imageCache.current.set(key, bytesToDataUrl(imageData));
+
+      const emptyEntry: DefaultImageEntry = { prompt: null, filename: null, generatedAt: null };
+      const currentDefaults = zone.defaultImages || { room: { ...emptyEntry }, mob: { ...emptyEntry }, item: { ...emptyEntry } };
+      const updatedDefaults = {
+        ...currentDefaults,
+        [entityType]: {
+          prompt,
+          filename,
+          generatedAt: new Date().toISOString(),
+        },
+      };
+
+      const latest = projectRef.current!;
+      const latestZone = latest.zones[zoneKey];
+      const next: ProjectFile = {
+        ...latest,
+        zones: {
+          ...latest.zones,
+          [zoneKey]: { ...latestZone, defaultImages: updatedDefaults },
+        },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const getDefaultImageDataUrl = useCallback(
+    async (zoneKey: string, entityType: EntityType): Promise<string | null> => {
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return null;
+
+      const zone = p.zones[zoneKey];
+      if (!zone?.defaultImages) return null;
+
+      const entry = zone.defaultImages[entityType];
+      if (!entry?.filename) return null;
+
+      const entityId = `default_${entityType}`;
+      const key = cacheKey(zoneKey, entityId, entry.filename);
+      const cached = imageCache.current.get(key);
+      if (cached) return cached;
+
+      const filePath = await getImagePath(dir, zoneKey, entityId, entry.filename);
+      const bytes = await readFile(filePath);
+      const dataUrl = bytesToDataUrl(bytes);
+      imageCache.current.set(key, dataUrl);
+      return dataUrl;
+    },
+    []
+  );
+
   const getEntity = useCallback(
     (entityId: string): Entity | undefined => {
       for (const zone of Object.values(parsedZones)) {
@@ -357,6 +436,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         updatePrompt,
         addVariant,
         approveVariant,
+        updateDefaultImage,
+        getDefaultImageDataUrl,
         setViewingVariant: setViewingVariantIndex,
         viewingVariantIndex,
         getEntity,

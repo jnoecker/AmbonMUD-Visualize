@@ -1,21 +1,104 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
-import { generateZoneVibe } from "../../lib/prompt-gen";
+import { generateZoneVibe, generateDefaultImagePrompt } from "../../lib/prompt-gen";
+import { generateImage, getAspectRatio } from "../../lib/image-gen";
+import type { EntityType } from "../../types/entities";
+import type { DefaultImageEntry } from "../../types/project";
+
+const DEFAULT_TYPES: EntityType[] = ["room", "mob", "item"];
 
 interface ZoneVibePanelProps {
   zoneName: string;
   vibe: string | null;
+  defaultImages: {
+    room: DefaultImageEntry;
+    mob: DefaultImageEntry;
+    item: DefaultImageEntry;
+  } | null;
   allRoomDescriptions: string[];
 }
 
-export function ZoneVibePanel({ zoneName, vibe, allRoomDescriptions }: ZoneVibePanelProps) {
-  const { updateVibe } = useProject();
+export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptions }: ZoneVibePanelProps) {
+  const { updateVibe, updateDefaultImage, getDefaultImageDataUrl } = useProject();
   const { settings } = useSettings();
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(vibe || "");
   const [error, setError] = useState<string | null>(null);
+
+  // Per-type generation status
+  const [generatingDefaults, setGeneratingDefaults] = useState<Record<EntityType, boolean>>({
+    room: false, mob: false, item: false,
+  });
+  const [defaultThumbnails, setDefaultThumbnails] = useState<Record<EntityType, string | null>>({
+    room: null, mob: null, item: null,
+  });
+  const [defaultError, setDefaultError] = useState<string | null>(null);
+
+  // Load existing default image thumbnails
+  useEffect(() => {
+    if (!defaultImages) return;
+    for (const entityType of DEFAULT_TYPES) {
+      if (defaultImages[entityType]?.filename) {
+        getDefaultImageDataUrl(zoneName, entityType).then((url) => {
+          if (url) {
+            setDefaultThumbnails((prev) => ({ ...prev, [entityType]: url }));
+          }
+        });
+      }
+    }
+  }, [defaultImages, zoneName, getDefaultImageDataUrl]);
+
+  const generateOneDefault = useCallback(
+    async (entityType: EntityType, vibeText: string) => {
+      if (!settings.anthropicApiKey || !settings.openaiApiKey) return;
+
+      setGeneratingDefaults((prev) => ({ ...prev, [entityType]: true }));
+      try {
+        const prompt = await generateDefaultImagePrompt(
+          settings.anthropicApiKey,
+          entityType,
+          zoneName,
+          vibeText
+        );
+
+        const imageData = await generateImage(settings.openaiApiKey, prompt, {
+          aspectRatio: getAspectRatio(entityType),
+          entityType,
+        });
+
+        await updateDefaultImage(zoneName, entityType, imageData, prompt);
+
+        // Update thumbnail from the raw bytes
+        let binary = "";
+        for (let i = 0; i < imageData.length; i++) {
+          binary += String.fromCharCode(imageData[i]);
+        }
+        const dataUrl = `data:image/png;base64,${btoa(binary)}`;
+        setDefaultThumbnails((prev) => ({ ...prev, [entityType]: dataUrl }));
+      } catch (err) {
+        setDefaultError(
+          `Failed to generate default ${entityType}: ${err instanceof Error ? err.message : String(err)}`
+        );
+      } finally {
+        setGeneratingDefaults((prev) => ({ ...prev, [entityType]: false }));
+      }
+    },
+    [settings.anthropicApiKey, settings.openaiApiKey, zoneName, updateDefaultImage]
+  );
+
+  const generateAllDefaults = useCallback(
+    async (vibeText: string) => {
+      if (!settings.anthropicApiKey || !settings.openaiApiKey) {
+        setDefaultError("API keys not set. Open Settings to configure.");
+        return;
+      }
+      setDefaultError(null);
+      await Promise.all(DEFAULT_TYPES.map((t) => generateOneDefault(t, vibeText)));
+    },
+    [settings.anthropicApiKey, settings.openaiApiKey, generateOneDefault]
+  );
 
   const handleGenerate = async () => {
     if (!settings.anthropicApiKey) {
@@ -32,6 +115,9 @@ export function ZoneVibePanel({ zoneName, vibe, allRoomDescriptions }: ZoneVibeP
       );
       await updateVibe(zoneName, newVibe);
       setEditText(newVibe);
+
+      // Auto-generate default images after vibe
+      generateAllDefaults(newVibe);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate vibe");
     } finally {
@@ -43,6 +129,8 @@ export function ZoneVibePanel({ zoneName, vibe, allRoomDescriptions }: ZoneVibeP
     await updateVibe(zoneName, editText);
     setEditing(false);
   };
+
+  const anyGenerating = DEFAULT_TYPES.some((t) => generatingDefaults[t]);
 
   return (
     <div className="glass-panel">
@@ -94,6 +182,67 @@ export function ZoneVibePanel({ zoneName, vibe, allRoomDescriptions }: ZoneVibeP
         <p className="zone-vibe-text" style={{ fontStyle: "normal", opacity: 0.5 }}>
           No vibe generated yet. Click "Generate Vibe" to create one.
         </p>
+      )}
+
+      {/* Default images section — shown when vibe exists */}
+      {vibe && (
+        <div style={{ marginTop: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+            <span style={{ fontSize: "0.82rem", fontWeight: 600, opacity: 0.7 }}>Default Images</span>
+            <button
+              className="soft-button soft-button--small"
+              onClick={() => generateAllDefaults(vibe)}
+              disabled={anyGenerating}
+            >
+              {anyGenerating && <span className="spinner spinner--small" />}
+              {defaultImages ? "Regenerate Defaults" : "Generate Defaults"}
+            </button>
+          </div>
+
+          {defaultError && (
+            <div style={{ color: "var(--color-error)", fontSize: "0.78rem", marginBottom: 6 }}>{defaultError}</div>
+          )}
+
+          <div style={{ display: "flex", gap: 8 }}>
+            {DEFAULT_TYPES.map((entityType) => (
+              <div
+                key={entityType}
+                style={{
+                  flex: entityType === "room" ? "1.5" : "1",
+                  textAlign: "center",
+                }}
+              >
+                <div
+                  style={{
+                    aspectRatio: entityType === "room" ? "16/9" : "1",
+                    backgroundColor: "var(--bg-deepest)",
+                    borderRadius: 6,
+                    overflow: "hidden",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid var(--border-subtle)",
+                  }}
+                >
+                  {generatingDefaults[entityType] ? (
+                    <span className="spinner spinner--small" />
+                  ) : defaultThumbnails[entityType] ? (
+                    <img
+                      src={defaultThumbnails[entityType]!}
+                      alt={`Default ${entityType}`}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span style={{ opacity: 0.3, fontSize: "0.72rem" }}>--</span>
+                  )}
+                </div>
+                <div style={{ fontSize: "0.72rem", marginTop: 3, opacity: 0.6, textTransform: "capitalize" }}>
+                  {entityType}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

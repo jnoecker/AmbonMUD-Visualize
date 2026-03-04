@@ -7,6 +7,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { join, dirname } from "@tauri-apps/api/path";
 import type { ProjectFile, ZoneData } from "../types/project";
+import type { EntityType } from "../types/entities";
 import { getImagePath } from "./project-io";
 
 export interface ExportProgress {
@@ -30,11 +31,18 @@ export async function exportProject(
 ): Promise<void> {
   // Count total work
   let totalFiles = 0;
+  const defaultTypes: EntityType[] = ["room", "mob", "item"];
   for (const zone of Object.values(project.zones)) {
     totalFiles++; // YAML file
     for (const asset of Object.values(zone.assets)) {
       if (asset.approvedVariantIndex !== null) {
         totalFiles++; // Image file
+      }
+    }
+    // Count default images
+    if (zone.defaultImages) {
+      for (const t of defaultTypes) {
+        if (zone.defaultImages[t]?.filename) totalFiles++;
       }
     }
   }
@@ -85,6 +93,28 @@ export async function exportProject(
       progress.completed++;
     }
 
+    // Copy default images
+    if (zone.defaultImages) {
+      for (const entityType of defaultTypes) {
+        const entry = zone.defaultImages[entityType];
+        if (!entry?.filename) continue;
+
+        const entityId = `default_${entityType}`;
+        const srcPath = await getImagePath(projectDir, zone.zoneName, entityId, entry.filename);
+        const destPath = await join(zoneImgDir, `default_${entityType}.png`);
+
+        progress.currentFile = `default_${entityType}.png`;
+        onProgress?.({ ...progress });
+
+        const srcExists = await exists(srcPath);
+        if (srcExists) {
+          await copyFile(srcPath, destPath);
+        }
+
+        progress.completed++;
+      }
+    }
+
     // Modify YAML in-place with image fields
     progress.currentFile = `${zone.zoneName}.yaml`;
     onProgress?.({ ...progress });
@@ -125,7 +155,23 @@ async function exportZoneYaml(
     imageMap.set(bareId, `${zone.zoneName}/${bareId}.png`);
   }
 
-  if (imageMap.size === 0) return;
+  // Build zone-level default image block
+  const defaultImageLines: string[] = [];
+  if (zone.defaultImages) {
+    const defaultTypes: EntityType[] = ["room", "mob", "item"];
+    const entries: string[] = [];
+    for (const t of defaultTypes) {
+      if (zone.defaultImages[t]?.filename) {
+        entries.push(`  ${t}: ${zone.zoneName}/default_${t}.png`);
+      }
+    }
+    if (entries.length > 0) {
+      defaultImageLines.push("image:");
+      defaultImageLines.push(...entries);
+    }
+  }
+
+  if (imageMap.size === 0 && defaultImageLines.length === 0) return;
 
   // String-based insertion of image fields
   const lines = yaml.split("\n");
@@ -134,6 +180,25 @@ async function exportZoneYaml(
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     output.push(line);
+
+    // Insert zone-level image block after the "zone:" line
+    if (defaultImageLines.length > 0) {
+      const zoneMatch = line.match(/^zone:\s/);
+      if (zoneMatch) {
+        // Check if an image: block already follows
+        const nextLine = i + 1 < lines.length ? lines[i + 1] : "";
+        if (nextLine.trimStart().startsWith("image:")) {
+          // Skip existing zone-level image block (image: + indented entries)
+          i++; // skip "image:"
+          while (i + 1 < lines.length && /^  \w+:/.test(lines[i + 1])) {
+            i++;
+          }
+        }
+        // Insert new zone-level image block
+        output.push(...defaultImageLines);
+        continue;
+      }
+    }
 
     // Match entity ID keys at 2-space indent: "  bareId:"
     const trimmed = line.trimEnd();

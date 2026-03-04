@@ -8,6 +8,12 @@ export interface ImageVariant {
   prompt: string;
 }
 
+export interface DefaultImageEntry {
+  prompt: string | null;
+  filename: string | null;
+  generatedAt: string | null;
+}
+
 export interface AssetEntry {
   entityId: string;
   entityType: EntityType;
@@ -22,6 +28,11 @@ export interface ZoneData {
   zoneName: string;
   sourceYamlPath: string;
   vibe: string | null;
+  defaultImages: {
+    room: DefaultImageEntry;
+    mob: DefaultImageEntry;
+    item: DefaultImageEntry;
+  } | null;
   assets: Record<string, AssetEntry>;
 }
 

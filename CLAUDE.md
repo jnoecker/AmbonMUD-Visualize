@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git Workflow
+
+This is an in-house tool — commit and push directly to `main`. No feature branches or PRs needed.
+
 ## Project Overview
 
 AmbonMUD-Visualize is a standalone desktop application for generating style-consistent images for AmbonMUD zones. It uses Claude API to transform zone YAML descriptions into optimized image generation prompts, then calls a pluggable image generation API to produce assets conforming to the "Surreal Gentle Magic" (surreal_softmagic_v1) design system.

@@ -32,6 +32,7 @@ export function Sidebar() {
             <ZoneVibePanel
               zoneName={zone.zoneName}
               vibe={zone.vibe}
+              defaultImages={zone.defaultImages}
               allRoomDescriptions={parsed.allRoomDescriptions}
             />
           </div>
