@@ -133,12 +133,13 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
       (async () => {
         try {
           const imageData = await generateImage(
-            settingsRef.current.openaiApiKey!,
+            settingsRef.current.runwareApiKey!,
             prompt,
             {
               aspectRatio: getAspectRatio(entity.type),
               entityType: entity.type,
-            }
+            },
+            settingsRef.current.runwareModel
           );
           const newIndex = await addVariant(zoneKey, entityId, imageData, prompt);
 

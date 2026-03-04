@@ -1,4 +1,4 @@
-import OpenAI, { BadRequestError } from "openai";
+import { Runware } from "@runware/sdk-js";
 import type { EntityType } from "../types/entities";
 
 export class ContentPolicyError extends Error {
@@ -16,47 +16,58 @@ interface GenerateOptions {
   entityType: EntityType;
 }
 
-const SIZE_MAP: Record<string, "1792x1024" | "1024x1024"> = {
-  "16:9": "1792x1024",
-  "1:1": "1024x1024",
+const SIZE_MAP: Record<string, { width: number; height: number }> = {
+  "16:9": { width: 1024, height: 576 },
+  "1:1": { width: 1024, height: 1024 },
 };
 
 export function getAspectRatio(entityType: EntityType): "16:9" | "1:1" {
   return entityType === "room" ? "16:9" : "1:1";
 }
 
+// Reuse a single Runware connection across calls
+let runwareInstance: InstanceType<typeof Runware> | null = null;
+let runwareKey: string | null = null;
+
+function getRunware(apiKey: string): InstanceType<typeof Runware> {
+  if (runwareInstance && runwareKey === apiKey) return runwareInstance;
+  runwareInstance = new Runware({ apiKey });
+  runwareKey = apiKey;
+  return runwareInstance;
+}
+
 export async function generateImage(
   apiKey: string,
   prompt: string,
-  options: GenerateOptions
+  options: GenerateOptions,
+  model = "runware:101@1"
 ): Promise<Uint8Array> {
-  const client = new OpenAI({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
+  const runware = getRunware(apiKey);
 
-  const size = SIZE_MAP[options.aspectRatio];
+  const { width, height } = SIZE_MAP[options.aspectRatio];
 
-  let response;
+  let images;
   try {
-    response = await client.images.generate({
-      model: "dall-e-3",
-      prompt,
-      n: 1,
-      size,
-      quality: "standard",
-      response_format: "b64_json",
+    images = await runware.requestImages({
+      positivePrompt: prompt,
+      model,
+      width,
+      height,
+      numberResults: 1,
+      outputType: "base64Data",
+      outputFormat: "PNG",
     });
-  } catch (err) {
-    if (err instanceof BadRequestError && /content_policy/i.test(String(err.message))) {
+  } catch (err: any) {
+    if (/content.?policy|nsfw|safety/i.test(String(err.message))) {
       throw new ContentPolicyError();
     }
     throw err;
   }
 
-  const b64 = response.data?.[0]?.b64_json;
+  const image = images?.[0] as any;
+  const b64: string | undefined = image?.imageBase64Data;
   if (!b64) {
-    throw new Error("No image data in DALL-E 3 response");
+    throw new Error("No image data in Runware response");
   }
 
   // Convert base64 to Uint8Array

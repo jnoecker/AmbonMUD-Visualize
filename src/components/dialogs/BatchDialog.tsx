@@ -21,7 +21,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
 
   const handleStart = useCallback(async () => {
     if (!project) return;
-    if (!settings.anthropicApiKey || !settings.openaiApiKey) {
+    if (!settings.anthropicApiKey || !settings.runwareApiKey) {
       return;
     }
 
@@ -48,10 +48,10 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
           return prompt;
         },
         generateImage: async (prompt: string, entity: Entity) => {
-          return generateImage(settings.openaiApiKey, prompt, {
+          return generateImage(settings.runwareApiKey, prompt, {
             aspectRatio: getAspectRatio(entity.type),
             entityType: entity.type,
-          });
+          }, settings.runwareModel);
         },
         onSaveImage: async (entityId: string, data: Uint8Array, prompt: string) => {
           await addVariant(zoneKey, entityId, data, prompt);
@@ -102,7 +102,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
               </div>
             )}
 
-            {(!settings.anthropicApiKey || !settings.openaiApiKey) && (
+            {(!settings.anthropicApiKey || !settings.runwareApiKey) && (
               <div style={{ color: "var(--color-error)", fontSize: "0.85rem", marginBottom: 12 }}>
                 Both API keys must be configured in Settings.
               </div>
@@ -187,7 +187,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
                 disabled={
                   totalToProcess === 0 ||
                   !settings.anthropicApiKey ||
-                  !settings.openaiApiKey
+                  !settings.runwareApiKey
                 }
               >
                 Start ({totalToProcess})

@@ -52,7 +52,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
 
   const generateOneDefault = useCallback(
     async (entityType: EntityType, vibeText: string) => {
-      if (!settings.anthropicApiKey || !settings.openaiApiKey) return;
+      if (!settings.anthropicApiKey || !settings.runwareApiKey) return;
 
       setGeneratingDefaults((prev) => ({ ...prev, [entityType]: true }));
       try {
@@ -63,10 +63,10 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
           vibeText
         );
 
-        const imageData = await generateImage(settings.openaiApiKey, prompt, {
+        const imageData = await generateImage(settings.runwareApiKey, prompt, {
           aspectRatio: getAspectRatio(entityType),
           entityType,
-        });
+        }, settings.runwareModel);
 
         await updateDefaultImage(zoneName, entityType, imageData, prompt);
 
@@ -85,19 +85,19 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
         setGeneratingDefaults((prev) => ({ ...prev, [entityType]: false }));
       }
     },
-    [settings.anthropicApiKey, settings.openaiApiKey, zoneName, updateDefaultImage]
+    [settings.anthropicApiKey, settings.runwareApiKey, zoneName, updateDefaultImage]
   );
 
   const generateAllDefaults = useCallback(
     async (vibeText: string) => {
-      if (!settings.anthropicApiKey || !settings.openaiApiKey) {
+      if (!settings.anthropicApiKey || !settings.runwareApiKey) {
         setDefaultError("API keys not set. Open Settings to configure.");
         return;
       }
       setDefaultError(null);
       await Promise.all(DEFAULT_TYPES.map((t) => generateOneDefault(t, vibeText)));
     },
-    [settings.anthropicApiKey, settings.openaiApiKey, generateOneDefault]
+    [settings.anthropicApiKey, settings.runwareApiKey, generateOneDefault]
   );
 
   const handleGenerate = async () => {

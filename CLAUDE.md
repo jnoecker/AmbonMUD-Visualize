@@ -20,7 +20,7 @@ AmbonMUD-Visualize is a standalone desktop application for generating style-cons
 - **Styling:** CSS design tokens ported from `reference/styles.css` (Surreal Gentle Magic dark-mode theme)
 - **YAML parsing:** `js-yaml` or `yaml` npm package (client-side)
 - **LLM API:** Anthropic Claude API via `@anthropic-ai/sdk`
-- **Image gen:** Pluggable backend (Flux, DALL-E 3, SD3, Ideogram, etc.)
+- **Image gen:** Runware.AI (FLUX Dev model) via `@runware/sdk-js`
 - **State:** React state + local JSON project files (no backend)
 
 ## Architecture

@@ -82,8 +82,8 @@ export function SpriteDetailPanel({
 
   const handleGenerateImage = () => {
     if (!entity || !asset?.currentPrompt) return;
-    if (!settings.openaiApiKey) {
-      setLocalError("OpenAI API key not set. Open Settings.");
+    if (!settings.runwareApiKey) {
+      setLocalError("Runware API key not set. Open Settings.");
       return;
     }
     setLocalError(null);

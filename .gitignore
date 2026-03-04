@@ -30,6 +30,10 @@ src-tauri/gen/
 # Spike output
 spike/output/
 spike/node_modules/
+spikes/runware/output/
+
+# Environment
+.env
 
 # Bun
 bun.lock

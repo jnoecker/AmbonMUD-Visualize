@@ -1,20 +1,30 @@
 import { useState } from "react";
 import { useSettings } from "../../context/SettingsContext";
+import { RUNWARE_MODEL_PRESETS } from "../../types/settings";
 
 interface SettingsDialogProps {
   onClose: () => void;
 }
 
+const CUSTOM_VALUE = "__custom__";
+
 export function SettingsDialog({ onClose }: SettingsDialogProps) {
   const { settings, updateSettings } = useSettings();
   const [anthropicKey, setAnthropicKey] = useState(settings.anthropicApiKey);
-  const [openaiKey, setOpenaiKey] = useState(settings.openaiApiKey);
+  const [runwareKey, setRunwareKey] = useState(settings.runwareApiKey);
   const [concurrency, setConcurrency] = useState(settings.batchConcurrency);
+
+  const isPreset = RUNWARE_MODEL_PRESETS.some((p) => p.id === settings.runwareModel);
+  const [modelSelect, setModelSelect] = useState(isPreset ? settings.runwareModel : CUSTOM_VALUE);
+  const [customModel, setCustomModel] = useState(isPreset ? "" : settings.runwareModel);
+
+  const resolvedModel = modelSelect === CUSTOM_VALUE ? customModel : modelSelect;
 
   const handleSave = () => {
     updateSettings({
       anthropicApiKey: anthropicKey,
-      openaiApiKey: openaiKey,
+      runwareApiKey: runwareKey,
+      runwareModel: resolvedModel || "runware:101@1",
       batchConcurrency: concurrency,
     });
     onClose();
@@ -37,14 +47,39 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
         </div>
 
         <div className="dialog-field">
-          <label className="dialog-label">OpenAI API Key</label>
+          <label className="dialog-label">Runware API Key</label>
           <input
             className="dialog-input"
             type="password"
-            value={openaiKey}
-            onChange={(e) => setOpenaiKey(e.target.value)}
-            placeholder="sk-..."
+            value={runwareKey}
+            onChange={(e) => setRunwareKey(e.target.value)}
+            placeholder="Enter Runware API key..."
           />
+        </div>
+
+        <div className="dialog-field">
+          <label className="dialog-label">Image Model</label>
+          <select
+            className="dialog-input"
+            value={modelSelect}
+            onChange={(e) => setModelSelect(e.target.value)}
+          >
+            {RUNWARE_MODEL_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label} ({p.cost})
+              </option>
+            ))}
+            <option value={CUSTOM_VALUE}>Custom model ID...</option>
+          </select>
+          {modelSelect === CUSTOM_VALUE && (
+            <input
+              className="dialog-input"
+              style={{ marginTop: 6 }}
+              value={customModel}
+              onChange={(e) => setCustomModel(e.target.value)}
+              placeholder="e.g. civitai:102438@133677"
+            />
+          )}
         </div>
 
         <div className="dialog-field">

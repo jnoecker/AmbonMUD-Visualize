@@ -80,8 +80,8 @@ export function DetailPanel() {
 
   const handleGenerateImage = () => {
     if (!entity || !selectedZone || !asset?.currentPrompt) return;
-    if (!settings.openaiApiKey) {
-      setLocalError("OpenAI API key not set. Open Settings.");
+    if (!settings.runwareApiKey) {
+      setLocalError("Runware API key not set. Open Settings.");
       return;
     }
 

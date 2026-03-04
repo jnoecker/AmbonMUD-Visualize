@@ -72,7 +72,7 @@ export function SpriteBatchBar({
 
   const runBatch = useCallback(
     async (entityIds: string[]) => {
-      if (!spriteTemplate || !settings.openaiApiKey) return;
+      if (!spriteTemplate || !settings.runwareApiKey) return;
       const template = spriteTemplate; // narrow for closure
 
       const controller = new AbortController();
@@ -116,9 +116,10 @@ export function SpriteBatchBar({
 
             // Generate image
             const imageData = await generateImage(
-              settings.openaiApiKey!,
+              settings.runwareApiKey!,
               prompt,
-              { aspectRatio: getAspectRatio(entity.type), entityType: entity.type }
+              { aspectRatio: getAspectRatio(entity.type), entityType: entity.type },
+              settings.runwareModel
             );
             await addVariant(zoneKey, entityId, imageData, prompt);
           } catch {
