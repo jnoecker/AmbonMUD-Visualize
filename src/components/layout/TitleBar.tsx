@@ -1,10 +1,12 @@
 interface TitleBarProps {
   onSettingsClick: () => void;
   onReloadClick?: () => void;
+  onOpenClick?: () => void;
+  onCloseClick?: () => void;
   projectName?: string | null;
 }
 
-export function TitleBar({ onSettingsClick, onReloadClick, projectName }: TitleBarProps) {
+export function TitleBar({ onSettingsClick, onReloadClick, onOpenClick, onCloseClick, projectName }: TitleBarProps) {
   return (
     <header className="title-bar">
       <h1 className="title-bar-title">
@@ -16,6 +18,20 @@ export function TitleBar({ onSettingsClick, onReloadClick, projectName }: TitleB
         )}
       </h1>
       <div className="title-bar-actions">
+        {onOpenClick && (
+          <button className="soft-button soft-button--icon" onClick={onOpenClick} title="Open project">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M2 5.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 16 14V7.5A1.5 1.5 0 0 0 14.5 6H9L7.5 3.5H3.5A1.5 1.5 0 0 0 2 5.5z" />
+            </svg>
+          </button>
+        )}
+        {onCloseClick && (
+          <button className="soft-button soft-button--icon" onClick={onCloseClick} title="Close project">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M5 5l8 8M13 5l-8 8" />
+            </svg>
+          </button>
+        )}
         {onReloadClick && (
           <button className="soft-button soft-button--icon" onClick={onReloadClick} title="Reload project">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">

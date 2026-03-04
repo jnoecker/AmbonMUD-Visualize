@@ -16,7 +16,7 @@ import { BatchDialog } from "./components/dialogs/BatchDialog";
 import { ExportDialog } from "./components/dialogs/ExportDialog";
 
 function AppInner() {
-  const { project, projectDir, openExistingProject, reloadProject } = useProject();
+  const { project, projectDir, openExistingProject, reloadProject, closeProject } = useProject();
   const { settings, updateSettings } = useSettings();
   const [showSettings, setShowSettings] = useState(false);
   const [showNewProject, setShowNewProject] = useState(false);
@@ -38,6 +38,11 @@ function AppInner() {
       updateSettings({ lastProjectPath: projectDir });
     }
   }, [projectDir]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleCloseProject = useCallback(() => {
+    closeProject();
+    updateSettings({ lastProjectPath: null });
+  }, [closeProject, updateSettings]);
 
   const handleOpenProject = useCallback(async () => {
     const result = await openDialog({
@@ -69,6 +74,8 @@ function AppInner() {
           <TitleBar
             onSettingsClick={() => setShowSettings(true)}
             onReloadClick={project ? reloadProject : undefined}
+            onOpenClick={project ? handleOpenProject : undefined}
+            onCloseClick={project ? handleCloseProject : undefined}
             projectName={project?.name}
           />
         }
