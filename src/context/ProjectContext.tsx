@@ -35,6 +35,7 @@ interface ProjectContextValue {
 
   createNewProject: (dir: string, name: string, yamlPaths: string[]) => Promise<void>;
   openExistingProject: (dir: string) => Promise<void>;
+  reloadProject: () => Promise<void>;
   closeProject: () => void;
   selectEntity: (zoneKey: string, entityId: string) => void;
 
@@ -66,21 +67,25 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [viewingVariantIndex, setViewingVariantIndex] = useState(0);
 
+  // Refs for latest values (avoid stale closures in concurrent batch operations)
+  const projectRef = useRef<ProjectFile | null>(null);
+  const projectDirRef = useRef<string | null>(null);
+
   // In-memory cache: "zone/entityId/filename" -> data URL
   const imageCache = useRef<Map<string, string>>(new Map());
 
   const cacheKey = (zone: string, entityId: string, filename: string) =>
     `${zone}/${entityId}/${filename}`;
 
-  const persistProject = useCallback(
-    async (p: ProjectFile) => {
-      if (projectDir) {
-        setProject(p);
-        await saveProject(projectDir, p);
-      }
-    },
-    [projectDir]
-  );
+  // Sync helper: updates both state and ref, persists to disk
+  const commitProject = useCallback(async (p: ProjectFile) => {
+    projectRef.current = p;
+    setProject(p);
+    const dir = projectDirRef.current;
+    if (dir) {
+      await saveProject(dir, p);
+    }
+  }, []);
 
   const parseAllZones = useCallback(async (proj: ProjectFile) => {
     const parsed: Record<string, ParsedZone> = {};
@@ -98,6 +103,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const createNewProject = useCallback(
     async (dir: string, name: string, yamlPaths: string[]) => {
       const proj = await createProject(dir, name, yamlPaths);
+      projectRef.current = proj;
+      projectDirRef.current = dir;
       setProject(proj);
       setProjectDir(dir);
       setSelectedEntityId(null);
@@ -111,6 +118,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const openExistingProject = useCallback(
     async (dir: string) => {
       const proj = await openProject(dir);
+      projectRef.current = proj;
+      projectDirRef.current = dir;
       setProject(proj);
       setProjectDir(dir);
       setSelectedEntityId(null);
@@ -121,7 +130,19 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     [parseAllZones]
   );
 
+  const reloadProject = useCallback(async () => {
+    const dir = projectDirRef.current;
+    if (!dir) return;
+    const proj = await openProject(dir);
+    projectRef.current = proj;
+    setProject(proj);
+    imageCache.current.clear();
+    await parseAllZones(proj);
+  }, [parseAllZones]);
+
   const closeProject = useCallback(() => {
+    projectRef.current = null;
+    projectDirRef.current = null;
     setProject(null);
     setProjectDir(null);
     setParsedZones({});
@@ -138,31 +159,33 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const updateVibe = useCallback(
     async (zoneKey: string, vibe: string) => {
-      if (!project) return;
+      const p = projectRef.current;
+      if (!p) return;
       const next = {
-        ...project,
+        ...p,
         zones: {
-          ...project.zones,
-          [zoneKey]: { ...project.zones[zoneKey], vibe },
+          ...p.zones,
+          [zoneKey]: { ...p.zones[zoneKey], vibe },
         },
       };
-      await persistProject(next);
+      await commitProject(next);
     },
-    [project, persistProject]
+    [commitProject]
   );
 
   const updatePrompt = useCallback(
     async (zoneKey: string, entityId: string, prompt: string) => {
-      if (!project) return;
-      const zone = project.zones[zoneKey];
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
       if (!zone) return;
       const asset = zone.assets[entityId];
       if (!asset) return;
 
       const next = {
-        ...project,
+        ...p,
         zones: {
-          ...project.zones,
+          ...p.zones,
           [zoneKey]: {
             ...zone,
             assets: {
@@ -172,9 +195,9 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
           },
         },
       };
-      await persistProject(next);
+      await commitProject(next);
     },
-    [project, persistProject]
+    [commitProject]
   );
 
   const addVariant = useCallback(
@@ -184,13 +207,15 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       imageData: Uint8Array,
       prompt: string
     ) => {
-      if (!project || !projectDir) return;
-      const zone = project.zones[zoneKey];
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return;
+      const zone = p.zones[zoneKey];
       if (!zone) return;
       const asset = zone.assets[entityId];
       if (!asset) return;
 
-      const filename = await saveImage(projectDir, zoneKey, entityId, imageData);
+      const filename = await saveImage(dir, zoneKey, entityId, imageData);
 
       // Cache the data URL immediately from the bytes we already have
       const key = cacheKey(zoneKey, entityId, filename);
@@ -209,36 +234,40 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         variants: [...asset.variants, variant],
       };
 
-      const next = {
-        ...project,
+      // Re-read ref to get latest (another concurrent call may have updated it)
+      const latest = projectRef.current!;
+      const latestZone = latest.zones[zoneKey];
+      const next: ProjectFile = {
+        ...latest,
         zones: {
-          ...project.zones,
+          ...latest.zones,
           [zoneKey]: {
-            ...zone,
-            assets: { ...zone.assets, [entityId]: updatedAsset },
+            ...latestZone,
+            assets: { ...latestZone.assets, [entityId]: updatedAsset },
           },
         },
       };
-      await persistProject(next);
+      await commitProject(next);
 
       // Auto-select the new variant
       setViewingVariantIndex(updatedAsset.variants.length - 1);
     },
-    [project, projectDir, persistProject]
+    [commitProject]
   );
 
   const approveVariant = useCallback(
     async (zoneKey: string, entityId: string, variantIndex: number) => {
-      if (!project) return;
-      const zone = project.zones[zoneKey];
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
       if (!zone) return;
       const asset = zone.assets[entityId];
       if (!asset) return;
 
       const next = {
-        ...project,
+        ...p,
         zones: {
-          ...project.zones,
+          ...p.zones,
           [zoneKey]: {
             ...zone,
             assets: {
@@ -252,9 +281,9 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
           },
         },
       };
-      await persistProject(next);
+      await commitProject(next);
     },
-    [project, persistProject]
+    [commitProject]
   );
 
   const getEntity = useCallback(
@@ -277,7 +306,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const getImageDataUrl = useCallback(
     async (zoneKey: string, entityId: string, filename: string): Promise<string> => {
-      if (!projectDir) throw new Error("No project open");
+      const dir = projectDirRef.current;
+      if (!dir) throw new Error("No project open");
 
       // Check cache first
       const key = cacheKey(zoneKey, entityId, filename);
@@ -285,13 +315,13 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       if (cached) return cached;
 
       // Read from disk and cache
-      const filePath = await getImagePath(projectDir, zoneKey, entityId, filename);
+      const filePath = await getImagePath(dir, zoneKey, entityId, filename);
       const bytes = await readFile(filePath);
       const dataUrl = bytesToDataUrl(bytes);
       imageCache.current.set(key, dataUrl);
       return dataUrl;
     },
-    [projectDir]
+    []
   );
 
   const getApprovalCounts = useCallback(() => {
@@ -317,6 +347,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         selectedZone,
         createNewProject,
         openExistingProject,
+        reloadProject,
         closeProject,
         selectEntity,
         updateVibe,

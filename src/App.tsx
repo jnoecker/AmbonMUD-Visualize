@@ -16,7 +16,7 @@ import { BatchDialog } from "./components/dialogs/BatchDialog";
 import { ExportDialog } from "./components/dialogs/ExportDialog";
 
 function AppInner() {
-  const { project, projectDir, openExistingProject } = useProject();
+  const { project, projectDir, openExistingProject, reloadProject } = useProject();
   const { settings, updateSettings } = useSettings();
   const [showSettings, setShowSettings] = useState(false);
   const [showNewProject, setShowNewProject] = useState(false);
@@ -68,6 +68,7 @@ function AppInner() {
         titleBar={
           <TitleBar
             onSettingsClick={() => setShowSettings(true)}
+            onReloadClick={project ? reloadProject : undefined}
             projectName={project?.name}
           />
         }

@@ -11,10 +11,11 @@ interface BatchDialogProps {
 }
 
 export function BatchDialog({ onClose }: BatchDialogProps) {
-  const { project, parsedZones, addVariant, updatePrompt } = useProject();
+  const { project, parsedZones, addVariant, updatePrompt, reloadProject } = useProject();
   const { settings } = useSettings();
   const [skipGenerated, setSkipGenerated] = useState(true);
   const [running, setRunning] = useState(false);
+  const [done, setDone] = useState(false);
   const [progress, setProgress] = useState<BatchProgress | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -61,7 +62,9 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
     }
 
     setRunning(false);
-  }, [project, parsedZones, settings, skipGenerated, addVariant, updatePrompt]);
+    setDone(true);
+    await reloadProject();
+  }, [project, parsedZones, settings, skipGenerated, addVariant, updatePrompt, reloadProject]);
 
   const handleAbort = () => {
     abortRef.current?.abort();
@@ -87,11 +90,11 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
   }
 
   return (
-    <div className="dialog-overlay" onClick={running ? undefined : onClose}>
+    <div className="dialog-overlay" onClick={running && !done ? undefined : onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
         <h2 className="dialog-title">Batch Generate</h2>
 
-        {!running && (
+        {!running && !done && (
           <>
             {missingVibe && (
               <div style={{ color: "var(--color-warning)", fontSize: "0.85rem", marginBottom: 12 }}>
@@ -127,6 +130,17 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
           </>
         )}
 
+        {done && !running && (
+          <div style={{ color: "var(--color-success)", fontSize: "0.85rem" }}>
+            Batch generation complete!
+            {progress && progress.errors.length > 0 && (
+              <span style={{ color: "var(--color-error)", marginLeft: 8 }}>
+                ({progress.errors.length} error{progress.errors.length !== 1 ? "s" : ""})
+              </span>
+            )}
+          </div>
+        )}
+
         {progress && (
           <div className="batch-progress-info">
             <div className="progress-bar">
@@ -157,6 +171,10 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
           {running ? (
             <button className="soft-button" onClick={handleAbort}>
               Abort
+            </button>
+          ) : done ? (
+            <button className="soft-button soft-button--primary" onClick={onClose}>
+              Done
             </button>
           ) : (
             <>
