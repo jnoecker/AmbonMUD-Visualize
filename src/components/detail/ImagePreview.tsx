@@ -11,7 +11,7 @@ export function ImagePreview({ src, entityType, loading }: ImagePreviewProps) {
 
   return (
     <div className={`image-preview${isSquare ? " image-preview--square" : ""}`}>
-      {loading ? (
+      {loading && !src ? (
         <div className="image-preview-placeholder">
           <div className="image-shimmer" />
           <div className="image-placeholder-content">
@@ -20,7 +20,15 @@ export function ImagePreview({ src, entityType, loading }: ImagePreviewProps) {
           </div>
         </div>
       ) : src ? (
-        <img src={src} alt="Generated preview" />
+        <>
+          <img src={src} alt="Generated preview" />
+          {loading && (
+            <div className="image-preview-generating-overlay">
+              <div className="spinner spinner--small" />
+              <span>Generating new variant...</span>
+            </div>
+          )}
+        </>
       ) : (
         <div className="image-preview-placeholder">
           <div className="image-placeholder-content">
