@@ -21,6 +21,9 @@ export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
 
   const { approved, total } = getApprovalCounts();
   const zoneCount = Object.keys(project.zones).length;
+  const hasDefaultImages = Object.values(project.zones).some(
+    (z) => z.defaultImages && Object.values(z.defaultImages).some((d) => d?.filename)
+  );
 
   return (
     <footer className="status-bar">
@@ -63,7 +66,7 @@ export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
         <button
           className="soft-button soft-button--small soft-button--success"
           onClick={onExportClick}
-          disabled={approved === 0}
+          disabled={approved === 0 && !hasDefaultImages}
         >
           Export
         </button>

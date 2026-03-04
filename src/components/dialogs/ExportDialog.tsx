@@ -13,8 +13,9 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Count approved assets
+  // Count approved assets and default images
   let approvedCount = 0;
+  let defaultImageCount = 0;
   let zonePaths: string[] = [];
   if (project) {
     for (const zone of Object.values(project.zones)) {
@@ -22,8 +23,14 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
       for (const asset of Object.values(zone.assets)) {
         if (asset.status === "approved") approvedCount++;
       }
+      if (zone.defaultImages) {
+        for (const d of Object.values(zone.defaultImages)) {
+          if (d?.filename) defaultImageCount++;
+        }
+      }
     }
   }
+  const canExport = approvedCount > 0 || defaultImageCount > 0;
 
   const handleExport = async () => {
     if (!project || !projectDir) return;
@@ -54,8 +61,9 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
                 with <code>image:</code> fields
               </li>
               <li>
-                Copy {approvedCount} approved image{approvedCount !== 1 ? "s" : ""} to{" "}
-                <code>images/{"{zone}/"}</code> alongside the YAML
+                Copy {approvedCount} approved image{approvedCount !== 1 ? "s" : ""}
+                {defaultImageCount > 0 && ` + ${defaultImageCount} default image${defaultImageCount !== 1 ? "s" : ""}`}
+                {" "}to <code>images/{"{zone}/"}</code> alongside the YAML
               </li>
             </ul>
             {zonePaths.length > 0 && (
@@ -122,7 +130,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
               <button
                 className="soft-button soft-button--success"
                 onClick={handleExport}
-                disabled={exporting || approvedCount === 0}
+                disabled={exporting || !canExport}
               >
                 {exporting && <span className="spinner spinner--small" />}
                 Export to World
