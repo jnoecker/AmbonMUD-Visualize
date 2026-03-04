@@ -133,6 +133,100 @@ export async function getImagePath(
   return join(projectDir, "images", zoneName, safeId, filename);
 }
 
+/**
+ * Scan the images directory and reconcile with the project file.
+ * Finds images on disk that aren't tracked in project.json (e.g. due to
+ * stale closure bugs during batch generation) and adds them as variants.
+ */
+export async function reconcileImages(
+  projectDir: string,
+  project: ProjectFile
+): Promise<ProjectFile> {
+  let changed = false;
+  const updated = { ...project, zones: { ...project.zones } };
+
+  for (const [zoneKey, zone] of Object.entries(updated.zones)) {
+    const zoneImagesDir = await join(projectDir, "images", zoneKey);
+    const zoneDirExists = await exists(zoneImagesDir);
+    if (!zoneDirExists) continue;
+
+    let entityDirs: { name: string | undefined; isDirectory: boolean }[];
+    try {
+      entityDirs = (await readDir(zoneImagesDir)) as { name: string | undefined; isDirectory: boolean }[];
+    } catch {
+      continue;
+    }
+
+    const updatedAssets = { ...zone.assets };
+
+    for (const entry of entityDirs) {
+      if (!entry.name || !entry.isDirectory) continue;
+      const dirName = entry.name; // e.g. "wesleyalis_gravel_road_2"
+
+      // Convert dir name back to entity ID (underscore -> colon for the zone prefix)
+      // The dir name is entityId.replace(/:/g, "_"), so "wesleyalis_gravel_road_2"
+      // came from "wesleyalis:gravel_road_2". We need to find the matching asset.
+      let matchingEntityId: string | null = null;
+      for (const entityId of Object.keys(updatedAssets)) {
+        if (entityId.replace(/:/g, "_") === dirName) {
+          matchingEntityId = entityId;
+          break;
+        }
+      }
+      if (!matchingEntityId) continue;
+
+      // Read PNG files in this entity's image directory
+      const entityImagesDir = await join(zoneImagesDir, dirName);
+      let imageFiles: { name: string | undefined }[];
+      try {
+        imageFiles = (await readDir(entityImagesDir)) as { name: string | undefined }[];
+      } catch {
+        continue;
+      }
+
+      const pngFiles = imageFiles
+        .filter((f) => f.name && /^v\d+\.png$/.test(f.name))
+        .map((f) => f.name!)
+        .sort((a, b) => {
+          const va = parseInt(a.match(/^v(\d+)/)?.[1] ?? "0", 10);
+          const vb = parseInt(b.match(/^v(\d+)/)?.[1] ?? "0", 10);
+          return va - vb;
+        });
+
+      if (pngFiles.length === 0) continue;
+
+      const asset = updatedAssets[matchingEntityId];
+      const trackedFilenames = new Set(asset.variants.map((v) => v.filename));
+      const missingFiles = pngFiles.filter((f) => !trackedFilenames.has(f));
+
+      if (missingFiles.length > 0) {
+        changed = true;
+        const newVariants = missingFiles.map((filename) => ({
+          filename,
+          generatedAt: new Date().toISOString(),
+          prompt: asset.currentPrompt || "",
+        }));
+
+        updatedAssets[matchingEntityId] = {
+          ...asset,
+          status: asset.status === "pending" ? "generated" : asset.status,
+          variants: [...asset.variants, ...newVariants],
+        };
+      }
+    }
+
+    if (changed) {
+      updated.zones[zoneKey] = { ...zone, assets: updatedAssets };
+    }
+  }
+
+  if (changed) {
+    await saveProject(projectDir, updated);
+  }
+
+  return updated;
+}
+
 export async function loadImageFile(path: string): Promise<Uint8Array> {
   return readFile(path);
 }

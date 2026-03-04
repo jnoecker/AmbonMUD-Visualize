@@ -14,6 +14,7 @@ import {
   saveProject,
   saveImage,
   getImagePath,
+  reconcileImages,
 } from "../lib/project-io";
 import { parseZone } from "../lib/yaml-parser";
 import { readTextFile, readFile } from "@tauri-apps/plugin-fs";
@@ -117,7 +118,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
   const openExistingProject = useCallback(
     async (dir: string) => {
-      const proj = await openProject(dir);
+      let proj = await openProject(dir);
+      proj = await reconcileImages(dir, proj);
       projectRef.current = proj;
       projectDirRef.current = dir;
       setProject(proj);
@@ -133,7 +135,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const reloadProject = useCallback(async () => {
     const dir = projectDirRef.current;
     if (!dir) return;
-    const proj = await openProject(dir);
+    let proj = await openProject(dir);
+    proj = await reconcileImages(dir, proj);
     projectRef.current = proj;
     setProject(proj);
     imageCache.current.clear();
