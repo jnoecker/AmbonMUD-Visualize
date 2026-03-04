@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 
 interface StatusBarProps {
@@ -6,7 +7,8 @@ interface StatusBarProps {
 }
 
 export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
-  const { project, getApprovalCounts } = useProject();
+  const { project, getApprovalCounts, batchApprove } = useProject();
+  const [approveMsg, setApproveMsg] = useState<string | null>(null);
 
   if (!project) {
     return (
@@ -36,6 +38,25 @@ export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
         )}
       </div>
       <div className="status-bar-right">
+        {approveMsg && (
+          <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)" }}>
+            {approveMsg}
+          </span>
+        )}
+        <button
+          className="soft-button soft-button--small"
+          onClick={async () => {
+            const count = await batchApprove();
+            setApproveMsg(
+              count > 0
+                ? `Approved ${count} entit${count === 1 ? "y" : "ies"}`
+                : "Nothing to auto-approve"
+            );
+            setTimeout(() => setApproveMsg(null), 3000);
+          }}
+        >
+          Batch Approve
+        </button>
         <button className="soft-button soft-button--small" onClick={onBatchClick}>
           Batch Generate
         </button>

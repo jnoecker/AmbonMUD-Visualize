@@ -60,6 +60,8 @@ interface ProjectContextValue {
   ) => Promise<void>;
   getDefaultImageDataUrl: (zoneKey: string, entityType: EntityType) => Promise<string | null>;
 
+  batchApprove: () => Promise<number>;
+
   getEntity: (entityId: string) => Entity | undefined;
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
   getImageDataUrl: (zoneKey: string, entityId: string, filename: string) => Promise<string>;
@@ -296,6 +298,46 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     [commitProject]
   );
 
+  const batchApprove = useCallback(async (): Promise<number> => {
+    const p = projectRef.current;
+    if (!p) return 0;
+
+    let count = 0;
+    let updated = { ...p };
+
+    for (const [zoneKey, zone] of Object.entries(p.zones)) {
+      let assetsChanged = false;
+      const updatedAssets = { ...zone.assets };
+
+      for (const [entityId, asset] of Object.entries(zone.assets)) {
+        if (asset.status !== "approved" && asset.variants.length === 1) {
+          updatedAssets[entityId] = {
+            ...asset,
+            status: "approved" as const,
+            approvedVariantIndex: 0,
+          };
+          assetsChanged = true;
+          count++;
+        }
+      }
+
+      if (assetsChanged) {
+        updated = {
+          ...updated,
+          zones: {
+            ...updated.zones,
+            [zoneKey]: { ...zone, assets: updatedAssets },
+          },
+        };
+      }
+    }
+
+    if (count > 0) {
+      await commitProject(updated);
+    }
+    return count;
+  }, [commitProject]);
+
   const updateDefaultImage = useCallback(
     async (
       zoneKey: string,
@@ -435,6 +477,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         updatePrompt,
         addVariant,
         approveVariant,
+        batchApprove,
         updateDefaultImage,
         getDefaultImageDataUrl,
         setViewingVariant: setViewingVariantIndex,
