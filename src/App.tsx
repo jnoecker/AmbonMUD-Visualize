@@ -4,6 +4,7 @@ import "./App.css";
 
 import { SettingsProvider, useSettings } from "./context/SettingsContext";
 import { ProjectProvider, useProject } from "./context/ProjectContext";
+import { GenerationProvider } from "./context/GenerationContext";
 import { AppShell } from "./components/layout/AppShell";
 import { TitleBar } from "./components/layout/TitleBar";
 import { StatusBar } from "./components/layout/StatusBar";
@@ -110,7 +111,9 @@ export default function App() {
   return (
     <SettingsProvider>
       <ProjectProvider>
-        <AppInner />
+        <GenerationProvider>
+          <AppInner />
+        </GenerationProvider>
       </ProjectProvider>
     </SettingsProvider>
   );

@@ -47,7 +47,7 @@ interface ProjectContextValue {
     entityId: string,
     imageData: Uint8Array,
     prompt: string
-  ) => Promise<void>;
+  ) => Promise<number>;
   approveVariant: (zoneKey: string, entityId: string, variantIndex: number) => Promise<void>;
   setViewingVariant: (index: number) => void;
   viewingVariantIndex: number;
@@ -217,14 +217,14 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       entityId: string,
       imageData: Uint8Array,
       prompt: string
-    ) => {
+    ): Promise<number> => {
       const p = projectRef.current;
       const dir = projectDirRef.current;
-      if (!p || !dir) return;
+      if (!p || !dir) return 0;
       const zone = p.zones[zoneKey];
-      if (!zone) return;
+      if (!zone) return 0;
       const asset = zone.assets[entityId];
-      if (!asset) return;
+      if (!asset) return 0;
 
       const filename = await saveImage(dir, zoneKey, entityId, imageData);
 
@@ -260,8 +260,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       };
       await commitProject(next);
 
-      // Auto-select the new variant
-      setViewingVariantIndex(updatedAsset.variants.length - 1);
+      return updatedAsset.variants.length - 1;
     },
     [commitProject]
   );

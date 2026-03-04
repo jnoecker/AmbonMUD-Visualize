@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { EntityTreeItem } from "./EntityTreeItem";
+import { useGeneration } from "../../context/GenerationContext";
 import type { Entity, EntityType } from "../../types/entities";
 import type { AssetEntry } from "../../types/project";
 
 interface EntityTreeProps {
+  zoneKey: string;
   entities: Entity[];
   assets: Record<string, AssetEntry>;
   selectedEntityId: string | null;
@@ -18,18 +20,21 @@ const SECTIONS: { type: EntityType; label: string }[] = [
 
 function TreeSection({
   label,
+  zoneKey,
   entities,
   assets,
   selectedEntityId,
   onSelectEntity,
 }: {
   label: string;
+  zoneKey: string;
   entities: Entity[];
   assets: Record<string, AssetEntry>;
   selectedEntityId: string | null;
   onSelectEntity: (entityId: string) => void;
 }) {
   const [open, setOpen] = useState(true);
+  const { getJob } = useGeneration();
 
   return (
     <div className="entity-tree-section">
@@ -50,6 +55,7 @@ function TreeSection({
                 title={entity.title}
                 status={asset?.status ?? "pending"}
                 selected={entity.id === selectedEntityId}
+                generating={!!getJob(zoneKey, entity.id)}
                 onClick={() => onSelectEntity(entity.id)}
               />
             );
@@ -60,7 +66,7 @@ function TreeSection({
   );
 }
 
-export function EntityTree({ entities, assets, selectedEntityId, onSelectEntity }: EntityTreeProps) {
+export function EntityTree({ zoneKey, entities, assets, selectedEntityId, onSelectEntity }: EntityTreeProps) {
   return (
     <div>
       {SECTIONS.map(({ type, label }) => {
@@ -70,6 +76,7 @@ export function EntityTree({ entities, assets, selectedEntityId, onSelectEntity 
           <TreeSection
             key={type}
             label={label}
+            zoneKey={zoneKey}
             entities={filtered}
             assets={assets}
             selectedEntityId={selectedEntityId}

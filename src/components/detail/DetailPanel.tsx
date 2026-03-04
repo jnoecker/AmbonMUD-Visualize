@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
-import { generateEntityPrompt } from "../../lib/prompt-gen";
-import { generateImage, getAspectRatio, ContentPolicyError } from "../../lib/image-gen";
+import { useGeneration } from "../../context/GenerationContext";
 import { ImagePreview } from "./ImagePreview";
 import { PromptEditor } from "./PromptEditor";
 import { ActionBar } from "./ActionBar";
@@ -16,18 +15,17 @@ export function DetailPanel() {
     getEntity,
     getAsset,
     updatePrompt,
-    addVariant,
     approveVariant,
     getImageDataUrl,
     viewingVariantIndex,
     setViewingVariant,
   } = useProject();
   const { settings } = useSettings();
+  const { startPromptGeneration, startImageGeneration, getJob, getError, clearError } =
+    useGeneration();
 
-  const [generatingPrompt, setGeneratingPrompt] = useState(false);
-  const [generatingImage, setGeneratingImage] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const entity = selectedEntityId ? getEntity(selectedEntityId) : undefined;
   const asset =
@@ -36,6 +34,14 @@ export function DetailPanel() {
       : undefined;
 
   const currentVariant = asset?.variants[viewingVariantIndex];
+
+  const job = selectedZone && selectedEntityId ? getJob(selectedZone, selectedEntityId) : undefined;
+  const genError =
+    selectedZone && selectedEntityId ? getError(selectedZone, selectedEntityId) : undefined;
+  const generatingPrompt = job?.type === "prompt";
+  const generatingImage = job?.type === "image";
+
+  const error = localError || genError || null;
 
   // Load image data URL when variant changes
   useEffect(() => {
@@ -48,58 +54,38 @@ export function DetailPanel() {
     }
   }, [selectedZone, selectedEntityId, currentVariant, getImageDataUrl]);
 
-  const handleGeneratePrompt = async () => {
+  // Clear local error and generation error when switching entities
+  useEffect(() => {
+    setLocalError(null);
+  }, [selectedZone, selectedEntityId]);
+
+  const handleGeneratePrompt = () => {
     if (!entity || !selectedZone || !project) return;
     const zone = project.zones[selectedZone];
     if (!zone?.vibe) {
-      setError("Generate a zone vibe first before generating prompts.");
+      setLocalError("Generate a zone vibe first before generating prompts.");
       return;
     }
     if (!settings.anthropicApiKey) {
-      setError("Anthropic API key not set. Open Settings.");
+      setLocalError("Anthropic API key not set. Open Settings.");
       return;
     }
 
-    setGeneratingPrompt(true);
-    setError(null);
-    try {
-      const prompt = await generateEntityPrompt(
-        settings.anthropicApiKey,
-        entity,
-        zone.vibe
-      );
-      await updatePrompt(selectedZone, entity.id, prompt);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate prompt");
-    } finally {
-      setGeneratingPrompt(false);
-    }
+    setLocalError(null);
+    if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
+    startPromptGeneration(selectedZone, entity.id, entity, zone.vibe);
   };
 
-  const handleGenerateImage = async () => {
+  const handleGenerateImage = () => {
     if (!entity || !selectedZone || !asset?.currentPrompt) return;
     if (!settings.openaiApiKey) {
-      setError("OpenAI API key not set. Open Settings.");
+      setLocalError("OpenAI API key not set. Open Settings.");
       return;
     }
 
-    setGeneratingImage(true);
-    setError(null);
-    try {
-      const imageData = await generateImage(settings.openaiApiKey, asset.currentPrompt, {
-        aspectRatio: getAspectRatio(entity.type),
-        entityType: entity.type,
-      });
-      await addVariant(selectedZone, entity.id, imageData, asset.currentPrompt);
-    } catch (err) {
-      if (err instanceof ContentPolicyError) {
-        setError(err.message);
-      } else {
-        setError(err instanceof Error ? err.message : "Failed to generate image");
-      }
-    } finally {
-      setGeneratingImage(false);
-    }
+    setLocalError(null);
+    if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
+    startImageGeneration(selectedZone, entity.id, asset.currentPrompt, entity);
   };
 
   const handleApprove = async () => {

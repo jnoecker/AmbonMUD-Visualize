@@ -23,6 +23,7 @@ export function Sidebar() {
                 <span className="glass-panel-title">{zone.zoneName}</span>
               </div>
               <EntityTree
+                zoneKey={zoneKey}
                 entities={parsed.entities}
                 assets={zone.assets}
                 selectedEntityId={selectedZone === zoneKey ? selectedEntityId : null}
