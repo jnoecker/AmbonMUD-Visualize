@@ -1,15 +1,21 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Entity, EntityType } from "../types/entities";
 
-export const STYLE_SUFFIX = `Rendered in the Surreal Gentle Magic style (surreal_softmagic_v1). Digital fantasy painting, NOT a photograph — stylized illustration with visible painterly brushwork and soft textured rendering. Features:
-- Soft lavender and pale blue undertones suffusing every surface
-- Ambient diffused lighting (no harsh shadows, no spotlighting, no realistic sun angles)
-- Gentle atmospheric haze with floating motes of light and faint magical particles in the air
-- Subtle magical glow integrated naturally into the environment — even mundane spaces feel quietly enchanted
-- Slightly elongated organic forms (trees, towers, figures, architecture)
-- Soft dreamy color palette — muted, desaturated, watercolor-adjacent tones
-- NO photorealism, NO neon colors, NO high contrast, NO harsh edges, NO sharp geometric lines
-- Dreamy, breathable, emotionally safe aesthetic — like a storybook illustration brought to life`;
+export const STYLE_SUFFIX = `Rendered in the Surreal Gentle Magic style (surreal_softmagic_v1). Digital fantasy painting in the style of a dreamy storybook illustration — NOT a photograph, NOT a 3D render, NOT concept art. Visible painterly brushwork with soft textured rendering throughout.
+
+Color and light:
+- Soft lavender and pale blue undertones suffusing every surface — cool undertones dominate, warm accents (dusty rose, soft gold) used sparingly for balance
+- Ambient diffused lighting with NO clear source point — light feels source-ambiguous and magical, never like realistic sunlight or artificial lamps
+- Gentle atmospheric haze with floating motes of light and faint magical particles drifting in the air
+- Soft bloom around windows and light sources, ground-level magical glow (glowing moss, luminous plants)
+- Even mundane spaces feel quietly enchanted — a kitchen has faintly glowing herbs, a patio has drifting light motes
+
+Shape and form:
+- Gentle curves over hard angles — nothing perfectly straight, micro-warping on all edges
+- Slightly elongated organic forms (trees, towers, figures, architecture, furniture)
+- Organic lived-in quality — nothing feels industrial, nothing feels mechanical
+
+FORBIDDEN: photorealism, neon colors, high contrast, harsh edges, sharp geometric lines, perfect 90-degree angles, mechanical rigidity, brutalist silhouettes, harsh shadows, spotlight effects, rim lighting, chiaroscuro`;
 
 const FORMAT_BY_TYPE: Record<EntityType, string> = {
   room: "16:9 landscape background illustration, wide establishing shot, no characters in foreground",
@@ -71,7 +77,7 @@ export async function generateDefaultImagePrompt(
     model: "claude-sonnet-4-5-20250929",
     max_tokens: 500,
     system:
-      "You are an expert image prompt engineer for AI image generators. Generate a fallback/default image prompt for this zone. The image should be atmospheric and representative of the zone without depicting any specific named entity. Output ONLY the prompt text — no labels, no markdown, no commentary.",
+      "You are an expert image prompt engineer for AI image generators specializing in the Surreal Gentle Magic aesthetic. Generate a fallback/default image prompt for this zone. The image should be atmospheric and representative of the zone without depicting any specific named entity. Reimagine any modern or mundane elements as dreamy fantasy equivalents with ambient magical glow, organic curved forms, and painterly softness. Output ONLY the prompt text — no labels, no markdown, no commentary.",
     messages: [
       {
         role: "user",
@@ -111,7 +117,7 @@ export async function generateEntityPrompt(
     model: "claude-sonnet-4-5-20250929",
     max_tokens: 500,
     system:
-      "You are an expert image prompt engineer for AI image generators. Given an entity from a fantasy MUD zone, write a single optimized image generation prompt. Output ONLY the prompt text — no labels, no markdown, no commentary.",
+      "You are an expert image prompt engineer for AI image generators specializing in the Surreal Gentle Magic aesthetic. Given an entity from a fantasy MUD zone, write a single optimized image generation prompt. CRITICAL: You must actively transform the scene toward the style — even if the source description sounds modern, industrial, or mundane, reimagine it as a dreamy fantasy painting. Replace harsh lighting with ambient magical glow, replace straight geometric surfaces with gently curved organic forms, replace industrial materials with enchanted equivalents. Every scene must feel like a softly luminous storybook illustration. Output ONLY the prompt text — no labels, no markdown, no commentary.",
     messages: [
       {
         role: "user",
