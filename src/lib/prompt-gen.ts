@@ -1,14 +1,15 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { Entity, EntityType } from "../types/entities";
 
-export const STYLE_SUFFIX = `Rendered in the Surreal Gentle Magic style (surreal_softmagic_v1), featuring:
-- Soft lavender and pale blue undertones
-- Ambient diffused lighting (no harsh shadows, no spotlighting)
-- Gentle atmospheric haze with floating motes of light
-- Subtle magical glow integrated naturally into the environment
-- Slightly elongated organic forms (trees, towers, figures)
-- NO neon colors, NO high contrast, NO harsh edges
-- Dreamy, breathable, emotionally safe aesthetic`;
+export const STYLE_SUFFIX = `Rendered in the Surreal Gentle Magic style (surreal_softmagic_v1). Digital fantasy painting, NOT a photograph — stylized illustration with visible painterly brushwork and soft textured rendering. Features:
+- Soft lavender and pale blue undertones suffusing every surface
+- Ambient diffused lighting (no harsh shadows, no spotlighting, no realistic sun angles)
+- Gentle atmospheric haze with floating motes of light and faint magical particles in the air
+- Subtle magical glow integrated naturally into the environment — even mundane spaces feel quietly enchanted
+- Slightly elongated organic forms (trees, towers, figures, architecture)
+- Soft dreamy color palette — muted, desaturated, watercolor-adjacent tones
+- NO photorealism, NO neon colors, NO high contrast, NO harsh edges, NO sharp geometric lines
+- Dreamy, breathable, emotionally safe aesthetic — like a storybook illustration brought to life`;
 
 const FORMAT_BY_TYPE: Record<EntityType, string> = {
   room: "16:9 landscape background illustration, wide establishing shot, no characters in foreground",
