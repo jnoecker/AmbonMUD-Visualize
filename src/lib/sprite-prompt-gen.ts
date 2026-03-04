@@ -58,7 +58,9 @@ Zone atmosphere: ${zoneVibe}`,
     throw new Error("Unexpected response format from Claude");
   }
 
-  const parsed = JSON.parse(block.text);
+  // Strip markdown code fences if present
+  const jsonText = block.text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
+  const parsed = JSON.parse(jsonText);
   if (!parsed.template || !parsed.tierDescriptions) {
     throw new Error("Invalid template response: missing template or tierDescriptions");
   }
