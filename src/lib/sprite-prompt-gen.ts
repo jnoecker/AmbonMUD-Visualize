@@ -33,7 +33,7 @@ export async function generateSpriteTemplate(
 Your task: produce a JSON object with two fields:
 1. "template" — a single image generation prompt template using these exact placeholders: {race}, {gender}, {class}, {tier_description}. The template must produce a fantasy character portrait matching the specified gender. Each unique race+gender+class combination is its own character — a dwarf female warrior and a human male warrior should look completely different. Consistency only matters WITHIN a single progression path (the same race+gender+class across tiers should look like the same person at different career stages, with different equipment and aura of power). Use {gender} to describe the character's presentation (e.g. "a {gender} {race} {class}").
 
-IMPORTANT: The {gender} placeholder will be filled with "male", "female", or "androgynous, gender-ambiguous" for nonbinary characters. Your template MUST work well with all three values. For nonbinary characters the filled prompt should naturally produce a character with androgynous features, ambiguous build, and a mysterious quality — consider incorporating visual cues like a partially shrouded or veiled face, fluid body proportions that blend masculine and feminine traits, and enigmatic presence.
+IMPORTANT: The {gender} placeholder will be filled with "male", "female", or a longer descriptor for nonbinary characters. For nonbinary characters the value will include instructions for a fully concealed, mysterious figure — hooded, masked, or veiled with no visible skin, face, or body shape. Your template MUST work well with all three cases. Do NOT add any gender-specific body descriptors outside the {gender} placeholder — let the placeholder control all gendered presentation.
 2. "tierDescriptions" — an object mapping each tier number to a description string that captures that tier's power level, equipment quality, and visual presence.
 
 The template, when filled in, should be a complete image generation prompt. Do NOT include the style suffix — it will be appended automatically.
@@ -93,7 +93,7 @@ export function fillSpriteTemplate(
 
   // Map gender IDs to image-gen-friendly descriptors
   const genderDesc = dimensions.gender === "enby"
-    ? "androgynous, gender-ambiguous"
+    ? "mysterious, fully hooded and masked, face completely hidden behind an ornate veil, body entirely concealed beneath layered flowing robes, no visible skin or body shape, gender-ambiguous enigmatic"
     : dimensions.gender;
 
   const prompt = template.template
