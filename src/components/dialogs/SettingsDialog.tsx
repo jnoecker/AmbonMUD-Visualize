@@ -89,7 +89,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
               className="slider-input"
               type="range"
               min={1}
-              max={10}
+              max={30}
               value={concurrency}
               onChange={(e) => setConcurrency(parseInt(e.target.value, 10))}
             />
