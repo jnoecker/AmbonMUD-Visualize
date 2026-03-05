@@ -105,12 +105,13 @@ export async function removeImageBackground(
   imageBytes: Uint8Array
 ): Promise<Uint8Array> {
   // Fresh connection per BG removal: avoids WebSocket degradation from large
-  // base64 payloads. Short timeout (15s) + no retries prevents the SDK from
+  // base64 payloads. Short timeout (20s) + single attempt prevents the SDK from
   // silently making extra billed API calls on timeout (default is 60s × 2 retries).
+  // Note: SDK retry loop uses `for(;s;)` so maxRetries=1 means 1 attempt (0 retries).
   const runware = new Runware({
     apiKey,
-    globalMaxRetries: 0,
-    timeoutDuration: 15000,
+    globalMaxRetries: 1,
+    timeoutDuration: 20000,
   });
   try {
     return await _removeBackground(runware, imageBytes);
