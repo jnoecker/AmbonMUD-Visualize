@@ -10,7 +10,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   anthropicApiKey: "",
   runwareApiKey: "",
   runwareModel: "runware:101@1",
-  batchConcurrency: 3,
+  batchConcurrency: 20,
   lastProjectPath: null,
 };
 

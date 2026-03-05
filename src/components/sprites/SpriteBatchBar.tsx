@@ -91,7 +91,7 @@ export function SpriteBatchBar({
       };
       setBatchProgress({ ...progress });
 
-      const concurrency = settings.batchConcurrency || 3;
+      const concurrency = settings.batchConcurrency || 20;
       let index = 0;
 
       async function processNext() {
