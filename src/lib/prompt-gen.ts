@@ -29,6 +29,9 @@ Light sources feel: AMBIENT (no clear source point), DIFFUSED (edges fade softly
 Treatments: Ground-level glow (magical plants, glowing moss), halos around magical beings, soft bloom around windows and light sources, light threads connecting magical objects, atmospheric diffusion creating depth
 FORBIDDEN: Sharp rim lights, hard shadows, spotlight effects, high-contrast chiaroscuro
 
+## Text in Images
+AI image generators cannot reliably render readable text. NEVER include signs, labels, plaques, book titles, inscriptions, or any readable words in prompts. Instead replace them with: mysterious glowing runes, arcane glyphs, softly luminous symbols, ancient mystical script, or indecipherable magical sigils. This applies to ALL references to writing, signs, banners with text, scrolls, etc.
+
 ## Emotional Check
 Every image must feel: gentle, slow/breathable, enchanted but safe, welcoming.
 If it feels intense, loud, sharp, or industrial — it's wrong. Revise.`;
@@ -46,6 +49,8 @@ Shape and form:
 - Gentle curves over hard angles — nothing perfectly straight, micro-warping on all edges
 - Slightly elongated organic forms (trees, towers, figures, architecture, furniture)
 - Organic lived-in quality — nothing feels industrial, nothing feels mechanical
+
+NO readable text, words, letters, or legible writing — replace all signs, plaques, and inscriptions with glowing runes or arcane glyphs.
 
 FORBIDDEN: photorealism, neon colors, high contrast, harsh edges, sharp geometric lines, perfect 90-degree angles, mechanical rigidity, brutalist silhouettes, harsh shadows, spotlight effects, rim lighting, chiaroscuro`;
 
@@ -164,6 +169,7 @@ Given an entity from a fantasy MUD zone, write a single optimized image generati
 - Replace industrial materials (metal panels, concrete, glass) with enchanted equivalents (weathered stone, living wood, crystalline surfaces)
 - Add subtle magical elements: floating motes, faint luminous particles, glowing vegetation, atmospheric haze
 - Ensure the palette stays within the approved tones (lavender, pale blue, dusty rose, moss green, soft gold on deep dark backgrounds)
+- Replace any references to readable text, signs, plaques, banners, or inscriptions with glowing runes, arcane glyphs, or mysterious luminous symbols — AI cannot render legible text
 
 Every scene must feel like a softly luminous storybook illustration — gentle, breathable, and quietly enchanted. Output ONLY the prompt text — no labels, no markdown, no commentary.`,
     messages: [
