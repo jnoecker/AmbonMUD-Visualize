@@ -71,10 +71,10 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     };
     setProgress({ ...prog });
 
-    // BG removal sends large base64 payloads over WebSocket — keep concurrency
-    // low to avoid timeouts (unlike image generation which sends tiny prompts).
+    // BG removal sends multi-MB base64 payloads over a single shared WebSocket.
+    // Concurrent requests congest the connection, causing SDK-level timeouts and
+    // automatic retries (each retry = a new billed API call). Serialize to avoid.
     let index = 0;
-    const concurrency = Math.min(settings.batchConcurrency, 3);
 
     async function processNext(): Promise<void> {
       while (index < eligibleItems.length) {
@@ -84,29 +84,19 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
         prog.currentEntity = item.title;
         setProgress({ ...prog });
 
-        let processed: Uint8Array | null = null;
-        let succeeded = false;
-        for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
-          try {
-            // Only call the API if we don't already have a result from a previous attempt
-            if (!processed) {
-              const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
-              if (abortRef.current) return;
+        try {
+          const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
+          if (abortRef.current) return;
 
-              processed = await removeImageBackground(settings.runwareApiKey, bytes);
-              if (abortRef.current) return;
-            }
+          const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+          if (abortRef.current) return;
 
-            await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
-            succeeded = true;
-          } catch (err) {
-            if (attempt === 1) {
-              prog.errors.push({
-                entityId: item.entityId,
-                error: err instanceof Error ? err.message : String(err),
-              });
-            }
-          }
+          await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
+        } catch (err) {
+          prog.errors.push({
+            entityId: item.entityId,
+            error: err instanceof Error ? err.message : String(err),
+          });
         }
 
         prog.completed++;
@@ -114,11 +104,8 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
       }
     }
 
-    const workers = Array.from(
-      { length: Math.min(concurrency, eligibleItems.length) },
-      () => processNext()
-    );
-    await Promise.all(workers);
+    // Single worker — no concurrency for BG removal (see comment above)
+    await processNext();
 
     prog.currentEntity = null;
     setProgress({ ...prog });
@@ -126,7 +113,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     setRunning(false);
     setDone(true);
     await reloadProject();
-  }, [eligibleItems, settings.runwareApiKey, settings.batchConcurrency, getVariantImageBytes, replaceVariantImage, reloadProject]);
+  }, [eligibleItems, settings.runwareApiKey, getVariantImageBytes, replaceVariantImage, reloadProject]);
 
   const handleAbort = () => {
     abortRef.current = true;
