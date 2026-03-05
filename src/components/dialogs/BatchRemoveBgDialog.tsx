@@ -69,9 +69,10 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     };
     setProgress({ ...prog });
 
-    // Process with concurrency limit
+    // BG removal sends large base64 payloads over WebSocket — keep concurrency
+    // low to avoid timeouts (unlike image generation which sends tiny prompts).
     let index = 0;
-    const concurrency = settings.batchConcurrency;
+    const concurrency = Math.min(settings.batchConcurrency, 3);
 
     async function processNext(): Promise<void> {
       while (index < eligibleItems.length) {
@@ -81,19 +82,25 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
         prog.currentEntity = item.title;
         setProgress({ ...prog });
 
-        try {
-          const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
-          if (abortRef.current) return;
+        let succeeded = false;
+        for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
+          try {
+            const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
+            if (abortRef.current) return;
 
-          const processed = await removeImageBackground(settings.runwareApiKey, bytes);
-          if (abortRef.current) return;
+            const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+            if (abortRef.current) return;
 
-          await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
-        } catch (err) {
-          prog.errors.push({
-            entityId: item.entityId,
-            error: err instanceof Error ? err.message : String(err),
-          });
+            await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
+            succeeded = true;
+          } catch (err) {
+            if (attempt === 1) {
+              prog.errors.push({
+                entityId: item.entityId,
+                error: err instanceof Error ? err.message : String(err),
+              });
+            }
+          }
         }
 
         prog.completed++;
@@ -206,7 +213,9 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
             )}
             {progress.errors.length > 0 && (
               <div style={{ color: "var(--color-error)", fontSize: "0.82rem" }}>
-                {progress.errors.length} error{progress.errors.length !== 1 ? "s" : ""}
+                {progress.errors.map((e, i) => (
+                  <div key={i}>{e.entityId}: {e.error}</div>
+                ))}
               </div>
             )}
           </div>
