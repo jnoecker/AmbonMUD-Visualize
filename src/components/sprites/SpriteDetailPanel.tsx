@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
-import { removeImageBackground } from "../../lib/image-gen";
+import { removeImageBackground, flipImageHorizontally } from "../../lib/image-gen";
 import { ImagePreview } from "../detail/ImagePreview";
 import { PromptEditor } from "../detail/PromptEditor";
 import { ActionBar } from "../detail/ActionBar";
@@ -42,6 +42,7 @@ export function SpriteDetailPanel({
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const [removingBg, setRemovingBg] = useState(false);
+  const [flipping, setFlipping] = useState(false);
 
   const entity = getEntity(entityId);
   const asset = getAsset(zoneKey, entityId);
@@ -121,6 +122,23 @@ export function SpriteDetailPanel({
     }
   };
 
+  const handleFlipHorizontal = async () => {
+    if (!currentVariant) return;
+    setFlipping(true);
+    try {
+      const bytes = await getVariantImageBytes(zoneKey, entityId, currentVariant.filename);
+      const flipped = await flipImageHorizontally(bytes, currentVariant.filename);
+      await replaceVariantImage(zoneKey, entityId, viewingVariantIndex, flipped);
+      setImageSrc(null);
+      const dataUrl = await getImageDataUrl(zoneKey, entityId, currentVariant.filename);
+      setImageSrc(dataUrl);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Failed to flip image");
+    } finally {
+      setFlipping(false);
+    }
+  };
+
   const handlePromptChange = async (prompt: string) => {
     await updatePrompt(zoneKey, entityId, prompt);
   };
@@ -178,11 +196,13 @@ export function SpriteDetailPanel({
           isGeneratingPrompt={generatingPrompt}
           isGeneratingImage={generatingImage}
           isRemovingBg={removingBg}
+          isFlipping={flipping}
           entityType={entity.type}
           onGeneratePrompt={handleGeneratePrompt}
           onGenerateImage={handleGenerateImage}
           onApprove={handleApprove}
           onRemoveBackground={handleRemoveBackground}
+          onFlipHorizontal={handleFlipHorizontal}
         />
       </div>
     </div>

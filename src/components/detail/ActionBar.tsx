@@ -7,11 +7,13 @@ interface ActionBarProps {
   isGeneratingPrompt: boolean;
   isGeneratingImage: boolean;
   isRemovingBg: boolean;
+  isFlipping?: boolean;
   entityType: EntityType;
   onGeneratePrompt: () => void;
   onGenerateImage: () => void;
   onApprove: () => void;
   onRemoveBackground: () => void;
+  onFlipHorizontal?: () => void;
 }
 
 export function ActionBar({
@@ -21,13 +23,15 @@ export function ActionBar({
   isGeneratingPrompt,
   isGeneratingImage,
   isRemovingBg,
+  isFlipping,
   entityType,
   onGeneratePrompt,
   onGenerateImage,
   onApprove,
   onRemoveBackground,
+  onFlipHorizontal,
 }: ActionBarProps) {
-  const busy = isGeneratingPrompt || isGeneratingImage || isRemovingBg;
+  const busy = isGeneratingPrompt || isGeneratingImage || isRemovingBg || !!isFlipping;
 
   return (
     <div className="action-bar">
@@ -55,6 +59,16 @@ export function ActionBar({
         >
           {isRemovingBg && <span className="spinner spinner--small" />}
           Remove BG
+        </button>
+      )}
+      {hasVariants && onFlipHorizontal && (
+        <button
+          className="soft-button"
+          onClick={onFlipHorizontal}
+          disabled={busy}
+        >
+          {isFlipping && <span className="spinner spinner--small" />}
+          Flip ↔
         </button>
       )}
       {hasVariants && (

@@ -276,6 +276,47 @@ export function recompressForEntityType(
   });
 }
 
+/**
+ * Flip an image horizontally (mirror). Preserves format based on filename extension.
+ */
+export function flipImageHorizontally(
+  imageBytes: Uint8Array,
+  filename: string
+): Promise<Uint8Array> {
+  const isJpeg = filename.endsWith(".jpg") || filename.endsWith(".jpeg");
+  const format = isJpeg ? "image/jpeg" : "image/png";
+  const quality = isJpeg ? ROOM_JPEG_QUALITY : undefined;
+
+  return new Promise((resolve, reject) => {
+    const blob = new Blob([imageBytes], { type: format });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(
+        (b) => {
+          if (!b) { reject(new Error("Canvas toBlob failed")); return; }
+          b.arrayBuffer().then((buf) => resolve(new Uint8Array(buf)));
+        },
+        format,
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Failed to load image for flip"));
+    };
+    img.src = url;
+  });
+}
+
 async function _removeBackground(
   runware: InstanceType<typeof Runware>,
   imageBytes: Uint8Array
