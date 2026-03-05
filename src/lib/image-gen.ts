@@ -104,12 +104,14 @@ export async function removeImageBackground(
   apiKey: string,
   imageBytes: Uint8Array
 ): Promise<Uint8Array> {
-  // Use a fresh connection for each BG removal. The shared singleton degrades
-  // after a few multi-MB base64 payloads (WebSocket buffer bloat / silent
-  // disconnect), causing the SDK to poll until timeout then retry — each retry
-  // a new billed API call. A fresh connection per request avoids this; the
-  // ~0.5s handshake overhead is negligible vs the alternative 60-120s timeout.
-  const runware = new Runware({ apiKey });
+  // Fresh connection per BG removal: avoids WebSocket degradation from large
+  // base64 payloads. Short timeout (15s) + no retries prevents the SDK from
+  // silently making extra billed API calls on timeout (default is 60s × 2 retries).
+  const runware = new Runware({
+    apiKey,
+    globalMaxRetries: 0,
+    timeoutDuration: 15000,
+  });
   try {
     return await _removeBackground(runware, imageBytes);
   } finally {
