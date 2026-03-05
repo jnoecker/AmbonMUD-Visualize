@@ -113,8 +113,15 @@ export async function removeImageBackground(
     globalMaxRetries: 1,
     timeoutDuration: 20000,
   });
+  const t0 = performance.now();
+  console.log(`[BG removal] starting — payload ${(imageBytes.length / 1024).toFixed(0)}KB`);
   try {
-    return await _removeBackground(runware, imageBytes);
+    const result = await _removeBackground(runware, imageBytes);
+    console.log(`[BG removal] done in ${((performance.now() - t0) / 1000).toFixed(1)}s — output ${(result.length / 1024).toFixed(0)}KB`);
+    return result;
+  } catch (err) {
+    console.error(`[BG removal] failed after ${((performance.now() - t0) / 1000).toFixed(1)}s:`, err);
+    throw err;
   } finally {
     runware.disconnect();
   }
@@ -127,6 +134,9 @@ async function _removeBackground(
   const inputBase64 = bytesToBase64(imageBytes);
   const dataUri = `data:image/png;base64,${inputBase64}`;
 
+  const t0 = performance.now();
+  console.log(`[BG removal] sending request — base64 ${(inputBase64.length / 1024).toFixed(0)}KB`);
+
   const result = await runware.removeImageBackground({
     inputImage: dataUri,
     model: "runware:110@1",
@@ -134,10 +144,13 @@ async function _removeBackground(
     outputFormat: "PNG",
   });
 
+  console.log(`[BG removal] SDK returned in ${((performance.now() - t0) / 1000).toFixed(1)}s — keys: ${Object.keys(result ?? {}).join(", ")}`);
+
   const resultAny = result as any;
   const outputB64: string | undefined =
     resultAny?.imageBase64Data ?? resultAny?.base64Data;
   if (!outputB64) {
+    console.error(`[BG removal] unexpected response shape:`, JSON.stringify(result).substring(0, 500));
     throw new Error("No image data in background removal response");
   }
 
