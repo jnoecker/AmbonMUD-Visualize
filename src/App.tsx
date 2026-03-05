@@ -15,6 +15,8 @@ import { SettingsDialog } from "./components/dialogs/SettingsDialog";
 import { NewProjectDialog } from "./components/dialogs/NewProjectDialog";
 import { BatchDialog } from "./components/dialogs/BatchDialog";
 import { ExportDialog } from "./components/dialogs/ExportDialog";
+import { CustomAssetDialog } from "./components/dialogs/CustomAssetDialog";
+import { BatchRemoveBgDialog } from "./components/dialogs/BatchRemoveBgDialog";
 
 function AppInner() {
   const { project, projectDir, openExistingProject, reloadProject, closeProject } = useProject();
@@ -23,6 +25,8 @@ function AppInner() {
   const [showNewProject, setShowNewProject] = useState(false);
   const [showBatch, setShowBatch] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [showCustomAsset, setShowCustomAsset] = useState(false);
+  const [showBatchRemoveBg, setShowBatchRemoveBg] = useState(false);
 
   // Reopen last project on launch
   useEffect(() => {
@@ -95,6 +99,8 @@ function AppInner() {
           <StatusBar
             onBatchClick={() => setShowBatch(true)}
             onExportClick={() => setShowExport(true)}
+            onCustomAssetClick={() => setShowCustomAsset(true)}
+            onBatchRemoveBgClick={() => setShowBatchRemoveBg(true)}
           />
         }
       />
@@ -103,6 +109,8 @@ function AppInner() {
       {showNewProject && <NewProjectDialog onClose={() => setShowNewProject(false)} />}
       {showBatch && <BatchDialog onClose={() => setShowBatch(false)} />}
       {showExport && <ExportDialog onClose={() => setShowExport(false)} />}
+      {showCustomAsset && <CustomAssetDialog onClose={() => setShowCustomAsset(false)} />}
+      {showBatchRemoveBg && <BatchRemoveBgDialog onClose={() => setShowBatchRemoveBg(false)} />}
     </>
   );
 }

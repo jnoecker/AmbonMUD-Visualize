@@ -3,6 +3,7 @@ export interface AppSettings {
   runwareApiKey: string;
   runwareModel: string;
   batchConcurrency: number;
+  removeBackground: boolean;
   lastProjectPath: string | null;
 }
 
@@ -11,6 +12,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   runwareApiKey: "",
   runwareModel: "runware:101@1",
   batchConcurrency: 20,
+  removeBackground: false,
   lastProjectPath: null,
 };
 

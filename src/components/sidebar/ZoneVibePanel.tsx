@@ -66,6 +66,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
         const imageData = await generateImage(settings.runwareApiKey, prompt, {
           aspectRatio: getAspectRatio(entityType),
           entityType,
+          removeBackground: settings.removeBackground,
         }, settings.runwareModel);
 
         await updateDefaultImage(zoneName, entityType, imageData, prompt);

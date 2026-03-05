@@ -13,6 +13,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
   const [anthropicKey, setAnthropicKey] = useState(settings.anthropicApiKey);
   const [runwareKey, setRunwareKey] = useState(settings.runwareApiKey);
   const [concurrency, setConcurrency] = useState(settings.batchConcurrency);
+  const [removeBg, setRemoveBg] = useState(settings.removeBackground);
 
   const isPreset = RUNWARE_MODEL_PRESETS.some((p) => p.id === settings.runwareModel);
   const [modelSelect, setModelSelect] = useState(isPreset ? settings.runwareModel : CUSTOM_VALUE);
@@ -26,6 +27,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
       runwareApiKey: runwareKey,
       runwareModel: resolvedModel || "runware:101@1",
       batchConcurrency: concurrency,
+      removeBackground: removeBg,
     });
     onClose();
   };
@@ -94,6 +96,21 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
               onChange={(e) => setConcurrency(parseInt(e.target.value, 10))}
             />
             <span className="slider-value">{concurrency}</span>
+          </div>
+        </div>
+
+        <div className="dialog-field">
+          <label className="checkbox-field">
+            <input
+              className="checkbox-input"
+              type="checkbox"
+              checked={removeBg}
+              onChange={(e) => setRemoveBg(e.target.checked)}
+            />
+            Remove background (mobs & items)
+          </label>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+            Produces transparent PNGs via Runware background removal. Adds ~$0.004/image.
           </div>
         </div>
 

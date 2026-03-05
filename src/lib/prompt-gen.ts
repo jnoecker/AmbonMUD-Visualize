@@ -198,3 +198,53 @@ ${STYLE_SUFFIX}`,
   }
   throw new Error("Unexpected response format from Claude");
 }
+
+export async function generateCustomAssetPrompt(
+  apiKey: string,
+  description: string,
+  entityType: EntityType,
+  zoneVibe: string | null
+): Promise<string> {
+  const client = new Anthropic({
+    apiKey,
+    dangerouslyAllowBrowser: true,
+  });
+
+  const formatSpec = FORMAT_BY_TYPE[entityType];
+  const vibeContext = zoneVibe
+    ? `\n\nZone atmosphere (use as additional context for mood/palette): ${zoneVibe}`
+    : "";
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-5-20250929",
+    max_tokens: 500,
+    system: `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
+
+${STYLE_GUIDE_REFERENCE}
+
+The user will provide a free-form description of an image they want generated. Transform it into an optimized image generation prompt that fully conforms to the Surreal Gentle Magic aesthetic. Apply the same transformation rules as for zone entities:
+- Replace harsh/artificial elements with ambient magical equivalents
+- Add subtle magical elements: floating motes, faint luminous particles, atmospheric haze
+- Ensure the palette stays within approved tones
+- Replace any references to readable text with glowing runes or arcane glyphs
+
+Output ONLY the prompt text — no labels, no markdown, no commentary.`,
+    messages: [
+      {
+        role: "user",
+        content: `Format: ${formatSpec}
+
+User description: ${description}${vibeContext}
+
+Required style suffix (include verbatim at the end):
+${STYLE_SUFFIX}`,
+      },
+    ],
+  });
+
+  const textBlock = response.content[0];
+  if (textBlock.type === "text") {
+    return textBlock.text;
+  }
+  throw new Error("Unexpected response format from Claude");
+}

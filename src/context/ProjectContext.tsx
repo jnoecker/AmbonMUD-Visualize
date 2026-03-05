@@ -19,7 +19,7 @@ import {
   reconcileImages,
 } from "../lib/project-io";
 import { parseZone } from "../lib/yaml-parser";
-import { readTextFile, readFile } from "@tauri-apps/plugin-fs";
+import { readTextFile, readFile, writeFile } from "@tauri-apps/plugin-fs";
 
 function bytesToDataUrl(bytes: Uint8Array): string {
   let binary = "";
@@ -65,6 +65,21 @@ interface ProjectContextValue {
   batchApprove: () => Promise<number>;
 
   updateSpriteTemplate: (zoneKey: string, template: SpritePromptTemplate) => Promise<void>;
+
+  addCustomAsset: (
+    zoneKey: string,
+    title: string,
+    description: string,
+    entityType: EntityType
+  ) => Promise<string>;
+
+  replaceVariantImage: (
+    zoneKey: string,
+    entityId: string,
+    variantIndex: number,
+    imageData: Uint8Array
+  ) => Promise<void>;
+  getVariantImageBytes: (zoneKey: string, entityId: string, filename: string) => Promise<Uint8Array>;
 
   getEntity: (entityId: string) => Entity | undefined;
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
@@ -458,6 +473,84 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const replaceVariantImage = useCallback(
+    async (
+      zoneKey: string,
+      entityId: string,
+      variantIndex: number,
+      imageData: Uint8Array
+    ) => {
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+      const asset = zone.assets[entityId];
+      if (!asset) return;
+      const variant = asset.variants[variantIndex];
+      if (!variant) return;
+
+      // Overwrite the file on disk
+      const filePath = await getImagePath(dir, zoneKey, entityId, variant.filename);
+      await writeFile(filePath, imageData);
+
+      // Invalidate cache so next read picks up the new file
+      const key = cacheKey(zoneKey, entityId, variant.filename);
+      imageCache.current.set(key, bytesToDataUrl(imageData));
+    },
+    []
+  );
+
+  const getVariantImageBytes = useCallback(
+    async (zoneKey: string, entityId: string, filename: string): Promise<Uint8Array> => {
+      const dir = projectDirRef.current;
+      if (!dir) throw new Error("No project open");
+      const filePath = await getImagePath(dir, zoneKey, entityId, filename);
+      return readFile(filePath);
+    },
+    []
+  );
+
+  const addCustomAsset = useCallback(
+    async (
+      zoneKey: string,
+      title: string,
+      description: string,
+      entityType: EntityType
+    ): Promise<string> => {
+      const p = projectRef.current;
+      if (!p) return "";
+      const zone = p.zones[zoneKey];
+      if (!zone) return "";
+
+      const entityId = `custom_${Date.now()}`;
+      const asset: AssetEntry = {
+        entityId,
+        entityType,
+        title,
+        status: "pending",
+        currentPrompt: null,
+        variants: [],
+        approvedVariantIndex: null,
+        customDescription: description,
+      };
+
+      const next: ProjectFile = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: {
+            ...zone,
+            assets: { ...zone.assets, [entityId]: asset },
+          },
+        },
+      };
+      await commitProject(next);
+      return entityId;
+    },
+    [commitProject]
+  );
+
   const getEntity = useCallback(
     (entityId: string): Entity | undefined => {
       for (const zone of Object.values(parsedZones)) {
@@ -527,11 +620,14 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         addVariant,
         approveVariant,
         batchApprove,
+        addCustomAsset,
         updateSpriteTemplate,
         updateDefaultImage,
         getDefaultImageDataUrl,
         setViewingVariant: setViewingVariantIndex,
         viewingVariantIndex,
+        replaceVariantImage,
+        getVariantImageBytes,
         getEntity,
         getAsset,
         getImageDataUrl,

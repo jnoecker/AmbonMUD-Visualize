@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
+import { removeImageBackground } from "../../lib/image-gen";
 import { ImagePreview } from "../detail/ImagePreview";
 import { PromptEditor } from "../detail/PromptEditor";
 import { ActionBar } from "../detail/ActionBar";
@@ -29,6 +30,8 @@ export function SpriteDetailPanel({
     updatePrompt,
     approveVariant,
     getImageDataUrl,
+    replaceVariantImage,
+    getVariantImageBytes,
     viewingVariantIndex,
     setViewingVariant,
   } = useProject();
@@ -38,6 +41,7 @@ export function SpriteDetailPanel({
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [removingBg, setRemovingBg] = useState(false);
 
   const entity = getEntity(entityId);
   const asset = getAsset(zoneKey, entityId);
@@ -93,6 +97,28 @@ export function SpriteDetailPanel({
 
   const handleApprove = async () => {
     await approveVariant(zoneKey, entityId, viewingVariantIndex);
+  };
+
+  const handleRemoveBackground = async () => {
+    if (!currentVariant) return;
+    if (!settings.runwareApiKey) {
+      setLocalError("Runware API key not set. Open Settings.");
+      return;
+    }
+    setLocalError(null);
+    setRemovingBg(true);
+    try {
+      const bytes = await getVariantImageBytes(zoneKey, entityId, currentVariant.filename);
+      const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+      await replaceVariantImage(zoneKey, entityId, viewingVariantIndex, processed);
+      setImageSrc(null);
+      const dataUrl = await getImageDataUrl(zoneKey, entityId, currentVariant.filename);
+      setImageSrc(dataUrl);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Failed to remove background");
+    } finally {
+      setRemovingBg(false);
+    }
   };
 
   const handlePromptChange = async (prompt: string) => {
@@ -151,9 +177,12 @@ export function SpriteDetailPanel({
           isApproved={isApproved}
           isGeneratingPrompt={generatingPrompt}
           isGeneratingImage={generatingImage}
+          isRemovingBg={removingBg}
+          entityType={entity.type}
           onGeneratePrompt={handleGeneratePrompt}
           onGenerateImage={handleGenerateImage}
           onApprove={handleApprove}
+          onRemoveBackground={handleRemoveBackground}
         />
       </div>
     </div>

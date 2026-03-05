@@ -120,7 +120,7 @@ export function SpriteBatchBar({
               const imageData = await generateImage(
                 settings.runwareApiKey!,
                 prompt,
-                { aspectRatio: getAspectRatio(entity.type), entityType: entity.type },
+                { aspectRatio: getAspectRatio(entity.type), entityType: entity.type, removeBackground: settings.removeBackground },
                 settings.runwareModel
               );
               await addVariant(zoneKey, entityId, imageData, prompt);

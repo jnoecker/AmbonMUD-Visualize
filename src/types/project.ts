@@ -23,6 +23,8 @@ export interface AssetEntry {
   currentPrompt: string | null;
   variants: ImageVariant[];
   approvedVariantIndex: number | null;
+  /** Present only on user-created custom assets (not from zone YAML). */
+  customDescription?: string;
 }
 
 export interface ZoneData {

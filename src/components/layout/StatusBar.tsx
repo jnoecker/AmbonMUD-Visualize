@@ -4,9 +4,11 @@ import { useProject } from "../../context/ProjectContext";
 interface StatusBarProps {
   onBatchClick: () => void;
   onExportClick: () => void;
+  onCustomAssetClick: () => void;
+  onBatchRemoveBgClick: () => void;
 }
 
-export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
+export function StatusBar({ onBatchClick, onExportClick, onCustomAssetClick, onBatchRemoveBgClick }: StatusBarProps) {
   const { project, getApprovalCounts, batchApprove } = useProject();
   const [approveMsg, setApproveMsg] = useState<string | null>(null);
 
@@ -46,6 +48,9 @@ export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
             {approveMsg}
           </span>
         )}
+        <button className="soft-button soft-button--small" onClick={onCustomAssetClick}>
+          + Custom Asset
+        </button>
         <button
           className="soft-button soft-button--small"
           onClick={async () => {
@@ -62,6 +67,9 @@ export function StatusBar({ onBatchClick, onExportClick }: StatusBarProps) {
         </button>
         <button className="soft-button soft-button--small" onClick={onBatchClick}>
           Batch Generate
+        </button>
+        <button className="soft-button soft-button--small" onClick={onBatchRemoveBgClick}>
+          Batch Remove BG
         </button>
         <button
           className="soft-button soft-button--small soft-button--success"

@@ -8,9 +8,9 @@ import {
 } from "react";
 import { useProject } from "./ProjectContext";
 import { useSettings } from "./SettingsContext";
-import { generateEntityPrompt } from "../lib/prompt-gen";
+import { generateEntityPrompt, generateCustomAssetPrompt } from "../lib/prompt-gen";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
-import type { Entity } from "../types/entities";
+import type { Entity, EntityType } from "../types/entities";
 
 type JobType = "prompt" | "image";
 
@@ -25,11 +25,24 @@ interface GenerationContextValue {
     entity: Entity,
     zoneVibe: string
   ) => void;
+  startCustomPromptGeneration: (
+    zoneKey: string,
+    entityId: string,
+    description: string,
+    entityType: EntityType,
+    zoneVibe: string | null
+  ) => void;
   startImageGeneration: (
     zoneKey: string,
     entityId: string,
     prompt: string,
     entity: Entity
+  ) => void;
+  startCustomImageGeneration: (
+    zoneKey: string,
+    entityId: string,
+    prompt: string,
+    entityType: EntityType
   ) => void;
   getJob: (zoneKey: string, entityId: string) => GenerationJob | undefined;
   getError: (zoneKey: string, entityId: string) => string | undefined;
@@ -117,6 +130,46 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
     [updatePrompt, setJob, removeJob, setErrorForKey]
   );
 
+  const startCustomPromptGeneration = useCallback(
+    (
+      zoneKey: string,
+      entityId: string,
+      description: string,
+      entityType: EntityType,
+      zoneVibe: string | null
+    ) => {
+      const key = entityKey(zoneKey, entityId);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "prompt" });
+
+      (async () => {
+        try {
+          const prompt = await generateCustomAssetPrompt(
+            settingsRef.current.anthropicApiKey!,
+            description,
+            entityType,
+            zoneVibe
+          );
+          await updatePrompt(zoneKey, entityId, prompt);
+        } catch (err) {
+          setErrorForKey(
+            key,
+            err instanceof Error ? err.message : "Failed to generate prompt"
+          );
+        } finally {
+          removeJob(key);
+        }
+      })();
+    },
+    [updatePrompt, setJob, removeJob, setErrorForKey]
+  );
+
   const startImageGeneration = useCallback(
     (zoneKey: string, entityId: string, prompt: string, entity: Entity) => {
       const key = entityKey(zoneKey, entityId);
@@ -138,12 +191,63 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
             {
               aspectRatio: getAspectRatio(entity.type),
               entityType: entity.type,
+              removeBackground: settingsRef.current.removeBackground,
             },
             settingsRef.current.runwareModel
           );
           const newIndex = await addVariant(zoneKey, entityId, imageData, prompt);
 
           // Auto-select the new variant only if user is still viewing this entity
+          if (
+            newIndex !== undefined &&
+            selectedZoneRef.current === zoneKey &&
+            selectedEntityIdRef.current === entityId
+          ) {
+            setViewingVariant(newIndex);
+          }
+        } catch (err) {
+          if (err instanceof ContentPolicyError) {
+            setErrorForKey(key, err.message);
+          } else {
+            setErrorForKey(
+              key,
+              err instanceof Error ? err.message : "Failed to generate image"
+            );
+          }
+        } finally {
+          removeJob(key);
+        }
+      })();
+    },
+    [addVariant, setViewingVariant, setJob, removeJob, setErrorForKey]
+  );
+
+  const startCustomImageGeneration = useCallback(
+    (zoneKey: string, entityId: string, prompt: string, entityType: EntityType) => {
+      const key = entityKey(zoneKey, entityId);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "image" });
+
+      (async () => {
+        try {
+          const imageData = await generateImage(
+            settingsRef.current.runwareApiKey!,
+            prompt,
+            {
+              aspectRatio: getAspectRatio(entityType),
+              entityType,
+              removeBackground: settingsRef.current.removeBackground,
+            },
+            settingsRef.current.runwareModel
+          );
+          const newIndex = await addVariant(zoneKey, entityId, imageData, prompt);
+
           if (
             newIndex !== undefined &&
             selectedZoneRef.current === zoneKey &&
@@ -199,7 +303,9 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
     <GenerationCtx.Provider
       value={{
         startPromptGeneration,
+        startCustomPromptGeneration,
         startImageGeneration,
+        startCustomImageGeneration,
         getJob,
         getError,
         clearError,

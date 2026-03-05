@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
+import { removeImageBackground } from "../../lib/image-gen";
 import { ImagePreview } from "./ImagePreview";
 import { PromptEditor } from "./PromptEditor";
 import { ActionBar } from "./ActionBar";
@@ -19,21 +20,42 @@ export function DetailPanel() {
     updatePrompt,
     approveVariant,
     getImageDataUrl,
+    replaceVariantImage,
+    getVariantImageBytes,
     viewingVariantIndex,
     setViewingVariant,
   } = useProject();
   const { settings } = useSettings();
-  const { startPromptGeneration, startImageGeneration, getJob, getError, clearError } =
-    useGeneration();
+  const {
+    startPromptGeneration,
+    startCustomPromptGeneration,
+    startImageGeneration,
+    startCustomImageGeneration,
+    getJob,
+    getError,
+    clearError,
+  } = useGeneration();
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [removingBg, setRemovingBg] = useState(false);
 
-  const entity = selectedEntityId ? getEntity(selectedEntityId) : undefined;
   const asset =
     selectedZone && selectedEntityId
       ? getAsset(selectedZone, selectedEntityId)
       : undefined;
+
+  const isCustom = !!asset?.customDescription;
+
+  // For custom assets, synthesize an Entity from AssetEntry data
+  const parsedEntity = selectedEntityId ? getEntity(selectedEntityId) : undefined;
+  const entity = parsedEntity ?? (isCustom && asset ? {
+    id: asset.entityId,
+    type: asset.entityType,
+    title: asset.title,
+    description: asset.customDescription!,
+    extraContext: "",
+  } : undefined);
 
   const currentVariant = asset?.variants[viewingVariantIndex];
 
@@ -64,18 +86,31 @@ export function DetailPanel() {
   const handleGeneratePrompt = () => {
     if (!entity || !selectedZone || !project) return;
     const zone = project.zones[selectedZone];
-    if (!zone?.vibe) {
-      setLocalError("Generate a zone vibe first before generating prompts.");
-      return;
-    }
     if (!settings.anthropicApiKey) {
       setLocalError("Anthropic API key not set. Open Settings.");
       return;
     }
 
-    setLocalError(null);
-    if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
-    startPromptGeneration(selectedZone, entity.id, entity, zone.vibe);
+    if (isCustom) {
+      // Custom assets can optionally use zone vibe but don't require it
+      setLocalError(null);
+      if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
+      startCustomPromptGeneration(
+        selectedZone,
+        entity.id,
+        asset!.customDescription!,
+        entity.type,
+        zone?.vibe ?? null
+      );
+    } else {
+      if (!zone?.vibe) {
+        setLocalError("Generate a zone vibe first before generating prompts.");
+        return;
+      }
+      setLocalError(null);
+      if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
+      startPromptGeneration(selectedZone, entity.id, entity, zone.vibe);
+    }
   };
 
   const handleGenerateImage = () => {
@@ -87,12 +122,40 @@ export function DetailPanel() {
 
     setLocalError(null);
     if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
-    startImageGeneration(selectedZone, entity.id, asset.currentPrompt, entity);
+    if (isCustom) {
+      startCustomImageGeneration(selectedZone, entity.id, asset.currentPrompt, entity.type);
+    } else {
+      startImageGeneration(selectedZone, entity.id, asset.currentPrompt, entity);
+    }
   };
 
   const handleApprove = async () => {
     if (!selectedZone || !selectedEntityId) return;
     await approveVariant(selectedZone, selectedEntityId, viewingVariantIndex);
+  };
+
+  const handleRemoveBackground = async () => {
+    if (!selectedZone || !selectedEntityId || !currentVariant) return;
+    if (!settings.runwareApiKey) {
+      setLocalError("Runware API key not set. Open Settings.");
+      return;
+    }
+
+    setLocalError(null);
+    setRemovingBg(true);
+    try {
+      const bytes = await getVariantImageBytes(selectedZone, selectedEntityId, currentVariant.filename);
+      const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+      await replaceVariantImage(selectedZone, selectedEntityId, viewingVariantIndex, processed);
+      // Force image refresh
+      setImageSrc(null);
+      const dataUrl = await getImageDataUrl(selectedZone, selectedEntityId, currentVariant.filename);
+      setImageSrc(dataUrl);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Failed to remove background");
+    } finally {
+      setRemovingBg(false);
+    }
   };
 
   const handlePromptChange = async (prompt: string) => {
@@ -138,7 +201,7 @@ export function DetailPanel() {
         <div className="detail-entity-header">
           <h2 className="detail-entity-title">{entity.title}</h2>
           <span className={`entity-type-badge entity-type-badge--${entity.type}`}>
-            {entity.type}
+            {isCustom ? `custom ${entity.type}` : entity.type}
           </span>
         </div>
         <div className="detail-description">{entity.description}</div>
@@ -199,9 +262,12 @@ export function DetailPanel() {
           isApproved={isApproved}
           isGeneratingPrompt={generatingPrompt}
           isGeneratingImage={generatingImage}
+          isRemovingBg={removingBg}
+          entityType={entity.type}
           onGeneratePrompt={handleGeneratePrompt}
           onGenerateImage={handleGenerateImage}
           onApprove={handleApprove}
+          onRemoveBackground={handleRemoveBackground}
         />
       </div>
     </div>
