@@ -93,20 +93,6 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
     [zoneKey, updateSpriteTemplate]
   );
 
-  // If viewing a specific sprite's detail
-  if (detailEntityId) {
-    return (
-      <div className="sprite-grid-container">
-        <SpriteDetailPanel
-          zoneKey={zoneKey}
-          entityId={detailEntityId}
-          spriteTemplate={zone.spriteTemplate || null}
-          onBack={handleBack}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="sprite-grid-container">
       <SpriteBatchBar
@@ -118,6 +104,16 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
         visibleEntityIds={visibleEntityIds}
         onTemplateGenerated={handleTemplateGenerated}
       />
+
+      {/* Detail view (shown instead of grid, batch bar stays visible above) */}
+      {detailEntityId ? (
+        <SpriteDetailPanel
+          zoneKey={zoneKey}
+          entityId={detailEntityId}
+          spriteTemplate={zone.spriteTemplate || null}
+          onBack={handleBack}
+        />
+      ) : (<>
 
       {/* Gender tabs */}
       <div className="sprite-gender-tabs">
@@ -192,6 +188,7 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
           </div>
         ))}
       </div>
+      </>)}
     </div>
   );
 }
