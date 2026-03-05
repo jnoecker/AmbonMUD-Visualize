@@ -848,6 +848,60 @@ body {
   color: var(--text-secondary);
 }
 
+/* Floating batch progress bar (minimized mode) */
+.batch-floating-bar {
+  position: fixed;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-notification);
+  cursor: pointer;
+  min-width: 320px;
+  max-width: 520px;
+  transition: opacity 0.2s var(--ease-out-soft);
+}
+
+.batch-floating-bar:hover {
+  border-color: var(--color-primary-lavender);
+}
+
+.batch-floating-progress {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-panel);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+.batch-floating-progress-fill {
+  height: 100%;
+  background: var(--color-primary-lavender);
+  border-radius: 3px;
+  transition: width 0.3s var(--ease-out-soft);
+}
+
+.batch-floating-text {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.batch-floating-abort,
+.batch-floating-close {
+  padding: var(--space-1) var(--space-2) !important;
+  font-size: 0.78rem !important;
+}
+
 /* Slider */
 .slider-field {
   display: flex;

@@ -16,6 +16,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
   const [skipGenerated, setSkipGenerated] = useState(true);
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const [progress, setProgress] = useState<BatchProgress | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -70,6 +71,14 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
     abortRef.current?.abort();
   };
 
+  const handleMinimize = () => {
+    setMinimized(true);
+  };
+
+  const handleRestore = () => {
+    setMinimized(false);
+  };
+
   // Count entities that need processing
   let totalToProcess = 0;
   let missingVibe = false;
@@ -87,6 +96,43 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
         totalToProcess++;
       }
     }
+  }
+
+  const pct = progress && progress.total > 0
+    ? (progress.completed / progress.total) * 100
+    : 0;
+
+  // Minimized floating progress bar
+  if (minimized) {
+    return (
+      <div className="batch-floating-bar" onClick={handleRestore}>
+        <div className="batch-floating-progress">
+          <div className="batch-floating-progress-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="batch-floating-text">
+          {done
+            ? "Batch done!"
+            : `Batch: ${progress?.completed ?? 0}/${progress?.total ?? 0}`}
+          {progress && progress.errors.length > 0 && ` (${progress.errors.length} err)`}
+        </span>
+        {running && (
+          <button
+            className="soft-button soft-button--danger batch-floating-abort"
+            onClick={(e) => { e.stopPropagation(); handleAbort(); }}
+          >
+            Abort
+          </button>
+        )}
+        {done && (
+          <button
+            className="soft-button batch-floating-close"
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+          >
+            Dismiss
+          </button>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -146,9 +192,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
             <div className="progress-bar">
               <div
                 className="progress-bar-fill"
-                style={{
-                  width: `${progress.total > 0 ? (progress.completed / progress.total) * 100 : 0}%`,
-                }}
+                style={{ width: `${pct}%` }}
               />
             </div>
             <div style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
@@ -169,9 +213,14 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
 
         <div className="dialog-actions">
           {running ? (
-            <button className="soft-button" onClick={handleAbort}>
-              Abort
-            </button>
+            <>
+              <button className="soft-button" onClick={handleMinimize}>
+                Minimize
+              </button>
+              <button className="soft-button soft-button--danger" onClick={handleAbort}>
+                Abort
+              </button>
+            </>
           ) : done ? (
             <button className="soft-button soft-button--primary" onClick={onClose}>
               Done
