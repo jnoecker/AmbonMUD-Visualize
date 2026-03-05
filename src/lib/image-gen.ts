@@ -104,15 +104,11 @@ export async function removeImageBackground(
   apiKey: string,
   imageBytes: Uint8Array
 ): Promise<Uint8Array> {
-  // Fresh connection per BG removal: avoids WebSocket degradation from large
-  // base64 payloads. Short timeout (20s) + single attempt prevents the SDK from
-  // silently making extra billed API calls on timeout (default is 60s × 2 retries).
-  // Note: SDK retry loop uses `for(;s;)` so maxRetries=1 means 1 attempt (0 retries).
-  const runware = new Runware({
-    apiKey,
-    globalMaxRetries: 1,
-    timeoutDuration: 20000,
-  });
+  // Reuse the shared Runware connection — creating fresh connections per request
+  // triggers server-side rate limiting on new WebSocket handshakes. Serial
+  // processing (enforced by BatchRemoveBgDialog) keeps the shared connection
+  // healthy since only one request is in flight at a time.
+  const runware = getRunware(apiKey);
   const t0 = performance.now();
   console.log(`[BG removal] starting — payload ${(imageBytes.length / 1024).toFixed(0)}KB`);
   try {
@@ -122,8 +118,6 @@ export async function removeImageBackground(
   } catch (err) {
     console.error(`[BG removal] failed after ${((performance.now() - t0) / 1000).toFixed(1)}s:`, err);
     throw err;
-  } finally {
-    runware.disconnect();
   }
 }
 
