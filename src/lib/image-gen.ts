@@ -17,9 +17,17 @@ interface GenerateOptions {
   removeBackground?: boolean;
 }
 
-const SIZE_MAP: Record<string, { width: number; height: number }> = {
+// Generation sizes — generate at higher resolution for quality, then downscale
+const GEN_SIZE_MAP: Record<string, { width: number; height: number }> = {
   "16:9": { width: 1024, height: 576 },
   "1:1": { width: 1024, height: 1024 },
+};
+
+// Final output sizes per entity type
+const OUTPUT_SIZE_MAP: Record<EntityType, { width: number; height: number }> = {
+  room: { width: 1920, height: 1080 },
+  mob: { width: 512, height: 512 },
+  item: { width: 256, height: 256 },
 };
 
 export function getAspectRatio(entityType: EntityType): "16:9" | "1:1" {
@@ -45,7 +53,7 @@ export async function generateImage(
 ): Promise<Uint8Array> {
   const runware = getRunware(apiKey);
 
-  const { width, height } = SIZE_MAP[options.aspectRatio];
+  const { width, height } = GEN_SIZE_MAP[options.aspectRatio];
 
   let images;
   try {
@@ -79,6 +87,10 @@ export async function generateImage(
     bytes = await _removeBackground(runware, bytes);
   }
 
+  // Downscale to target output size and re-encode with proper PNG compression
+  const outputSize = OUTPUT_SIZE_MAP[options.entityType];
+  bytes = await resizeImage(bytes, outputSize.width, outputSize.height);
+
   return bytes;
 }
 
@@ -102,7 +114,8 @@ function bytesToBase64(bytes: Uint8Array): string {
 
 export async function removeImageBackground(
   apiKey: string,
-  imageBytes: Uint8Array
+  imageBytes: Uint8Array,
+  entityType?: EntityType
 ): Promise<Uint8Array> {
   // Reuse the shared Runware connection — creating fresh connections per request
   // triggers server-side rate limiting on new WebSocket handshakes. Serial
@@ -112,7 +125,12 @@ export async function removeImageBackground(
   const t0 = performance.now();
   console.log(`[BG removal] starting — payload ${(imageBytes.length / 1024).toFixed(0)}KB`);
   try {
-    const result = await _removeBackground(runware, imageBytes);
+    let result = await _removeBackground(runware, imageBytes);
+    // Re-encode at target size if entity type provided
+    if (entityType) {
+      const outputSize = OUTPUT_SIZE_MAP[entityType];
+      result = await resizeImage(result, outputSize.width, outputSize.height);
+    }
     console.log(`[BG removal] done in ${((performance.now() - t0) / 1000).toFixed(1)}s — output ${(result.length / 1024).toFixed(0)}KB`);
     return result;
   } catch (err) {
@@ -168,6 +186,56 @@ export function imageHasTransparency(imageBytes: Uint8Array): Promise<boolean> {
     img.onerror = () => {
       URL.revokeObjectURL(url);
       resolve(false); // can't decode → assume opaque
+    };
+    img.src = url;
+  });
+}
+
+/**
+ * Resize a PNG image to target dimensions using canvas.
+ * Skips if the image is already at or below the target size.
+ * Preserves transparency.
+ */
+function resizeImage(
+  imageBytes: Uint8Array,
+  targetWidth: number,
+  targetHeight: number
+): Promise<Uint8Array> {
+  return new Promise((resolve, reject) => {
+    const blob = new Blob([imageBytes], { type: "image/png" });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      // Skip if already at or below target size
+      if (img.width <= targetWidth && img.height <= targetHeight) {
+        resolve(imageBytes);
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const ctx = canvas.getContext("2d")!;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+      canvas.toBlob(
+        (b) => {
+          if (!b) {
+            reject(new Error("Canvas toBlob failed"));
+            return;
+          }
+          b.arrayBuffer().then((buf) => resolve(new Uint8Array(buf)));
+        },
+        "image/png"
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(imageBytes); // can't decode → return original
     };
     img.src = url;
   });

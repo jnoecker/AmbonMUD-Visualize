@@ -109,7 +109,7 @@ export function SpriteDetailPanel({
     setRemovingBg(true);
     try {
       const bytes = await getVariantImageBytes(zoneKey, entityId, currentVariant.filename);
-      const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+      const processed = await removeImageBackground(settings.runwareApiKey, bytes, "mob");
       await replaceVariantImage(zoneKey, entityId, viewingVariantIndex, processed);
       setImageSrc(null);
       const dataUrl = await getImageDataUrl(zoneKey, entityId, currentVariant.filename);

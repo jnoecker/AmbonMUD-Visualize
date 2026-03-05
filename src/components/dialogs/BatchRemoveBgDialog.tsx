@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { removeImageBackground, imageHasTransparency } from "../../lib/image-gen";
+import type { EntityType } from "../../types/entities";
 
 interface BatchRemoveBgDialogProps {
   onClose: () => void;
@@ -33,6 +34,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     title: string;
     variantIndex: number;
     filename: string;
+    entityType: EntityType;
   }> = [];
 
   if (project) {
@@ -50,6 +52,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
             title: asset.title,
             variantIndex: asset.approvedVariantIndex,
             filename: asset.variants[asset.approvedVariantIndex].filename,
+            entityType: asset.entityType,
           });
           totalEligible++;
         }
@@ -99,7 +102,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
             continue;
           }
 
-          const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+          const processed = await removeImageBackground(settings.runwareApiKey, bytes, item.entityType);
           if (abortRef.current) return;
 
           await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);

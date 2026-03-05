@@ -145,7 +145,7 @@ export function DetailPanel() {
     setRemovingBg(true);
     try {
       const bytes = await getVariantImageBytes(selectedZone, selectedEntityId, currentVariant.filename);
-      const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+      const processed = await removeImageBackground(settings.runwareApiKey, bytes, entity?.type);
       await replaceVariantImage(selectedZone, selectedEntityId, viewingVariantIndex, processed);
       // Force image refresh
       setImageSrc(null);
