@@ -7,11 +7,13 @@ startRoom: entrance
 
 rooms:
   entrance:
-    desc: "A grand marble atrium with softly glowing crystal displays. Enchanted portraits line the walls, depicting adventurers of every race and calling."
+    title: "Entrance"
+    description: "A grand marble atrium with softly glowing crystal displays. Enchanted portraits line the walls, depicting adventurers of every race and calling."
     exits:
       n: novice_hall
   novice_hall:
-    desc: "A warm corridor lined with training dummies and practice targets. The air smells of fresh leather and chalk."
+    title: "Novice Hall"
+    description: "A warm corridor lined with training dummies and practice targets. The air smells of fresh leather and chalk."
     exits:
       s: entrance
       n: apprentice_hall
@@ -20,7 +22,8 @@ rooms:
       u: novice_clerics
       d: novice_rogues
   apprentice_hall:
-    desc: "A wider passage with polished stone floors and mounted weapons behind glass. Faint battle sounds echo from adjacent chambers."
+    title: "Apprentice Hall"
+    description: "A wider passage with polished stone floors and mounted weapons behind glass. Faint battle sounds echo from adjacent chambers."
     exits:
       s: novice_hall
       n: journeyman_hall
@@ -29,7 +32,8 @@ rooms:
       u: apprentice_clerics
       d: apprentice_rogues
   journeyman_hall:
-    desc: "An impressive gallery with vaulted ceilings and enchanted tapestries depicting famous battles. Arcane lanterns cast a steady glow."
+    title: "Journeyman Hall"
+    description: "An impressive gallery with vaulted ceilings and enchanted tapestries depicting famous battles. Arcane lanterns cast a steady glow."
     exits:
       s: apprentice_hall
       n: expert_hall
@@ -38,7 +42,8 @@ rooms:
       u: journeyman_clerics
       d: journeyman_rogues
   expert_hall:
-    desc: "A prestigious corridor of dark oak and silver filigree. Trophy cases display legendary artifacts and commendations."
+    title: "Expert Hall"
+    description: "A prestigious corridor of dark oak and silver filigree. Trophy cases display legendary artifacts and commendations."
     exits:
       s: journeyman_hall
       n: master_hall
@@ -47,7 +52,8 @@ rooms:
       u: expert_clerics
       d: expert_rogues
   master_hall:
-    desc: "A resplendent hall of gleaming obsidian and gold inlay. The air hums with barely contained power."
+    title: "Master Hall"
+    description: "A resplendent hall of gleaming obsidian and gold inlay. The air hums with barely contained power."
     exits:
       s: expert_hall
       n: legend_hall
@@ -56,109 +62,165 @@ rooms:
       u: master_clerics
       d: master_rogues
   legend_hall:
-    desc: "An ethereal sanctuary where reality shimmers at the edges. Constellations drift across the ceiling, and the floor seems to float above an endless void."
+    title: "Legend Hall"
+    description: "An ethereal sanctuary where reality shimmers at the edges. Constellations drift across the ceiling, and the floor seems to float above an endless void."
     exits:
       s: master_hall
+      n: staff_hall
       e: legend_warriors
       w: legend_mages
       u: legend_clerics
       d: legend_rogues
   novice_warriors:
-    desc: "A dusty training yard with wooden swords and straw dummies. Young recruits practice basic stances."
+    title: "Novice Warriors"
+    description: "A dusty training yard with wooden swords and straw dummies. Young recruits practice basic stances."
     exits:
       w: novice_hall
   novice_mages:
-    desc: "A cramped study filled with primer spellbooks and sputtering candles. Apprentices struggle with basic incantations."
+    title: "Novice Mages"
+    description: "A cramped study filled with primer spellbooks and sputtering candles. Apprentices struggle with basic incantations."
     exits:
       e: novice_hall
   novice_clerics:
-    desc: "A humble chapel with simple wooden pews and a small altar. Acolytes kneel in quiet prayer."
+    title: "Novice Clerics"
+    description: "A humble chapel with simple wooden pews and a small altar. Acolytes kneel in quiet prayer."
     exits:
       d: novice_hall
   novice_rogues:
-    desc: "A shadowy alcove with lockpick sets and rope coils scattered about. Fledgling thieves practice sleight of hand."
+    title: "Novice Rogues"
+    description: "A shadowy alcove with lockpick sets and rope coils scattered about. Fledgling thieves practice sleight of hand."
     exits:
       u: novice_hall
   apprentice_warriors:
-    desc: "A proper armory with iron weapons and training rings. Soldiers spar with disciplined form."
+    title: "Apprentice Warriors"
+    description: "A proper armory with iron weapons and training rings. Soldiers spar with disciplined form."
     exits:
       w: apprentice_hall
   apprentice_mages:
-    desc: "A well-stocked library with glowing runes etched into the reading desks. Channelers weave threads of mana."
+    title: "Apprentice Mages"
+    description: "A well-stocked library with glowing runes etched into the reading desks. Channelers weave threads of mana."
     exits:
       e: apprentice_hall
   apprentice_clerics:
-    desc: "A serene sanctuary with stained glass windows casting colored light. Healers tend to minor wounds."
+    title: "Apprentice Clerics"
+    description: "A serene sanctuary with stained glass windows casting colored light. Healers tend to minor wounds."
     exits:
       d: apprentice_hall
   apprentice_rogues:
-    desc: "A dimly lit den with targets, tripwires, and hidden compartments. Thieves hone their craft in silence."
+    title: "Apprentice Rogues"
+    description: "A dimly lit den with targets, tripwires, and hidden compartments. Thieves hone their craft in silence."
     exits:
       u: apprentice_hall
   journeyman_warriors:
-    desc: "A battle-scarred arena with enchanted training golems. Knights test their mettle against formidable opponents."
+    title: "Journeyman Warriors"
+    description: "A battle-scarred arena with enchanted training golems. Knights test their mettle against formidable opponents."
     exits:
       w: journeyman_hall
   journeyman_mages:
-    desc: "A conjuration chamber crackling with residual energy. Conjurers summon elemental wisps that dance through the air."
+    title: "Journeyman Mages"
+    description: "A conjuration chamber crackling with residual energy. Conjurers summon elemental wisps that dance through the air."
     exits:
       e: journeyman_hall
   journeyman_clerics:
-    desc: "A radiant temple with floating prayer beads and divine sigils. Priests channel healing light with practiced ease."
+    title: "Journeyman Clerics"
+    description: "A radiant temple with floating prayer beads and divine sigils. Priests channel healing light with practiced ease."
     exits:
       d: journeyman_hall
   journeyman_rogues:
-    desc: "A labyrinthine vault of shifting walls and concealed traps. Assassins move like whispers through the maze."
+    title: "Journeyman Rogues"
+    description: "A labyrinthine vault of shifting walls and concealed traps. Assassins move like whispers through the maze."
     exits:
       u: journeyman_hall
   expert_warriors:
-    desc: "A war room with enchanted battle maps and masterwork weapons. Champions bear the scars of countless victories."
+    title: "Expert Warriors"
+    description: "A war room with enchanted battle maps and masterwork weapons. Champions bear the scars of countless victories."
     exits:
       w: expert_hall
   expert_mages:
-    desc: "An arcane sanctum where spell circles burn permanently into the floor. Sorcerers command devastating magical forces."
+    title: "Expert Mages"
+    description: "An arcane sanctum where spell circles burn permanently into the floor. Sorcerers command devastating magical forces."
     exits:
       e: expert_hall
   expert_clerics:
-    desc: "A blessed cathedral resonating with divine harmonics. Templars radiate an aura of holy protection."
+    title: "Expert Clerics"
+    description: "A blessed cathedral resonating with divine harmonics. Templars radiate an aura of holy protection."
     exits:
       d: expert_hall
   expert_rogues:
-    desc: "A vault of absolute darkness pierced only by the glint of poisoned blades. Shadows move with lethal purpose."
+    title: "Expert Rogues"
+    description: "A vault of absolute darkness pierced only by the glint of poisoned blades. Shadows move with lethal purpose."
     exits:
       u: expert_hall
   master_warriors:
-    desc: "A legendary forge-arena where enchanted weapons clash with thunderous force. Warlords command the very essence of combat."
+    title: "Master Warriors"
+    description: "A legendary forge-arena where enchanted weapons clash with thunderous force. Warlords command the very essence of combat."
     exits:
       w: master_hall
   master_mages:
-    desc: "A reality-bending sanctum where space folds and time stutters. Wizards reshape the fabric of existence."
+    title: "Master Mages"
+    description: "A reality-bending sanctum where space folds and time stutters. Wizards reshape the fabric of existence."
     exits:
       e: master_hall
   master_clerics:
-    desc: "A celestial observatory bathed in divine radiance. Bishops commune directly with higher powers."
+    title: "Master Clerics"
+    description: "A celestial observatory bathed in divine radiance. Bishops commune directly with higher powers."
     exits:
       d: master_hall
   master_rogues:
-    desc: "A chamber that seems to exist between moments. Nightblades phase through solid matter at will."
+    title: "Master Rogues"
+    description: "A chamber that seems to exist between moments. Nightblades phase through solid matter at will."
     exits:
       u: master_hall
   legend_warriors:
-    desc: "A mythic colosseum suspended among storm clouds. Warlords of godslaying renown stand as monuments to martial perfection."
+    title: "Legend Warriors"
+    description: "A mythic colosseum suspended among storm clouds. Warlords of godslaying renown stand as monuments to martial perfection."
     exits:
       w: legend_hall
   legend_mages:
-    desc: "A nexus of pure magical energy where archmages exist as living spells. Reality itself bends to their will."
+    title: "Legend Mages"
+    description: "A nexus of pure magical energy where archmages exist as living spells. Reality itself bends to their will."
     exits:
       e: legend_hall
   legend_clerics:
-    desc: "A fragment of the divine plane made manifest. Prophets glow with the light of celestial ascension."
+    title: "Legend Clerics"
+    description: "A fragment of the divine plane made manifest. Prophets glow with the light of celestial ascension."
     exits:
       d: legend_hall
   legend_rogues:
-    desc: "A void between worlds where shadowlords rule the spaces between shadows. Even light fears to enter."
+    title: "Legend Rogues"
+    description: "A void between worlds where shadowlords rule the spaces between shadows. Even light fears to enter."
     exits:
       u: legend_hall
+
+  staff_hall:
+    title: "Staff Hall"
+    description: "A transcendent chamber beyond mortal comprehension. The walls are woven from living starlight and the floor pulses with the heartbeat of the world itself. Only those who have surpassed legend dare enter."
+    exits:
+      s: legend_hall
+      e: staff_warriors
+      w: staff_mages
+      u: staff_clerics
+      d: staff_rogues
+  staff_warriors:
+    title: "Staff Warriors"
+    description: "An infinite battlefield where the greatest warriors across all timelines clash in eternal combat. The very concept of defeat has been banished from this place."
+    exits:
+      w: staff_hall
+  staff_mages:
+    title: "Staff Mages"
+    description: "A dimension of pure arcane energy where reality is merely a suggestion. Spells of world-shaping magnitude orbit like lazy fireflies."
+    exits:
+      e: staff_hall
+  staff_clerics:
+    title: "Staff Clerics"
+    description: "The throne room of divinity itself, where mortal and celestial merge into one. Pillars of crystallized prayer support a ceiling of infinite sky."
+    exits:
+      d: staff_hall
+  staff_rogues:
+    title: "Staff Rogues"
+    description: "A paradox of space that exists everywhere and nowhere simultaneously. Masters of shadow have transcended the boundary between seen and unseen."
+    exits:
+      u: staff_hall
 
 mobs:
   human_enby_cleric_l1:
@@ -3617,3 +3679,579 @@ mobs:
     xpReward: 2000
     goldMin: 200
     goldMax: 500
+  human_enby_cleric_l60:
+    image: player_sprites/human_enby_cleric_l60.png
+    name: "a transcendent human high oracle"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_enby_mage_l60:
+    image: player_sprites/human_enby_mage_l60.png
+    name: "a transcendent human archmage"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_enby_rogue_l60:
+    image: player_sprites/human_enby_rogue_l60.png
+    name: "a transcendent human phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_enby_warrior_l60:
+    image: player_sprites/human_enby_warrior_l60.png
+    name: "a transcendent human god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_female_cleric_l60:
+    image: player_sprites/human_female_cleric_l60.png
+    name: "a transcendent human high priestess"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_female_mage_l60:
+    image: player_sprites/human_female_mage_l60.png
+    name: "a transcendent human archsorceress"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_female_rogue_l60:
+    image: player_sprites/human_female_rogue_l60.png
+    name: "a transcendent human phantom mistress"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_female_warrior_l60:
+    image: player_sprites/human_female_warrior_l60.png
+    name: "a transcendent human goddess of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_male_cleric_l60:
+    image: player_sprites/human_male_cleric_l60.png
+    name: "a transcendent human high priest"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_male_mage_l60:
+    image: player_sprites/human_male_mage_l60.png
+    name: "a transcendent human archsorcerer"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_male_rogue_l60:
+    image: player_sprites/human_male_rogue_l60.png
+    name: "a transcendent human phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  human_male_warrior_l60:
+    image: player_sprites/human_male_warrior_l60.png
+    name: "a transcendent human god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_enby_cleric_l60:
+    image: player_sprites/elf_enby_cleric_l60.png
+    name: "a transcendent elven high oracle"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_enby_mage_l60:
+    image: player_sprites/elf_enby_mage_l60.png
+    name: "a transcendent elven archmage"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_enby_rogue_l60:
+    image: player_sprites/elf_enby_rogue_l60.png
+    name: "a transcendent elven phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_enby_warrior_l60:
+    image: player_sprites/elf_enby_warrior_l60.png
+    name: "a transcendent elven god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_female_cleric_l60:
+    image: player_sprites/elf_female_cleric_l60.png
+    name: "a transcendent elven high priestess"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_female_mage_l60:
+    image: player_sprites/elf_female_mage_l60.png
+    name: "a transcendent elven archsorceress"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_female_rogue_l60:
+    image: player_sprites/elf_female_rogue_l60.png
+    name: "a transcendent elven phantom mistress"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_female_warrior_l60:
+    image: player_sprites/elf_female_warrior_l60.png
+    name: "a transcendent elven goddess of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_male_cleric_l60:
+    image: player_sprites/elf_male_cleric_l60.png
+    name: "a transcendent elven high priest"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_male_mage_l60:
+    image: player_sprites/elf_male_mage_l60.png
+    name: "a transcendent elven archsorcerer"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_male_rogue_l60:
+    image: player_sprites/elf_male_rogue_l60.png
+    name: "a transcendent elven phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  elf_male_warrior_l60:
+    image: player_sprites/elf_male_warrior_l60.png
+    name: "a transcendent elven god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_enby_cleric_l60:
+    image: player_sprites/dwarf_enby_cleric_l60.png
+    name: "a transcendent dwarven high oracle"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_enby_mage_l60:
+    image: player_sprites/dwarf_enby_mage_l60.png
+    name: "a transcendent dwarven archmage"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_enby_rogue_l60:
+    image: player_sprites/dwarf_enby_rogue_l60.png
+    name: "a transcendent dwarven phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_enby_warrior_l60:
+    image: player_sprites/dwarf_enby_warrior_l60.png
+    name: "a transcendent dwarven god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_female_cleric_l60:
+    image: player_sprites/dwarf_female_cleric_l60.png
+    name: "a transcendent dwarven high priestess"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_female_mage_l60:
+    image: player_sprites/dwarf_female_mage_l60.png
+    name: "a transcendent dwarven archsorceress"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_female_rogue_l60:
+    image: player_sprites/dwarf_female_rogue_l60.png
+    name: "a transcendent dwarven phantom mistress"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_female_warrior_l60:
+    image: player_sprites/dwarf_female_warrior_l60.png
+    name: "a transcendent dwarven goddess of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_male_cleric_l60:
+    image: player_sprites/dwarf_male_cleric_l60.png
+    name: "a transcendent dwarven high priest"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_male_mage_l60:
+    image: player_sprites/dwarf_male_mage_l60.png
+    name: "a transcendent dwarven archsorcerer"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_male_rogue_l60:
+    image: player_sprites/dwarf_male_rogue_l60.png
+    name: "a transcendent dwarven phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  dwarf_male_warrior_l60:
+    image: player_sprites/dwarf_male_warrior_l60.png
+    name: "a transcendent dwarven god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_enby_cleric_l60:
+    image: player_sprites/halfling_enby_cleric_l60.png
+    name: "a transcendent halfling high oracle"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_enby_mage_l60:
+    image: player_sprites/halfling_enby_mage_l60.png
+    name: "a transcendent halfling archmage"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_enby_rogue_l60:
+    image: player_sprites/halfling_enby_rogue_l60.png
+    name: "a transcendent halfling phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_enby_warrior_l60:
+    image: player_sprites/halfling_enby_warrior_l60.png
+    name: "a transcendent halfling god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_female_cleric_l60:
+    image: player_sprites/halfling_female_cleric_l60.png
+    name: "a transcendent halfling high priestess"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_female_mage_l60:
+    image: player_sprites/halfling_female_mage_l60.png
+    name: "a transcendent halfling archsorceress"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_female_rogue_l60:
+    image: player_sprites/halfling_female_rogue_l60.png
+    name: "a transcendent halfling phantom mistress"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_female_warrior_l60:
+    image: player_sprites/halfling_female_warrior_l60.png
+    name: "a transcendent halfling goddess of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_male_cleric_l60:
+    image: player_sprites/halfling_male_cleric_l60.png
+    name: "a transcendent halfling high priest"
+    room: staff_clerics
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_male_mage_l60:
+    image: player_sprites/halfling_male_mage_l60.png
+    name: "a transcendent halfling archsorcerer"
+    room: staff_mages
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_male_rogue_l60:
+    image: player_sprites/halfling_male_rogue_l60.png
+    name: "a transcendent halfling phantom lord"
+    room: staff_rogues
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
+  halfling_male_warrior_l60:
+    image: player_sprites/halfling_male_warrior_l60.png
+    name: "a transcendent halfling god of war"
+    room: staff_warriors
+    level: 60
+    hp: 1100
+    minDamage: 80
+    maxDamage: 130
+    armor: 55
+    xpReward: 3000
+    goldMin: 300
+    goldMax: 750
