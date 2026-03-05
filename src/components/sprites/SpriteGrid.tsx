@@ -23,6 +23,7 @@ const TIER_LABELS: Record<number, string> = {
   30: "Expert",
   40: "Master",
   50: "Legendary",
+  60: "Staff",
 };
 
 const GENDER_LABELS: Record<string, string> = {
@@ -42,12 +43,27 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
     getAsset,
     getImageDataUrl,
     updateSpriteTemplate,
+    swapVariants,
   } = useProject();
   const { getJob } = useGeneration();
 
   const [activeGender, setActiveGender] = useState(spriteConfig.genders[0]);
   const [activeClass, setActiveClass] = useState(spriteConfig.classes[0]);
   const [detailEntityId, setDetailEntityId] = useState<string | null>(null);
+  const [swapping, setSwapping] = useState<string | null>(null); // "entityA|entityB"
+
+  const handleSwap = useCallback(
+    async (entityIdA: string, entityIdB: string) => {
+      const key = `${entityIdA}|${entityIdB}`;
+      setSwapping(key);
+      try {
+        await swapVariants(zoneKey, entityIdA, entityIdB);
+      } finally {
+        setSwapping(null);
+      }
+    },
+    [zoneKey, swapVariants]
+  );
 
   // Memoize groups
   const groups = useMemo(
@@ -151,12 +167,17 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
         {/* Column headers */}
         <div className="sprite-grid-header">
           <div className="sprite-grid-corner" />
-          {spriteConfig.tiers.map((tier) => (
-            <div key={tier} className="sprite-grid-col-header">
-              {TIER_LABELS[tier] || `L${tier}`}
-              <span className="sprite-grid-col-level">Lv {tier}</span>
-            </div>
-          ))}
+          {spriteConfig.tiers.flatMap((tier, tierIdx) => {
+            const header = (
+              <div key={tier} className="sprite-grid-col-header">
+                {TIER_LABELS[tier] || `L${tier}`}
+                <span className="sprite-grid-col-level">Lv {tier}</span>
+              </div>
+            );
+            return tierIdx > 0
+              ? [<div key={`spacer-${tier}`} className="sprite-swap-spacer" />, header]
+              : [header];
+          })}
         </div>
 
         {/* Rows */}
@@ -165,25 +186,47 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
             <div className="sprite-grid-row-header">
               {capitalize(group.race)}
             </div>
-            {spriteConfig.tiers.map((tier) => {
+            {spriteConfig.tiers.flatMap((tier, tierIdx) => {
               const entityId = group.entityIds[tier];
-              if (!entityId) {
-                return <div key={tier} className="sprite-cell sprite-cell--missing" />;
-              }
-              const asset = getAsset(zoneKey, entityId);
-              const generating = !!getJob(zoneKey, entityId);
-              return (
+              const prevTier = tierIdx > 0 ? spriteConfig.tiers[tierIdx - 1] : undefined;
+              const prevEntityId = prevTier ? group.entityIds[prevTier] : undefined;
+
+              const cell = !entityId ? (
+                <div key={tier} className="sprite-cell sprite-cell--missing" />
+              ) : (
                 <SpriteCell
                   key={tier}
                   entityId={entityId}
-                  asset={asset}
+                  asset={getAsset(zoneKey, entityId)}
                   race={group.race}
                   selected={entityId === selectedEntityId}
-                  generating={generating}
+                  generating={!!getJob(zoneKey, entityId)}
                   onClick={() => handleCellClick(entityId)}
                   getDataUrl={getDataUrl}
                 />
               );
+
+              if (tierIdx === 0) return [cell];
+
+              // Swap button or spacer between adjacent tiers
+              const gap = prevEntityId && entityId ? (
+                <button
+                  key={`swap-${tier}`}
+                  className="sprite-swap-btn"
+                  title={`Swap L${prevTier} ↔ L${tier}`}
+                  disabled={swapping !== null}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSwap(prevEntityId, entityId);
+                  }}
+                >
+                  ⇄
+                </button>
+              ) : (
+                <div key={`spacer-${tier}`} className="sprite-swap-spacer" />
+              );
+
+              return [gap, cell];
             })}
           </div>
         ))}

@@ -6,6 +6,7 @@ import {
   readDir,
   readFile,
   writeFile,
+  rename,
 } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
 import type { ProjectFile, AssetEntry, DefaultImageEntry } from "../types/project";
@@ -287,6 +288,37 @@ export async function reconcileImages(
 
 export async function loadImageFile(path: string): Promise<Uint8Array> {
   return readFile(path);
+}
+
+/**
+ * Swap image directories for two entities on disk.
+ * Uses a temp rename to avoid collisions.
+ */
+export async function swapEntityImages(
+  projectDir: string,
+  zoneName: string,
+  entityIdA: string,
+  entityIdB: string
+): Promise<void> {
+  const safeA = entityIdA.replace(/:/g, "_");
+  const safeB = entityIdB.replace(/:/g, "_");
+  const dirA = await join(projectDir, "images", zoneName, safeA);
+  const dirB = await join(projectDir, "images", zoneName, safeB);
+  const dirTemp = await join(projectDir, "images", zoneName, `_swap_tmp_${Date.now()}`);
+
+  const aExists = await exists(dirA);
+  const bExists = await exists(dirB);
+
+  if (aExists && bExists) {
+    await rename(dirA, dirTemp);
+    await rename(dirB, dirA);
+    await rename(dirTemp, dirB);
+  } else if (aExists) {
+    await rename(dirA, dirB);
+  } else if (bExists) {
+    await rename(dirB, dirA);
+  }
+  // If neither exists, nothing to do
 }
 
 export async function reparseZone(

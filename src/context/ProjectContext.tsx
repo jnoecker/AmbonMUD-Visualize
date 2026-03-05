@@ -17,6 +17,7 @@ import {
   saveImage,
   getImagePath,
   reconcileImages,
+  swapEntityImages,
 } from "../lib/project-io";
 import { parseZone } from "../lib/yaml-parser";
 import { readTextFile, readFile, writeFile } from "@tauri-apps/plugin-fs";
@@ -78,6 +79,7 @@ interface ProjectContextValue {
     entityType: EntityType
   ) => Promise<string>;
 
+  swapVariants: (zoneKey: string, entityIdA: string, entityIdB: string) => Promise<void>;
   replaceVariantImage: (
     zoneKey: string,
     entityId: string,
@@ -481,6 +483,66 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const swapVariants = useCallback(
+    async (zoneKey: string, entityIdA: string, entityIdB: string) => {
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const emptyAsset = (id: string): AssetEntry => ({
+        entityId: id, entityType: "mob", title: id,
+        status: "pending", currentPrompt: null, variants: [], approvedVariantIndex: null,
+      });
+      const assetA = zone.assets[entityIdA] ?? emptyAsset(entityIdA);
+      const assetB = zone.assets[entityIdB] ?? emptyAsset(entityIdB);
+
+      // Swap image directories on disk
+      await swapEntityImages(dir, zoneKey, entityIdA, entityIdB);
+
+      // Swap image data between assets, keeping identity fields in place
+      const next: ProjectFile = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: {
+            ...zone,
+            assets: {
+              ...zone.assets,
+              [entityIdA]: {
+                ...assetA,
+                // Take image data from B
+                variants: assetB.variants,
+                approvedVariantIndex: assetB.approvedVariantIndex,
+                status: assetB.status,
+                currentPrompt: assetB.currentPrompt,
+              },
+              [entityIdB]: {
+                ...assetB,
+                // Take image data from A
+                variants: assetA.variants,
+                approvedVariantIndex: assetA.approvedVariantIndex,
+                status: assetA.status,
+                currentPrompt: assetA.currentPrompt,
+              },
+            },
+          },
+        },
+      };
+
+      // Invalidate image cache for both entities
+      for (const key of imageCache.current.keys()) {
+        if (key.includes(entityIdA) || key.includes(entityIdB)) {
+          imageCache.current.delete(key);
+        }
+      }
+
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
   const replaceVariantImage = useCallback(
     async (
       zoneKey: string,
@@ -634,6 +696,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         getDefaultImageDataUrl,
         setViewingVariant: setViewingVariantIndex,
         viewingVariantIndex,
+        swapVariants,
         replaceVariantImage,
         getVariantImageBytes,
         getEntity,
