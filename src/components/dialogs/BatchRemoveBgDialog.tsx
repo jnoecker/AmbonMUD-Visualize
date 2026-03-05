@@ -68,30 +68,43 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     };
     setProgress({ ...prog });
 
-    for (const item of eligibleItems) {
-      if (abortRef.current) break;
+    // Process with concurrency limit
+    let index = 0;
+    const concurrency = settings.batchConcurrency;
 
-      prog.currentEntity = item.title;
-      setProgress({ ...prog });
+    async function processNext(): Promise<void> {
+      while (index < eligibleItems.length) {
+        if (abortRef.current) return;
 
-      try {
-        const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
-        if (abortRef.current) break;
+        const item = eligibleItems[index++];
+        prog.currentEntity = item.title;
+        setProgress({ ...prog });
 
-        const processed = await removeImageBackground(settings.runwareApiKey, bytes);
-        if (abortRef.current) break;
+        try {
+          const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
+          if (abortRef.current) return;
 
-        await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
-      } catch (err) {
-        prog.errors.push({
-          entityId: item.entityId,
-          error: err instanceof Error ? err.message : String(err),
-        });
+          const processed = await removeImageBackground(settings.runwareApiKey, bytes);
+          if (abortRef.current) return;
+
+          await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
+        } catch (err) {
+          prog.errors.push({
+            entityId: item.entityId,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        }
+
+        prog.completed++;
+        setProgress({ ...prog });
       }
-
-      prog.completed++;
-      setProgress({ ...prog });
     }
+
+    const workers = Array.from(
+      { length: Math.min(concurrency, eligibleItems.length) },
+      () => processNext()
+    );
+    await Promise.all(workers);
 
     prog.currentEntity = null;
     setProgress({ ...prog });
