@@ -19,6 +19,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
   const { settings } = useSettings();
   const [running, setRunning] = useState(false);
   const [done, setDone] = useState(false);
+  const [minimized, setMinimized] = useState(false);
   const [progress, setProgress] = useState<BgProgress | null>(null);
   const abortRef = useRef(false);
 
@@ -122,8 +123,40 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
       ? (progress.completed / progress.total) * 100
       : 0;
 
+  if (minimized) {
+    return (
+      <div className="batch-floating-bar" onClick={() => setMinimized(false)}>
+        <div className="batch-floating-progress">
+          <div className="batch-floating-progress-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <span className="batch-floating-text">
+          {done
+            ? "BG removal done!"
+            : `Remove BG: ${progress?.completed ?? 0}/${progress?.total ?? 0}`}
+          {progress && progress.errors.length > 0 && ` (${progress.errors.length} err)`}
+        </span>
+        {running && (
+          <button
+            className="soft-button soft-button--danger batch-floating-abort"
+            onClick={(e) => { e.stopPropagation(); handleAbort(); }}
+          >
+            Abort
+          </button>
+        )}
+        {done && (
+          <button
+            className="soft-button batch-floating-close"
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+          >
+            Dismiss
+          </button>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="dialog-overlay" onClick={running ? undefined : onClose}>
+    <div className="dialog-overlay" onClick={running && !done ? undefined : onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
         <h2 className="dialog-title">Batch Remove Backgrounds</h2>
 
@@ -181,9 +214,14 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
 
         <div className="dialog-actions">
           {running ? (
-            <button className="soft-button soft-button--danger" onClick={handleAbort}>
-              Abort
-            </button>
+            <>
+              <button className="soft-button" onClick={() => setMinimized(true)}>
+                Minimize
+              </button>
+              <button className="soft-button soft-button--danger" onClick={handleAbort}>
+                Abort
+              </button>
+            </>
           ) : done ? (
             <button className="soft-button soft-button--primary" onClick={onClose}>
               Done
