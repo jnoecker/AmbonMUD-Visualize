@@ -21,13 +21,17 @@ import {
 import { parseZone } from "../lib/yaml-parser";
 import { readTextFile, readFile, writeFile } from "@tauri-apps/plugin-fs";
 
-function bytesToDataUrl(bytes: Uint8Array): string {
+function bytesToDataUrl(bytes: Uint8Array, mime = "image/png"): string {
   const CHUNK = 0x8000;
   const parts: string[] = [];
   for (let i = 0; i < bytes.length; i += CHUNK) {
     parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
   }
-  return `data:image/png;base64,${btoa(parts.join(""))}`;
+  return `data:${mime};base64,${btoa(parts.join(""))}`;
+}
+
+function mimeForFilename(filename: string): string {
+  return filename.endsWith(".jpg") ? "image/jpeg" : "image/png";
 }
 
 interface ProjectContextValue {
@@ -275,11 +279,13 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       const asset = zone.assets[entityId];
       if (!asset) return 0;
 
-      const filename = await saveImage(dir, zoneKey, entityId, imageData);
+      const ext = asset.entityType === "room" ? "jpg" : "png";
+      const filename = await saveImage(dir, zoneKey, entityId, imageData, ext);
 
       // Cache the data URL immediately from the bytes we already have
+      const mime = ext === "jpg" ? "image/jpeg" : "image/png";
       const key = cacheKey(zoneKey, entityId, filename);
-      imageCache.current.set(key, bytesToDataUrl(imageData));
+      imageCache.current.set(key, bytesToDataUrl(imageData, mime));
 
       const variant: ImageVariant = {
         filename,
@@ -417,11 +423,12 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       if (!zone) return;
 
       const entityId = `default_${entityType}`;
-      const filename = await saveImage(dir, zoneKey, entityId, imageData);
+      const ext = entityType === "room" ? "jpg" : "png";
+      const filename = await saveImage(dir, zoneKey, entityId, imageData, ext);
 
       // Cache the data URL
       const key = cacheKey(zoneKey, entityId, filename);
-      imageCache.current.set(key, bytesToDataUrl(imageData));
+      imageCache.current.set(key, bytesToDataUrl(imageData, mimeForFilename(filename)));
 
       const emptyEntry: DefaultImageEntry = { prompt: null, filename: null, generatedAt: null };
       const currentDefaults = zone.defaultImages || { room: { ...emptyEntry }, mob: { ...emptyEntry }, item: { ...emptyEntry } };
@@ -467,7 +474,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
       const filePath = await getImagePath(dir, zoneKey, entityId, entry.filename);
       const bytes = await readFile(filePath);
-      const dataUrl = bytesToDataUrl(bytes);
+      const dataUrl = bytesToDataUrl(bytes, mimeForFilename(entry.filename));
       imageCache.current.set(key, dataUrl);
       return dataUrl;
     },
@@ -497,7 +504,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
       // Invalidate cache so next read picks up the new file
       const key = cacheKey(zoneKey, entityId, variant.filename);
-      imageCache.current.set(key, bytesToDataUrl(imageData));
+      imageCache.current.set(key, bytesToDataUrl(imageData, mimeForFilename(variant.filename)));
     },
     []
   );
@@ -583,7 +590,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       // Read from disk and cache
       const filePath = await getImagePath(dir, zoneKey, entityId, filename);
       const bytes = await readFile(filePath);
-      const dataUrl = bytesToDataUrl(bytes);
+      const dataUrl = bytesToDataUrl(bytes, mimeForFilename(filename));
       imageCache.current.set(key, dataUrl);
       return dataUrl;
     },

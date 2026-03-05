@@ -25,10 +25,13 @@ const GEN_SIZE_MAP: Record<string, { width: number; height: number }> = {
 
 // Final output sizes per entity type
 const OUTPUT_SIZE_MAP: Record<EntityType, { width: number; height: number }> = {
-  room: { width: 1920, height: 1080 },
+  room: { width: 1024, height: 576 },
   mob: { width: 512, height: 512 },
   item: { width: 256, height: 256 },
 };
+
+// Rooms use JPEG (no transparency needed, ~20x smaller than PNG)
+const ROOM_JPEG_QUALITY = 0.85;
 
 export function getAspectRatio(entityType: EntityType): "16:9" | "1:1" {
   return entityType === "room" ? "16:9" : "1:1";
@@ -87,9 +90,8 @@ export async function generateImage(
     bytes = await _removeBackground(runware, bytes);
   }
 
-  // Downscale to target output size and re-encode with proper PNG compression
-  const outputSize = OUTPUT_SIZE_MAP[options.entityType];
-  bytes = await resizeImage(bytes, outputSize.width, outputSize.height);
+  // Downscale to target output size and compress (JPEG for rooms, PNG for others)
+  bytes = await recompressForEntityType(bytes, options.entityType);
 
   return bytes;
 }
@@ -128,8 +130,7 @@ export async function removeImageBackground(
     let result = await _removeBackground(runware, imageBytes);
     // Re-encode at target size if entity type provided
     if (entityType) {
-      const outputSize = OUTPUT_SIZE_MAP[entityType];
-      result = await resizeImage(result, outputSize.width, outputSize.height);
+      result = await recompressForEntityType(result, entityType);
     }
     console.log(`[BG removal] done in ${((performance.now() - t0) / 1000).toFixed(1)}s — output ${(result.length / 1024).toFixed(0)}KB`);
     return result;
@@ -191,16 +192,22 @@ export function imageHasTransparency(imageBytes: Uint8Array): Promise<boolean> {
   });
 }
 
+interface RecompressOptions {
+  targetWidth: number;
+  targetHeight: number;
+  format?: "image/png" | "image/jpeg";
+  quality?: number;
+}
+
 /**
- * Resize a PNG image to target dimensions using canvas.
- * Skips if the image is already at or below the target size.
- * Preserves transparency.
+ * Resize/recompress an image using canvas.
+ * Skips if already at or below target size and format is PNG.
  */
-function resizeImage(
+function recompressImage(
   imageBytes: Uint8Array,
-  targetWidth: number,
-  targetHeight: number
+  opts: RecompressOptions
 ): Promise<Uint8Array> {
+  const { targetWidth, targetHeight, format = "image/png", quality } = opts;
   return new Promise((resolve, reject) => {
     const blob = new Blob([imageBytes], { type: "image/png" });
     const url = URL.createObjectURL(blob);
@@ -208,19 +215,23 @@ function resizeImage(
     img.onload = () => {
       URL.revokeObjectURL(url);
 
-      // Skip if already at or below target size
-      if (img.width <= targetWidth && img.height <= targetHeight) {
+      // Skip if already at or below target size and staying PNG
+      if (
+        format === "image/png" &&
+        img.width <= targetWidth &&
+        img.height <= targetHeight
+      ) {
         resolve(imageBytes);
         return;
       }
 
       const canvas = document.createElement("canvas");
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
+      canvas.width = Math.min(img.width, targetWidth);
+      canvas.height = Math.min(img.height, targetHeight);
       const ctx = canvas.getContext("2d")!;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       canvas.toBlob(
         (b) => {
@@ -230,14 +241,38 @@ function resizeImage(
           }
           b.arrayBuffer().then((buf) => resolve(new Uint8Array(buf)));
         },
-        "image/png"
+        format,
+        quality
       );
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      resolve(imageBytes); // can't decode → return original
+      resolve(imageBytes);
     };
     img.src = url;
+  });
+}
+
+/**
+ * Recompress an image to the appropriate format/size for its entity type.
+ * Rooms → JPEG at quality 85, mobs → 512px PNG, items → 256px PNG.
+ */
+export function recompressForEntityType(
+  imageBytes: Uint8Array,
+  entityType: EntityType
+): Promise<Uint8Array> {
+  const outputSize = OUTPUT_SIZE_MAP[entityType];
+  if (entityType === "room") {
+    return recompressImage(imageBytes, {
+      targetWidth: outputSize.width,
+      targetHeight: outputSize.height,
+      format: "image/jpeg",
+      quality: ROOM_JPEG_QUALITY,
+    });
+  }
+  return recompressImage(imageBytes, {
+    targetWidth: outputSize.width,
+    targetHeight: outputSize.height,
   });
 }
 

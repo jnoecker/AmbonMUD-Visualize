@@ -93,11 +93,15 @@ export async function saveProject(
   await writeTextFile(projectPath, JSON.stringify(project, null, 2));
 }
 
+// Matches variant image files: v1.png, v2.jpg, etc.
+const VARIANT_FILE_RE = /^v(\d+)\.(png|jpg)$/;
+
 export async function saveImage(
   projectDir: string,
   zoneName: string,
   entityId: string,
-  imageData: Uint8Array
+  imageData: Uint8Array,
+  extension: "png" | "jpg" = "png"
 ): Promise<string> {
   // Sanitize entity ID for filesystem (replace : with _)
   const safeId = entityId.replace(/:/g, "_");
@@ -108,15 +112,12 @@ export async function saveImage(
     await mkdir(entityDir, { recursive: true });
   }
 
-  // Find next version number
+  // Find next version number (across both .png and .jpg)
   let version = 1;
   try {
     const entries = await readDir(entityDir);
-    const pngFiles = entries.filter(
-      (e) => e.name && e.name.endsWith(".png")
-    );
-    for (const f of pngFiles) {
-      const match = f.name?.match(/^v(\d+)\.png$/);
+    for (const f of entries) {
+      const match = f.name?.match(VARIANT_FILE_RE);
       if (match) {
         const v = parseInt(match[1], 10);
         if (v >= version) version = v + 1;
@@ -126,7 +127,7 @@ export async function saveImage(
     // Directory might be empty, that's fine
   }
 
-  const filename = `v${version}.png`;
+  const filename = `v${version}.${extension}`;
   const filePath = await join(entityDir, filename);
   await writeFile(filePath, imageData);
 
@@ -195,7 +196,7 @@ export async function reconcileImages(
       }
 
       const pngFiles = imageFiles
-        .filter((f) => f.name && /^v\d+\.png$/.test(f.name))
+        .filter((f) => f.name && VARIANT_FILE_RE.test(f.name))
         .map((f) => f.name!)
         .sort((a, b) => {
           const va = parseInt(a.match(/^v(\d+)/)?.[1] ?? "0", 10);
@@ -242,7 +243,7 @@ export async function reconcileImages(
       }
 
       const pngFiles = imageFiles
-        .filter((f) => f.name && /^v\d+\.png$/.test(f.name))
+        .filter((f) => f.name && VARIANT_FILE_RE.test(f.name))
         .sort((a, b) => {
           const va = parseInt(a.name!.match(/^v(\d+)/)?.[1] ?? "0", 10);
           const vb = parseInt(b.name!.match(/^v(\d+)/)?.[1] ?? "0", 10);

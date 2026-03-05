@@ -6,9 +6,10 @@ interface StatusBarProps {
   onExportClick: () => void;
   onCustomAssetClick: () => void;
   onBatchRemoveBgClick: () => void;
+  onRecompressClick: () => void;
 }
 
-export function StatusBar({ onBatchClick, onExportClick, onCustomAssetClick, onBatchRemoveBgClick }: StatusBarProps) {
+export function StatusBar({ onBatchClick, onExportClick, onCustomAssetClick, onBatchRemoveBgClick, onRecompressClick }: StatusBarProps) {
   const { project, getApprovalCounts, batchApprove } = useProject();
   const [approveMsg, setApproveMsg] = useState<string | null>(null);
 
@@ -70,6 +71,9 @@ export function StatusBar({ onBatchClick, onExportClick, onCustomAssetClick, onB
         </button>
         <button className="soft-button soft-button--small" onClick={onBatchRemoveBgClick}>
           Batch Remove BG
+        </button>
+        <button className="soft-button soft-button--small" onClick={onRecompressClick}>
+          Recompress
         </button>
         <button
           className="soft-button soft-button--small soft-button--success"
