@@ -206,6 +206,14 @@ export function SpriteBatchBar({
             Generate All ({entities.filter((e) => e.type === "mob").length})
           </button>
           <button
+            className="soft-button"
+            onClick={handleGenerateTemplate}
+            disabled={running || generatingTemplate || !zoneVibe}
+          >
+            {generatingTemplate && <span className="spinner spinner--small" />}
+            Regenerate Template
+          </button>
+          <button
             className="soft-button soft-button--success"
             onClick={handleBatchApprove}
             disabled={running}
