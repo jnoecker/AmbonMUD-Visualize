@@ -19,12 +19,15 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
   const [minimized, setMinimized] = useState(false);
   const [progress, setProgress] = useState<BatchProgress | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const runningRef = useRef(false);
 
   const handleStart = useCallback(async () => {
     if (!project) return;
     if (!settings.anthropicApiKey || !settings.runwareApiKey) {
       return;
     }
+    if (runningRef.current) return;
+    runningRef.current = true;
 
     setRunning(true);
     abortRef.current = new AbortController();
@@ -63,6 +66,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
       });
     }
 
+    runningRef.current = false;
     setRunning(false);
     setDone(true);
     await reloadProject();

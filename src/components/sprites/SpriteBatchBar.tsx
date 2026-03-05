@@ -106,24 +106,30 @@ export function SpriteBatchBar({
           setBatchProgress({ ...progress });
 
           let succeeded = false;
+          let generatedImage: Uint8Array | null = null;
+          let prompt: string | null = null;
           for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
             try {
               // Fill prompt from template (no Claude call)
-              const dims = parseSpriteId(entityId);
-              if (!dims) continue;
-              const prompt = fillSpriteTemplate(template, dims, entity.title);
-              await updatePrompt(zoneKey, entityId, prompt);
+              if (!prompt) {
+                const dims = parseSpriteId(entityId);
+                if (!dims) continue;
+                prompt = fillSpriteTemplate(template, dims, entity.title);
+                await updatePrompt(zoneKey, entityId, prompt);
+              }
 
               if (controller.signal.aborted) return;
 
-              // Generate image
-              const imageData = await generateImage(
-                settings.runwareApiKey!,
-                prompt,
-                { aspectRatio: getAspectRatio(entity.type), entityType: entity.type, removeBackground: settings.removeBackground },
-                settings.runwareModel
-              );
-              await addVariant(zoneKey, entityId, imageData, prompt);
+              // Generate image (reuse from previous attempt if available)
+              if (!generatedImage) {
+                generatedImage = await generateImage(
+                  settings.runwareApiKey!,
+                  prompt,
+                  { aspectRatio: getAspectRatio(entity.type), entityType: entity.type, removeBackground: settings.removeBackground },
+                  settings.runwareModel
+                );
+              }
+              await addVariant(zoneKey, entityId, generatedImage, prompt);
               succeeded = true;
             } catch {
               if (attempt === 1) {

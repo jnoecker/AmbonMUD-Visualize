@@ -22,6 +22,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
   const [minimized, setMinimized] = useState(false);
   const [progress, setProgress] = useState<BgProgress | null>(null);
   const abortRef = useRef(false);
+  const runningRef = useRef(false);
 
   // Count eligible assets: approved mobs/items with variants
   let totalEligible = 0;
@@ -56,7 +57,8 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
   }
 
   const handleStart = useCallback(async () => {
-    if (!settings.runwareApiKey) return;
+    if (!settings.runwareApiKey || runningRef.current) return;
+    runningRef.current = true;
 
     setRunning(true);
     abortRef.current = false;
@@ -82,14 +84,18 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
         prog.currentEntity = item.title;
         setProgress({ ...prog });
 
+        let processed: Uint8Array | null = null;
         let succeeded = false;
         for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
           try {
-            const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
-            if (abortRef.current) return;
+            // Only call the API if we don't already have a result from a previous attempt
+            if (!processed) {
+              const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
+              if (abortRef.current) return;
 
-            const processed = await removeImageBackground(settings.runwareApiKey, bytes);
-            if (abortRef.current) return;
+              processed = await removeImageBackground(settings.runwareApiKey, bytes);
+              if (abortRef.current) return;
+            }
 
             await replaceVariantImage(item.zoneKey, item.entityId, item.variantIndex, processed);
             succeeded = true;
@@ -116,10 +122,11 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
 
     prog.currentEntity = null;
     setProgress({ ...prog });
+    runningRef.current = false;
     setRunning(false);
     setDone(true);
     await reloadProject();
-  }, [eligibleItems, settings.runwareApiKey, getVariantImageBytes, replaceVariantImage, reloadProject]);
+  }, [eligibleItems, settings.runwareApiKey, settings.batchConcurrency, getVariantImageBytes, replaceVariantImage, reloadProject]);
 
   const handleAbort = () => {
     abortRef.current = true;

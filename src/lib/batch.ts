@@ -64,24 +64,30 @@ export async function runBatch(options: BatchOptions): Promise<BatchProgress> {
       onProgress({ ...progress });
 
       let succeeded = false;
+      let generatedPrompt: string | null = null;
+      let generatedImage: Uint8Array | null = null;
       for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
         try {
-          // Generate prompt if needed
-          const asset = assets[entity.id];
-          let prompt = asset?.currentPrompt;
-          if (!prompt) {
-            prompt = await generatePrompt(entity, zoneVibe);
+          // Generate prompt if needed (reuse from previous attempt if available)
+          if (!generatedPrompt) {
+            const asset = assets[entity.id];
+            generatedPrompt = asset?.currentPrompt ?? null;
+            if (!generatedPrompt) {
+              generatedPrompt = await generatePrompt(entity, zoneVibe);
+            }
           }
 
           if (abortSignal?.aborted) return;
 
-          // Generate image
-          const imageData = await generateImage(prompt, entity);
+          // Generate image (reuse from previous attempt if available)
+          if (!generatedImage) {
+            generatedImage = await generateImage(generatedPrompt, entity);
+          }
 
           if (abortSignal?.aborted) return;
 
           // Save
-          await onSaveImage(entity.id, imageData, prompt);
+          await onSaveImage(entity.id, generatedImage, generatedPrompt);
           succeeded = true;
         } catch (err) {
           if (attempt === 1) {
