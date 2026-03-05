@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
-import { removeImageBackground } from "../../lib/image-gen";
+import { removeImageBackground, imageHasTransparency } from "../../lib/image-gen";
 
 interface BatchRemoveBgDialogProps {
   onClose: () => void;
@@ -10,6 +10,7 @@ interface BatchRemoveBgDialogProps {
 interface BgProgress {
   total: number;
   completed: number;
+  skipped: number;
   currentEntity: string | null;
   errors: Array<{ entityId: string; error: string }>;
 }
@@ -66,6 +67,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     const prog: BgProgress = {
       total: eligibleItems.length,
       completed: 0,
+      skipped: 0,
       currentEntity: null,
       errors: [],
     };
@@ -87,6 +89,15 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
         try {
           const bytes = await getVariantImageBytes(item.zoneKey, item.entityId, item.filename);
           if (abortRef.current) return;
+
+          // Skip images that already have transparency (BG already removed)
+          if (await imageHasTransparency(bytes)) {
+            console.log(`[BG removal] skipping ${item.title} — already transparent`);
+            prog.skipped++;
+            prog.completed++;
+            setProgress({ ...prog });
+            continue;
+          }
 
           const processed = await removeImageBackground(settings.runwareApiKey, bytes);
           if (abortRef.current) return;
@@ -132,7 +143,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
         </div>
         <span className="batch-floating-text">
           {done
-            ? "BG removal done!"
+            ? `BG removal done!${progress && progress.skipped > 0 ? ` (${progress.skipped} skipped)` : ""}`
             : `Remove BG: ${progress?.completed ?? 0}/${progress?.total ?? 0}`}
           {progress && progress.errors.length > 0 && ` (${progress.errors.length} err)`}
         </span>
@@ -184,6 +195,11 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
         {done && !running && (
           <div style={{ color: "var(--color-success)", fontSize: "0.85rem" }}>
             Background removal complete!
+            {progress && progress.skipped > 0 && (
+              <span style={{ color: "var(--text-secondary)", marginLeft: 8 }}>
+                ({progress.skipped} already transparent — skipped)
+              </span>
+            )}
             {progress && progress.errors.length > 0 && (
               <span style={{ color: "var(--color-error)", marginLeft: 8 }}>
                 ({progress.errors.length} error{progress.errors.length !== 1 ? "s" : ""})
@@ -199,6 +215,7 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
             </div>
             <div style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
               {progress.completed} / {progress.total} completed
+              {progress.skipped > 0 && ` (${progress.skipped} already transparent)`}
             </div>
             {progress.currentEntity && (
               <div className="batch-current-entity">

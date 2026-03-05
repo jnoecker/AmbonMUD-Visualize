@@ -121,6 +121,58 @@ export async function removeImageBackground(
   }
 }
 
+/**
+ * Check if a PNG image already has transparent pixels by sampling the edges.
+ * Decodes onto an offscreen canvas and checks corner regions + edge samples.
+ */
+export function imageHasTransparency(imageBytes: Uint8Array): Promise<boolean> {
+  return new Promise((resolve) => {
+    const blob = new Blob([imageBytes], { type: "image/png" });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+
+      const w = img.width;
+      const h = img.height;
+
+      // Sample corner 8×8 regions and edge midpoints — if any pixel has
+      // alpha < 250, the image already has transparency (BG removed).
+      const regions: Array<[number, number, number, number]> = [
+        [0, 0, 8, 8],               // top-left
+        [w - 8, 0, 8, 8],           // top-right
+        [0, h - 8, 8, 8],           // bottom-left
+        [w - 8, h - 8, 8, 8],       // bottom-right
+        [Math.floor(w / 2) - 4, 0, 8, 8],         // top-center
+        [Math.floor(w / 2) - 4, h - 8, 8, 8],     // bottom-center
+        [0, Math.floor(h / 2) - 4, 8, 8],         // left-center
+        [w - 8, Math.floor(h / 2) - 4, 8, 8],     // right-center
+      ];
+
+      for (const [x, y, rw, rh] of regions) {
+        const data = ctx.getImageData(x, y, rw, rh).data;
+        for (let i = 3; i < data.length; i += 4) {
+          if (data[i] < 250) {
+            resolve(true);
+            return;
+          }
+        }
+      }
+      resolve(false);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(false); // can't decode → assume opaque
+    };
+    img.src = url;
+  });
+}
+
 async function _removeBackground(
   runware: InstanceType<typeof Runware>,
   imageBytes: Uint8Array
