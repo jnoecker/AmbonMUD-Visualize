@@ -70,7 +70,7 @@ export function ZoneMusicPanel({
                 <>
                   <div className="music-add-menu-divider" />
                   <div className="music-add-menu-label">Room Override</div>
-                  {roomIds.slice(0, 20).map((rid) => (
+                  {roomIds.map((rid) => (
                     <button key={rid} onClick={() => handleAddTrack("music", rid)}>
                       {rid}
                     </button>
