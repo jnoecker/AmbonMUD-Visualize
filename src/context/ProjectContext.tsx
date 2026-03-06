@@ -6,8 +6,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry } from "../types/project";
+import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry, EntityEdits } from "../types/project";
 import type { Entity, EntityType, ParsedZone } from "../types/entities";
+import { applyEditsToEntity } from "../lib/entity-edits";
 import type { SpritePromptTemplate } from "../types/sprites";
 import { detectSpriteZone } from "../lib/sprite-parser";
 import {
@@ -89,6 +90,14 @@ interface ProjectContextValue {
     imageData: Uint8Array
   ) => Promise<void>;
   getVariantImageBytes: (zoneKey: string, entityId: string, filename: string) => Promise<Uint8Array>;
+
+  updateEntityField: (
+    zoneKey: string,
+    entityId: string,
+    field: string,
+    value: unknown
+  ) => Promise<void>;
+  getEntityEdits: (zoneKey: string, entityId: string) => EntityEdits | undefined;
 
   getEntity: (entityId: string) => Entity | undefined;
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
@@ -638,11 +647,49 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     [commitProject]
   );
 
+  const updateEntityField = useCallback(
+    async (zoneKey: string, entityId: string, field: string, value: unknown) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const currentEdits = zone.entityEdits?.[entityId] ?? {};
+      const updatedEdits = { ...currentEdits, [field]: value };
+
+      const next: ProjectFile = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: {
+            ...zone,
+            entityEdits: {
+              ...zone.entityEdits,
+              [entityId]: updatedEdits,
+            },
+          },
+        },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const getEntityEdits = useCallback(
+    (zoneKey: string, entityId: string): EntityEdits | undefined => {
+      return project?.zones[zoneKey]?.entityEdits?.[entityId];
+    },
+    [project]
+  );
+
   const getEntity = useCallback(
     (entityId: string): Entity | undefined => {
-      for (const zone of Object.values(parsedZones)) {
+      for (const [zoneKey, zone] of Object.entries(parsedZones)) {
         const entity = zone.entities.find((e) => e.id === entityId);
-        if (entity) return entity;
+        if (entity) {
+          const edits = projectRef.current?.zones[zoneKey]?.entityEdits?.[entityId];
+          return applyEditsToEntity(entity, edits);
+        }
       }
       return undefined;
     },
@@ -717,6 +764,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         swapVariants,
         replaceVariantImage,
         getVariantImageBytes,
+        updateEntityField,
+        getEntityEdits,
         getEntity,
         getAsset,
         getImageDataUrl,

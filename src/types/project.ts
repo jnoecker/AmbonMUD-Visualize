@@ -1,5 +1,8 @@
-import type { EntityType } from "./entities";
+import type { EntityType, RawYaml } from "./entities";
 import type { SpriteConfig, SpritePromptTemplate } from "./sprites";
+
+/** Partial edits for a single entity — only fields the user has changed. */
+export type EntityEdits = RawYaml;
 
 export type EntityStatus = "pending" | "generated" | "approved";
 
@@ -37,6 +40,8 @@ export interface ZoneData {
     item: DefaultImageEntry;
   } | null;
   assets: Record<string, AssetEntry>;
+  /** User edits to entity fields, keyed by entity ID. Merged onto rawYaml at export. */
+  entityEdits?: Record<string, EntityEdits>;
   spriteConfig?: SpriteConfig | null;
   spriteTemplate?: SpritePromptTemplate | null;
 }

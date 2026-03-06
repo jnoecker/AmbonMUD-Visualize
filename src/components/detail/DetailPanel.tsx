@@ -8,6 +8,7 @@ import { PromptEditor } from "./PromptEditor";
 import { ActionBar } from "./ActionBar";
 import { VariantStrip } from "./VariantStrip";
 import { SpriteGrid } from "../sprites/SpriteGrid";
+import { EntityFieldEditor } from "./EntityFieldEditor";
 
 export function DetailPanel() {
   const {
@@ -56,6 +57,8 @@ export function DetailPanel() {
     title: asset.title,
     description: asset.customDescription!,
     extraContext: "",
+    bareId: asset.entityId,
+    rawYaml: {},
   } : undefined);
 
   const currentVariant = asset?.variants[viewingVariantIndex];
@@ -222,19 +225,14 @@ export function DetailPanel() {
             {isCustom ? `custom ${entity.type}` : entity.type}
           </span>
         </div>
-        <div className="detail-description">{entity.description}</div>
-        {entity.extraContext && (
-          <pre
-            style={{
-              fontSize: "0.78rem",
-              color: "var(--text-disabled)",
-              fontFamily: "var(--font-mono)",
-              whiteSpace: "pre-wrap",
-            }}
-          >
-            {entity.extraContext}
-          </pre>
-        )}
+        {isCustom ? (
+          <div className="detail-description">{entity.description}</div>
+        ) : selectedZone ? (
+          <EntityFieldEditor
+            entity={entity}
+            zoneKey={selectedZone}
+          />
+        ) : null}
       </div>
 
       {error && (

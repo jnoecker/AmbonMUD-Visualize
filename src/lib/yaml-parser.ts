@@ -48,6 +48,7 @@ function normalizeId(zone: string, id: string): string {
 
 export function parseZone(yamlContent: string): ParsedZone {
   const world = YAML.parse(yamlContent) as WorldFile;
+  const rawZone = world as unknown as Record<string, unknown>;
   const zoneName = world.zone;
   const entities: Entity[] = [];
   const allRoomDescriptions: string[] = [];
@@ -82,10 +83,12 @@ export function parseZone(yamlContent: string): ParsedZone {
 
       entities.push({
         id: fullId,
+        bareId: id,
         type: "room",
         title: room.title,
         description: room.description,
         extraContext: extra,
+        rawYaml: room as unknown as Record<string, unknown>,
       });
     }
   }
@@ -116,10 +119,12 @@ export function parseZone(yamlContent: string): ParsedZone {
 
       entities.push({
         id: fullId,
+        bareId: id,
         type: "mob",
         title: mob.name,
         description: mob.name,
         extraContext: extra,
+        rawYaml: mob as unknown as Record<string, unknown>,
       });
     }
   }
@@ -148,15 +153,17 @@ export function parseZone(yamlContent: string): ParsedZone {
 
       entities.push({
         id: fullId,
+        bareId: id,
         type: "item",
         title: item.displayName || id,
         description: desc,
         extraContext: extra,
+        rawYaml: item as unknown as Record<string, unknown>,
       });
     }
   }
 
-  return { zoneName, entities, allRoomDescriptions };
+  return { zoneName, entities, allRoomDescriptions, rawZone };
 }
 
 export function getEntitiesByType(

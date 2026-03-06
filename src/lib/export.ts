@@ -6,6 +6,7 @@ import {
   copyFile,
 } from "@tauri-apps/plugin-fs";
 import { join, dirname } from "@tauri-apps/api/path";
+import YAML from "yaml";
 import type { ProjectFile, ZoneData } from "../types/project";
 import type { EntityType } from "../types/entities";
 import { getImagePath } from "./project-io";
@@ -127,19 +128,54 @@ export async function exportProject(
   onProgress?.({ ...progress });
 }
 
+/** Entity sections in zone YAML that contain editable entities. */
+const ENTITY_SECTIONS = ["rooms", "mobs", "items"] as const;
+
 async function exportZoneYaml(
   _projectDir: string,
   zone: ZoneData
 ): Promise<void> {
-  // Read original YAML
-  let yaml: string;
+  let yamlText: string;
   try {
-    yaml = await readTextFile(zone.sourceYamlPath);
+    yamlText = await readTextFile(zone.sourceYamlPath);
   } catch {
     return;
   }
 
-  // Build a lookup: bareId -> relative image path
+  // Parse as a Document to preserve comments and formatting
+  const doc = YAML.parseDocument(yamlText);
+
+  // --- Apply entity edits ---
+  if (zone.entityEdits) {
+    for (const [entityId, edits] of Object.entries(zone.entityEdits)) {
+      if (!edits || Object.keys(edits).length === 0) continue;
+
+      const bareId = entityId.includes(":")
+        ? entityId.split(":").pop()!
+        : entityId;
+
+      // Find which section this entity belongs to
+      for (const section of ENTITY_SECTIONS) {
+        const sectionNode = doc.get(section, true) as YAML.YAMLMap | undefined;
+        if (!sectionNode || !YAML.isMap(sectionNode)) continue;
+
+        const entityNode = sectionNode.get(bareId, true) as YAML.YAMLMap | undefined;
+        if (!entityNode || !YAML.isMap(entityNode)) continue;
+
+        // Merge each edited field into the entity node
+        for (const [field, value] of Object.entries(edits)) {
+          if (value === undefined) {
+            entityNode.delete(field);
+          } else {
+            entityNode.set(field, value);
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  // --- Insert image fields for approved assets ---
   const imageMap = new Map<string, string>();
   for (const asset of Object.values(zone.assets)) {
     if (asset.approvedVariantIndex === null) continue;
@@ -150,76 +186,47 @@ async function exportZoneYaml(
       ? asset.entityId.split(":").pop()!
       : asset.entityId;
 
-    // Relative path: {zone}/{bareId}.png
-    // The server prepends /images/ to get the full URL
     imageMap.set(bareId, `${zone.zoneName}/${bareId}.png`);
   }
 
-  // Build zone-level default image block
-  const defaultImageLines: string[] = [];
+  // Set image fields on individual entities
+  for (const section of ENTITY_SECTIONS) {
+    const sectionNode = doc.get(section, true) as YAML.YAMLMap | undefined;
+    if (!sectionNode || !YAML.isMap(sectionNode)) continue;
+
+    for (const item of sectionNode.items) {
+      const key = YAML.isScalar(item.key) ? String(item.key.value) : null;
+      if (!key) continue;
+
+      const imgPath = imageMap.get(key);
+      if (!imgPath) continue;
+
+      const entityNode = item.value;
+      if (!YAML.isMap(entityNode)) continue;
+
+      // Set image as first field (delete existing, then re-add at position 0)
+      entityNode.delete("image");
+      const imgPair = new YAML.Pair(new YAML.Scalar("image"), new YAML.Scalar(imgPath));
+      entityNode.items.unshift(imgPair as any);
+    }
+  }
+
+  // Set zone-level default image block
   if (zone.defaultImages) {
     const defaultTypes: EntityType[] = ["room", "mob", "item"];
-    const entries: string[] = [];
+    const entries: Record<string, string> = {};
     for (const t of defaultTypes) {
       if (zone.defaultImages[t]?.filename) {
-        entries.push(`  ${t}: ${zone.zoneName}/default_${t}.png`);
-      }
-    }
-    if (entries.length > 0) {
-      defaultImageLines.push("image:");
-      defaultImageLines.push(...entries);
-    }
-  }
-
-  if (imageMap.size === 0 && defaultImageLines.length === 0) return;
-
-  // String-based insertion of image fields
-  const lines = yaml.split("\n");
-  const output: string[] = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    output.push(line);
-
-    // Insert zone-level image block after the "zone:" line
-    if (defaultImageLines.length > 0) {
-      const zoneMatch = line.match(/^zone:\s/);
-      if (zoneMatch) {
-        // Check if an image: block already follows
-        const nextLine = i + 1 < lines.length ? lines[i + 1] : "";
-        if (nextLine.trimStart().startsWith("image:")) {
-          // Skip existing zone-level image block (image: + indented entries)
-          i++; // skip "image:"
-          while (i + 1 < lines.length && /^  \w+:/.test(lines[i + 1])) {
-            i++;
-          }
-        }
-        // Insert new zone-level image block
-        output.push(...defaultImageLines);
-        continue;
+        entries[t] = `${zone.zoneName}/default_${t}.png`;
       }
     }
 
-    // Match entity ID keys at 2-space indent: "  bareId:"
-    const trimmed = line.trimEnd();
-    const match = trimmed.match(/^  (\w+):$/);
-    if (!match) continue;
-
-    const bareId = match[1];
-    const imgPath = imageMap.get(bareId);
-    if (!imgPath) continue;
-
-    // Check if next line already has an image field (avoid duplicates on re-export)
-    const nextLine = i + 1 < lines.length ? lines[i + 1] : "";
-    if (nextLine.trimStart().startsWith("image:")) {
-      // Replace existing image line
-      lines[i + 1] = `    image: ${imgPath}`;
-    } else {
-      // Insert image field as first property under the entity
-      output.push(`    image: ${imgPath}`);
+    if (Object.keys(entries).length > 0) {
+      doc.set("image", entries);
     }
   }
 
-  // Write modified YAML back to the source file
-  await writeTextFile(zone.sourceYamlPath, output.join("\n"));
+  // Write back, preserving original formatting as much as possible
+  const output = doc.toString({ lineWidth: 0 });
+  await writeTextFile(zone.sourceYamlPath, output);
 }

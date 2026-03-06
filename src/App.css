@@ -492,6 +492,66 @@ body {
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
+/* Entity field editor */
+.entity-field-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.entity-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.entity-field:has(.entity-field-textarea) {
+  grid-column: 1 / -1;
+}
+
+.entity-field-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-disabled);
+  padding-left: 2px;
+}
+
+.entity-field-input {
+  width: 100%;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-input);
+  color: var(--text-primary);
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.82rem;
+  font-family: var(--font-body);
+  line-height: 1.4;
+  transition: border-color 180ms var(--ease-out-soft);
+}
+
+.entity-field-input:focus {
+  outline: none;
+  border-color: var(--color-primary-pale-blue);
+  box-shadow: 0 0 0 2px rgb(140 174 201 / 20%);
+}
+
+.entity-field-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.entity-field-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.entity-field-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
 /* Image preview */
 .image-preview {
   position: relative;
