@@ -14,6 +14,8 @@ Guidelines:
 - The mood should be inviting, mysterious, and magical
 - Convey the zone's overall character and geography, not just one location
 - Include 2-3 specific motion elements layered at different depths
+- NEVER describe actions, events, characters doing things, or narrative beats — only describe slow cinematic camera motion and ambient environmental movement
+- NO walking, fighting, casting spells, opening doors, or any character/object actions
 
 Example motions: aerial drift from misty forest edge across canopy to a glowing clearing, sweeping crane over village rooftops revealing a distant castle, slow glide along a river from cavern mouth to open valley
 
@@ -30,6 +32,8 @@ Guidelines:
 - Keep motion gentle and atmospheric — no fast cuts, no jarring transitions
 - The mood should match the room's specific character and atmosphere
 - Include 2-3 specific motion elements layered at different depths
+- NEVER describe actions, events, characters doing things, or narrative beats — only describe slow cinematic camera motion and ambient environmental movement
+- NO walking, fighting, casting spells, opening doors, or any character/object actions
 
 Example motions: slow forward dolly through archway, gentle lateral pan revealing interior details, subtle upward tilt from ground-level glow to ceiling, ambient particles drifting across frame
 
@@ -46,6 +50,7 @@ Guidelines:
 - Keep it dramatic but not aggressive — powerful yet ethereal
 - Motion should feel intentional and weighted, not frantic
 - The boss should feel ancient, powerful, and otherworldly
+- Describe only slow cinematic motion, atmospheric effects, and camera movement — NOT the boss attacking, moving, speaking, or performing any actions
 
 Example effects: slow materialization from swirling mist, eyes glowing then full form emerging, magical aura building and pulsing outward, shadow lifting to reveal figure
 
@@ -62,6 +67,7 @@ Guidelines:
 - Keep it celebratory but elegant — this is a reward moment
 - Motion should feel magical and satisfying
 - The item should feel precious and powerful
+- Describe only slow cinematic motion and ambient effects — NOT hands picking up the item, characters interacting with it, or any actions
 
 Example effects: slow rotation with golden sparkle trail, pulsing glow building to radiant burst, magical runes spiraling inward then item gleams, light converging to form the item from pure energy
 
