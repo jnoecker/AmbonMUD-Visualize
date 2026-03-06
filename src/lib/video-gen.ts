@@ -35,16 +35,31 @@ const DEFAULT_MODEL_SPEC: ModelSpec = {
   duration: 10,
 };
 
+const DIMS_720P: ModelSpec["dims"] = {
+  zone_intro: { width: 1280, height: 720 },
+  room_cinematic: { width: 1280, height: 720 },
+  boss_reveal: { width: 720, height: 1280 },
+  item_reveal: { width: 720, height: 1280 },
+};
+
+const DIMS_768P: ModelSpec["dims"] = {
+  zone_intro: { width: 1366, height: 768 },
+  room_cinematic: { width: 1366, height: 768 },
+  boss_reveal: { width: 768, height: 1366 },
+  item_reveal: { width: 768, height: 1366 },
+};
+
 const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
-  "vidu:3@2": {
-    dims: {
-      zone_intro: { width: 1280, height: 720 },
-      room_cinematic: { width: 1280, height: 720 },
-      boss_reveal: { width: 720, height: 1280 },
-      item_reveal: { width: 720, height: 1280 },
-    },
-    duration: 8,
-  },
+  // Seedance 1.5 Pro: 720p, 5s per-video
+  "bytedance:seedance@1.5-pro": { dims: DIMS_720P, duration: 5 },
+  // PixVerse v5.6: 720p, 5s per-video
+  "pixverse:1@7": { dims: DIMS_720P, duration: 5 },
+  // Vidu Q2 Turbo: 720p, 8s per-video
+  "vidu:3@2": { dims: DIMS_720P, duration: 8 },
+  // Vidu Q3 Turbo: 720p, 10s per-second
+  "vidu:4@2": { dims: DIMS_720P, duration: 10 },
+  // MiniMax Hailuo 2.3: 768p, 10s per-video
+  "minimax:4@1": { dims: DIMS_768P, duration: 10 },
 };
 
 function getModelSpec(model: string): ModelSpec {
