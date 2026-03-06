@@ -18,13 +18,41 @@ export interface GenerateVideoResult {
   cost?: number;
 }
 
-// LTX 2.3 only supports standard broadcast resolutions (1080p, 1440p, 4K).
-// All video types use 1080p landscape — cheapest option at $0.06/s.
-const DIMENSIONS: Record<VideoAssetType, { width: number; height: number }> = {
-  zone_intro: { width: 1920, height: 1080 },
-  boss_reveal: { width: 1080, height: 1920 },
-  item_reveal: { width: 1080, height: 1920 },
+// Model-specific configurations: resolution and duration constraints.
+// Defaults (1080p) apply to LTX and most models.
+interface ModelSpec {
+  dims: Record<VideoAssetType, { width: number; height: number }>;
+  duration: number;
+}
+
+const DEFAULT_MODEL_SPEC: ModelSpec = {
+  dims: {
+    zone_intro: { width: 1920, height: 1080 },
+    boss_reveal: { width: 1080, height: 1920 },
+    item_reveal: { width: 1080, height: 1920 },
+  },
+  duration: 10,
 };
+
+const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
+  "vidu:3@2": {
+    dims: {
+      zone_intro: { width: 1280, height: 720 },
+      boss_reveal: { width: 720, height: 1280 },
+      item_reveal: { width: 720, height: 1280 },
+    },
+    duration: 8,
+  },
+};
+
+function getModelSpec(model: string): ModelSpec {
+  const override = MODEL_SPECS[model];
+  if (!override) return DEFAULT_MODEL_SPEC;
+  return {
+    dims: override.dims ?? DEFAULT_MODEL_SPEC.dims,
+    duration: override.duration ?? DEFAULT_MODEL_SPEC.duration,
+  };
+}
 
 /**
  * Generate a video via Runware's videoInference API.
@@ -38,12 +66,13 @@ export async function generateVideo(
   model: string = "lightricks:ltx@2.3"
 ): Promise<GenerateVideoResult> {
   const runware = getRunware(apiKey);
-  const dims = DIMENSIONS[videoType];
+  const spec = getModelSpec(model);
+  const dims = spec.dims[videoType];
 
   const payload: Record<string, unknown> = {
     model,
     positivePrompt: config.prompt,
-    duration: 10,
+    duration: spec.duration,
     width: dims.width,
     height: dims.height,
     numberResults: 1,

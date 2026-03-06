@@ -167,7 +167,7 @@ export async function exportProject(
         await mkdir(zoneAudioDir, { recursive: true });
 
         const srcPath = await getAudioPath(projectDir, zone.zoneName, music.id, variant.filename);
-        const destPath = await join(zoneAudioDir, `${music.title.toLowerCase().replace(/\s+/g, "_")}.mp3`);
+        const destPath = await join(zoneAudioDir, `${music.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp3`);
 
         progress.currentFile = `${music.title}.mp3`;
         onProgress?.({ ...progress });
@@ -192,7 +192,7 @@ export async function exportProject(
         await mkdir(zoneVideoDir, { recursive: true });
 
         const srcPath = await getVideoPath(projectDir, zone.zoneName, video.id, variant.filename);
-        const destPath = await join(zoneVideoDir, `${video.title.toLowerCase().replace(/\s+/g, "_")}.mp4`);
+        const destPath = await join(zoneVideoDir, `${video.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp4`);
 
         progress.currentFile = `${video.title}.mp4`;
         onProgress?.({ ...progress });
@@ -316,7 +316,7 @@ async function exportZoneYaml(
       (v) => v.videoType === "zone_intro" && v.approvedVariantIndex !== null
     );
     if (zoneIntro) {
-      doc.set("video", `${zone.zoneName}/${zoneIntro.title.toLowerCase().replace(/\s+/g, "_")}.mp4`);
+      doc.set("video", `${zone.zoneName}/${zoneIntro.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp4`);
     }
 
     // Per-entity videos (boss reveals, item reveals)
@@ -336,7 +336,7 @@ async function exportZoneYaml(
           const entityNode = sectionNode.get(bareId, true) as YAML.YAMLMap | undefined;
           if (!entityNode || !YAML.isMap(entityNode)) continue;
 
-          const videoPath = `${zone.zoneName}/${vid.title.toLowerCase().replace(/\s+/g, "_")}.mp4`;
+          const videoPath = `${zone.zoneName}/${vid.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp4`;
           entityNode.set("video", videoPath);
         }
       }
@@ -356,10 +356,10 @@ async function exportZoneYaml(
     if (zoneMusic || zoneAmbient) {
       const audioBlock: Record<string, string> = {};
       if (zoneMusic) {
-        audioBlock.music = `${zone.zoneName}/${zoneMusic.title.toLowerCase().replace(/\s+/g, "_")}.mp3`;
+        audioBlock.music = `${zone.zoneName}/${zoneMusic.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp3`;
       }
       if (zoneAmbient) {
-        audioBlock.ambient = `${zone.zoneName}/${zoneAmbient.title.toLowerCase().replace(/\s+/g, "_")}.mp3`;
+        audioBlock.ambient = `${zone.zoneName}/${zoneAmbient.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp3`;
       }
       doc.set("audio", audioBlock);
     }
@@ -375,7 +375,7 @@ async function exportZoneYaml(
           const roomNode = roomsNode.get(track.roomId!, true) as YAML.YAMLMap | undefined;
           if (!roomNode || !YAML.isMap(roomNode)) continue;
 
-          const audioPath = `${zone.zoneName}/${track.title.toLowerCase().replace(/\s+/g, "_")}.mp3`;
+          const audioPath = `${zone.zoneName}/${track.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp3`;
           roomNode.set(track.trackType, audioPath);
         }
       }
