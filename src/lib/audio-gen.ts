@@ -36,6 +36,10 @@ export async function generateMusic(
       numberResults: 1,
       positivePrompt: config.prompt,
       duration: config.duration,
+      audioSettings: {
+        sampleRate: 44100,
+        bitrate: 128,
+      },
     });
   } catch (err: any) {
     const msg =
