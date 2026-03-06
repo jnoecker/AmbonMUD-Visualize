@@ -100,7 +100,7 @@ export async function generateVideo(
   };
 
   if (sourceImageBase64) {
-    payload.inputs = { image: sourceImageBase64 };
+    payload.frameImages = [{ inputImage: sourceImageBase64, frame: "first" }];
   }
 
   let results: any;
