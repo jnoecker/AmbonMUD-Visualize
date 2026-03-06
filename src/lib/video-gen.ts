@@ -71,7 +71,7 @@ const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
   "vidu:3@2": { dims: DIMS_720P, durations: [4, 8] },
   "vidu:4@1": { durations: [4, 8] },
   "vidu:4@2": { dims: DIMS_720P, durations: [4, 8] },
-  "minimax:4@1": { dims: DIMS_768P, durations: [6, 10] },
+  "minimax:4@1": { dims: DIMS_768P, durations: [10, 6] },
 };
 
 export function getModelSpec(model: string): ModelSpec {
