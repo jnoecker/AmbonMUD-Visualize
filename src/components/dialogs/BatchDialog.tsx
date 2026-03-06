@@ -49,6 +49,8 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
             anthropicApiKey: settings.anthropicApiKey,
             runwareApiKey: settings.runwareApiKey,
             runwareLlmModel: settings.runwareLlmModel,
+            openRouterApiKey: settings.openRouterApiKey,
+            openRouterModel: settings.openRouterModel,
           };
           const prompt = await generateEntityPrompt(llmOpts, entity, vibe);
           await updatePrompt(zoneKey, entity.id, prompt);

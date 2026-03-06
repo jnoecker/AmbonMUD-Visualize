@@ -52,7 +52,9 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
     anthropicApiKey: settings.anthropicApiKey,
     runwareApiKey: settings.runwareApiKey,
     runwareLlmModel: settings.runwareLlmModel,
-  }), [settings.promptLlm, settings.anthropicApiKey, settings.runwareApiKey, settings.runwareLlmModel]);
+    openRouterApiKey: settings.openRouterApiKey,
+    openRouterModel: settings.openRouterModel,
+  }), [settings.promptLlm, settings.anthropicApiKey, settings.runwareApiKey, settings.runwareLlmModel, settings.openRouterApiKey, settings.openRouterModel]);
 
   const generateOneDefault = useCallback(
     async (entityType: DefaultImageEntityType, vibeText: string) => {
