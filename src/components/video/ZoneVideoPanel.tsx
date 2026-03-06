@@ -81,9 +81,17 @@ export function ZoneVideoPanel({
           </button>
           {showAddMenu && (
             <div className="music-add-menu">
-              <button onClick={() => handleAddVideo("zone_intro", rooms[0] ?? null)}>
-                Zone Intro Cinematic
-              </button>
+              <div className="music-add-menu-label">Zone Intro Cinematic</div>
+              {rooms.map((room) => (
+                <button key={room.id} onClick={() => handleAddVideo("zone_intro", room)}>
+                  {room.title}
+                </button>
+              ))}
+              {rooms.length === 0 && (
+                <button onClick={() => handleAddVideo("zone_intro", null)}>
+                  Zone Intro (text-to-video)
+                </button>
+              )}
               {(bossMobs.length > 0 || allMobs.length > 0) && (
                 <>
                   <div className="music-add-menu-divider" />
