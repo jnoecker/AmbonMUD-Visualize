@@ -2,6 +2,7 @@ import { useProject } from "../../context/ProjectContext";
 import { EntityTree } from "./EntityTree";
 import { ZoneVibePanel } from "./ZoneVibePanel";
 import { ZoneMusicPanel } from "../music/ZoneMusicPanel";
+import { ZoneVideoPanel } from "../video/ZoneVideoPanel";
 import type { ZoneData } from "../../types/project";
 
 export function Sidebar() {
@@ -72,6 +73,12 @@ export function Sidebar() {
                   vibe={zone.vibe}
                   roomDescriptions={parsed?.allRoomDescriptions ?? []}
                   roomIds={parsed?.entities.filter((e) => e.type === "room").map((e) => e.bareId)}
+                />
+                <ZoneVideoPanel
+                  zoneKey={zoneKey}
+                  zoneName={zone.zoneName}
+                  vibe={zone.vibe}
+                  entities={entities}
                 />
               </>
             )}

@@ -8,7 +8,7 @@ import {
 import { join, dirname } from "@tauri-apps/api/path";
 import YAML from "yaml";
 import type { ProjectFile, ZoneData, DefaultImageEntityType } from "../types/project";
-import { getImagePath, getAudioPath } from "./project-io";
+import { getImagePath, getAudioPath, getVideoPath } from "./project-io";
 import { getDefinitionPaths } from "./ability-parser";
 
 export interface ExportProgress {
@@ -54,6 +54,12 @@ export async function exportProject(
     if (zone.musicAssets) {
       for (const m of zone.musicAssets) {
         if (m.approvedVariantIndex !== null) totalFiles++;
+      }
+    }
+    // Count approved video clips
+    if (zone.videoAssets) {
+      for (const v of zone.videoAssets) {
+        if (v.approvedVariantIndex !== null) totalFiles++;
       }
     }
   }
@@ -173,6 +179,31 @@ export async function exportProject(
         progress.completed++;
       }
     }
+
+    // Copy approved video clips
+    if (zone.videoAssets) {
+      const videoBaseDir = await join(worldDir, "video");
+      for (const video of zone.videoAssets) {
+        if (video.approvedVariantIndex === null) continue;
+        const variant = video.variants[video.approvedVariantIndex];
+        if (!variant) continue;
+
+        const zoneVideoDir = await join(videoBaseDir, zone.zoneName);
+        await mkdir(zoneVideoDir, { recursive: true });
+
+        const srcPath = await getVideoPath(projectDir, zone.zoneName, video.id, variant.filename);
+        const destPath = await join(zoneVideoDir, `${video.title.toLowerCase().replace(/\s+/g, "_")}.mp4`);
+
+        progress.currentFile = `${video.title}.mp4`;
+        onProgress?.({ ...progress });
+
+        const srcExists = await exists(srcPath);
+        if (srcExists) {
+          await copyFile(srcPath, destPath);
+        }
+        progress.completed++;
+      }
+    }
   }
 
   progress.currentFile = null;
@@ -275,6 +306,40 @@ async function exportZoneYaml(
 
     if (Object.keys(entries).length > 0) {
       doc.set("image", entries);
+    }
+  }
+
+  // --- Insert video fields for approved video clips ---
+  if (zone.videoAssets) {
+    // Zone-level video (zone intro)
+    const zoneIntro = zone.videoAssets.find(
+      (v) => v.videoType === "zone_intro" && v.approvedVariantIndex !== null
+    );
+    if (zoneIntro) {
+      doc.set("video", `${zone.zoneName}/${zoneIntro.title.toLowerCase().replace(/\s+/g, "_")}.mp4`);
+    }
+
+    // Per-entity videos (boss reveals, item reveals)
+    const entityVideos = zone.videoAssets.filter(
+      (v) => v.sourceEntityId && v.videoType !== "zone_intro" && v.approvedVariantIndex !== null
+    );
+    if (entityVideos.length > 0) {
+      for (const section of ENTITY_SECTIONS) {
+        const sectionNode = doc.get(section, true) as YAML.YAMLMap | undefined;
+        if (!sectionNode || !YAML.isMap(sectionNode)) continue;
+
+        for (const vid of entityVideos) {
+          const bareId = vid.sourceEntityId!.includes(":")
+            ? vid.sourceEntityId!.split(":").pop()!
+            : vid.sourceEntityId!;
+
+          const entityNode = sectionNode.get(bareId, true) as YAML.YAMLMap | undefined;
+          if (!entityNode || !YAML.isMap(entityNode)) continue;
+
+          const videoPath = `${zone.zoneName}/${vid.title.toLowerCase().replace(/\s+/g, "_")}.mp4`;
+          entityNode.set("video", videoPath);
+        }
+      }
     }
   }
 

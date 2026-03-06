@@ -13,9 +13,12 @@ import { generateAbilityPrompt } from "../lib/ability-prompt-gen";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
 import { generateMusic } from "../lib/audio-gen";
 import { generateMusicConfig } from "../lib/music-prompt-gen";
+import { generateVideo } from "../lib/video-gen";
+import { generateVideoConfig } from "../lib/video-prompt-gen";
 import { runwareEnhancePrompt } from "../lib/runware-llm";
 import type { LlmCallOptions } from "../lib/llm";
 import type { MusicConfig, AudioTrackType } from "../types/music";
+import type { VideoConfig, VideoAssetType } from "../types/video";
 import type { Entity, EntityType } from "../types/entities";
 
 type JobType = "prompt" | "image";
@@ -73,6 +76,21 @@ interface GenerationContextValue {
     musicId: string,
     config: MusicConfig
   ) => void;
+  startVideoConfigGeneration: (
+    zoneKey: string,
+    videoId: string,
+    videoType: VideoAssetType,
+    entityTitle: string,
+    entityDescription: string,
+    zoneVibe: string | null
+  ) => void;
+  startVideoGeneration: (
+    zoneKey: string,
+    videoId: string,
+    config: VideoConfig,
+    videoType: VideoAssetType,
+    sourceImageBase64: string | null
+  ) => void;
   getJob: (zoneKey: string, entityId: string) => GenerationJob | undefined;
   getError: (zoneKey: string, entityId: string) => string | undefined;
   clearError: (zoneKey: string, entityId: string) => void;
@@ -88,6 +106,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
   const {
     updatePrompt, addVariant, selectedZone, selectedEntityId, setViewingVariant,
     updateMusicConfig, addMusicVariant,
+    updateVideoConfig, addVideoVariant,
   } = useProject();
   const { settings } = useSettings();
 
@@ -480,6 +499,94 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
     [addMusicVariant, setJob, removeJob, setErrorForKey]
   );
 
+  const startVideoConfigGeneration = useCallback(
+    (
+      zoneKey: string,
+      videoId: string,
+      videoType: VideoAssetType,
+      entityTitle: string,
+      entityDescription: string,
+      zoneVibe: string | null
+    ) => {
+      const key = entityKey(zoneKey, `video:${videoId}`);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "prompt" });
+
+      (async () => {
+        try {
+          const config = await generateVideoConfig(
+            getLlmOpts(),
+            videoType,
+            entityTitle,
+            entityDescription,
+            zoneVibe
+          );
+          await updateVideoConfig(zoneKey, videoId, config);
+        } catch (err) {
+          setErrorForKey(
+            key,
+            err instanceof Error ? err.message : "Failed to generate video config"
+          );
+        } finally {
+          removeJob(key);
+        }
+      })();
+    },
+    [updateVideoConfig, setJob, removeJob, setErrorForKey]
+  );
+
+  const startVideoGeneration = useCallback(
+    (
+      zoneKey: string,
+      videoId: string,
+      config: VideoConfig,
+      videoType: VideoAssetType,
+      sourceImageBase64: string | null
+    ) => {
+      const key = entityKey(zoneKey, `video:${videoId}`);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "image" }); // reuse "image" job type for video
+
+      (async () => {
+        try {
+          const result = await generateVideo(
+            settingsRef.current.runwareApiKey!,
+            config,
+            videoType,
+            sourceImageBase64,
+            settingsRef.current.videoModel
+          );
+
+          // Download the video from the URL
+          const response = await fetch(result.videoUrl);
+          const arrayBuffer = await response.arrayBuffer();
+          const videoData = new Uint8Array(arrayBuffer);
+
+          await addVideoVariant(zoneKey, videoId, videoData, config);
+        } catch (err) {
+          console.error("[video gen] error:", err);
+          const msg = err instanceof Error ? err.message : String(err);
+          setErrorForKey(key, msg);
+        } finally {
+          removeJob(key);
+        }
+      })();
+    },
+    [addVideoVariant, setJob, removeJob, setErrorForKey]
+  );
+
   const getJob = useCallback(
     (zoneKey: string, entityId: string) => {
       return jobs.get(entityKey(zoneKey, entityId));
@@ -517,6 +624,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
         startMultiImageGeneration,
         startMusicConfigGeneration,
         startMusicGeneration,
+        startVideoConfigGeneration,
+        startVideoGeneration,
         getJob,
         getError,
         clearError,

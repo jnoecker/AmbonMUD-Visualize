@@ -1880,6 +1880,37 @@ body {
   letter-spacing: 0.05em;
 }
 
+/* Video type badges */
+.video-track-type--zone_intro {
+  background: rgb(140 174 201 / 20%);
+  color: var(--color-pale-blue);
+}
+
+.video-track-type--boss_reveal {
+  background: rgb(184 143 170 / 20%);
+  color: var(--color-dusty-rose);
+}
+
+.video-track-type--item_reveal {
+  background: rgb(190 168 115 / 20%);
+  color: var(--color-soft-gold);
+}
+
+.video-source-warning {
+  font-size: 0.78rem;
+  color: var(--color-warning, #c9a84c);
+  padding: var(--space-1) 0;
+}
+
+.video-player {
+  margin: var(--space-2) 0;
+}
+
+.video-player video {
+  border-radius: var(--radius-md);
+  background: var(--bg-deepest);
+}
+
 /* Track actions */
 .music-track-actions {
   display: flex;

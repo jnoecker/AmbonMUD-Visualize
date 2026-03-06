@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry, DefaultImageEntityType, EntityEdits } from "../types/project";
 import type { MusicAssetEntry, MusicConfig, MusicVariant, AudioTrackType } from "../types/music";
+import type { VideoAssetEntry, VideoConfig, VideoVariant, VideoAssetType } from "../types/video";
 import type { Entity, EntityType, ParsedZone } from "../types/entities";
 import { applyEditsToEntity } from "../lib/entity-edits";
 import type { SpritePromptTemplate } from "../types/sprites";
@@ -20,8 +21,10 @@ import {
   saveProject,
   saveImage,
   saveAudioFile,
+  saveVideoFile,
   getImagePath,
   getAudioPath,
+  getVideoPath,
   reconcileImages,
   swapEntityImages,
 } from "../lib/project-io";
@@ -107,6 +110,19 @@ interface ProjectContextValue {
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
   getImageDataUrl: (zoneKey: string, entityId: string, filename: string) => Promise<string>;
   getApprovalCounts: () => { approved: number; total: number };
+
+  // Video
+  getVideoAssets: (zoneKey: string) => VideoAssetEntry[];
+  addVideoAsset: (zoneKey: string, title: string, videoType: VideoAssetType, sourceEntityId: string | null) => Promise<string>;
+  updateVideoConfig: (zoneKey: string, videoId: string, config: VideoConfig) => Promise<void>;
+  addVideoVariant: (
+    zoneKey: string,
+    videoId: string,
+    videoData: Uint8Array,
+    config: VideoConfig
+  ) => Promise<number>;
+  approveVideoVariant: (zoneKey: string, videoId: string, variantIndex: number) => Promise<void>;
+  getVideoDataUrl: (zoneKey: string, videoId: string, filename: string) => Promise<string>;
 
   // Music
   getMusicAssets: (zoneKey: string) => MusicAssetEntry[];
@@ -763,6 +779,168 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  // --- Video asset management ---
+
+  const getVideoAssets = useCallback(
+    (zoneKey: string): VideoAssetEntry[] => {
+      return project?.zones[zoneKey]?.videoAssets ?? [];
+    },
+    [project]
+  );
+
+  const addVideoAsset = useCallback(
+    async (zoneKey: string, title: string, videoType: VideoAssetType, sourceEntityId: string | null): Promise<string> => {
+      const p = projectRef.current;
+      if (!p) return "";
+      const zone = p.zones[zoneKey];
+      if (!zone) return "";
+
+      const id = `video_${Date.now()}`;
+      const entry: VideoAssetEntry = {
+        id,
+        title,
+        videoType,
+        sourceEntityId,
+        status: "pending",
+        currentConfig: null,
+        variants: [],
+        approvedVariantIndex: null,
+      };
+
+      const next: ProjectFile = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: {
+            ...zone,
+            videoAssets: [...(zone.videoAssets ?? []), entry],
+          },
+        },
+      };
+      await commitProject(next);
+      return id;
+    },
+    [commitProject]
+  );
+
+  const updateVideoConfig = useCallback(
+    async (zoneKey: string, videoId: string, config: VideoConfig) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const videoAssets = (zone.videoAssets ?? []).map((v) =>
+        v.id === videoId ? { ...v, currentConfig: config } : v
+      );
+
+      const next: ProjectFile = {
+        ...p,
+        zones: { ...p.zones, [zoneKey]: { ...zone, videoAssets } },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const addVideoVariant = useCallback(
+    async (
+      zoneKey: string,
+      videoId: string,
+      videoData: Uint8Array,
+      config: VideoConfig
+    ): Promise<number> => {
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return 0;
+      const zone = p.zones[zoneKey];
+      if (!zone) return 0;
+
+      const filename = await saveVideoFile(dir, zoneKey, videoId, videoData);
+
+      // Cache the video data URL
+      const key = `video/${zoneKey}/${videoId}/${filename}`;
+      const CHUNK = 0x8000;
+      const b64parts: string[] = [];
+      for (let i = 0; i < videoData.length; i += CHUNK) {
+        b64parts.push(String.fromCharCode(...videoData.subarray(i, i + CHUNK)));
+      }
+      imageCache.current.set(key, `data:video/mp4;base64,${btoa(b64parts.join(""))}`);
+
+      const variant: VideoVariant = {
+        filename,
+        generatedAt: new Date().toISOString(),
+        config,
+      };
+
+      const latest = projectRef.current!;
+      const latestZone = latest.zones[zoneKey];
+      const videoAssets = (latestZone.videoAssets ?? []).map((v) => {
+        if (v.id !== videoId) return v;
+        return {
+          ...v,
+          status: (v.status === "pending" ? "generated" : v.status) as VideoAssetEntry["status"],
+          variants: [...v.variants, variant],
+        };
+      });
+
+      const next: ProjectFile = {
+        ...latest,
+        zones: { ...latest.zones, [zoneKey]: { ...latestZone, videoAssets } },
+      };
+      await commitProject(next);
+
+      const updated = videoAssets.find((v) => v.id === videoId);
+      return updated ? updated.variants.length - 1 : 0;
+    },
+    [commitProject]
+  );
+
+  const approveVideoVariant = useCallback(
+    async (zoneKey: string, videoId: string, variantIndex: number) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const videoAssets = (zone.videoAssets ?? []).map((v) =>
+        v.id === videoId
+          ? { ...v, status: "approved" as const, approvedVariantIndex: variantIndex }
+          : v
+      );
+
+      const next: ProjectFile = {
+        ...p,
+        zones: { ...p.zones, [zoneKey]: { ...zone, videoAssets } },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const getVideoDataUrl = useCallback(
+    async (zoneKey: string, videoId: string, filename: string): Promise<string> => {
+      const dir = projectDirRef.current;
+      if (!dir) throw new Error("No project open");
+
+      const key = `video/${zoneKey}/${videoId}/${filename}`;
+      const cached = imageCache.current.get(key);
+      if (cached) return cached;
+
+      const filePath = await getVideoPath(dir, zoneKey, videoId, filename);
+      const bytes = await readFile(filePath);
+      const CHUNK = 0x8000;
+      const parts: string[] = [];
+      for (let i = 0; i < bytes.length; i += CHUNK) {
+        parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
+      }
+      const dataUrl = `data:video/mp4;base64,${btoa(parts.join(""))}`;
+      imageCache.current.set(key, dataUrl);
+      return dataUrl;
+    },
+    []
+  );
+
   // --- Music asset management ---
 
   const getMusicAssets = useCallback(
@@ -972,6 +1150,12 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         getAsset,
         getImageDataUrl,
         getApprovalCounts,
+        getVideoAssets,
+        addVideoAsset,
+        updateVideoConfig,
+        addVideoVariant,
+        approveVideoVariant,
+        getVideoDataUrl,
         getMusicAssets,
         updateMusicConfig,
         addMusicVariant,

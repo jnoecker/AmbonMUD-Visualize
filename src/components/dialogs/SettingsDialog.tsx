@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSettings } from "../../context/SettingsContext";
-import { RUNWARE_MODEL_PRESETS } from "../../types/settings";
+import { RUNWARE_MODEL_PRESETS, VIDEO_MODEL_PRESETS } from "../../types/settings";
 
 interface SettingsDialogProps {
   onClose: () => void;
@@ -17,6 +17,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
   const [promptLlm, setPromptLlm] = useState(settings.promptLlm);
   const [runwareLlmModel, setRunwareLlmModel] = useState(settings.runwareLlmModel);
   const [enhancePrompts, setEnhancePrompts] = useState(settings.enhancePrompts);
+  const [videoModel, setVideoModel] = useState(settings.videoModel);
 
   const isPreset = RUNWARE_MODEL_PRESETS.some((p) => p.id === settings.runwareModel);
   const [modelSelect, setModelSelect] = useState(isPreset ? settings.runwareModel : CUSTOM_VALUE);
@@ -34,6 +35,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
       promptLlm,
       runwareLlmModel,
       enhancePrompts,
+      videoModel,
     });
     onClose();
   };
@@ -88,6 +90,21 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
               placeholder="e.g. civitai:102438@133677"
             />
           )}
+        </div>
+
+        <div className="dialog-field">
+          <label className="dialog-label">Video Model</label>
+          <select
+            className="dialog-input"
+            value={videoModel}
+            onChange={(e) => setVideoModel(e.target.value)}
+          >
+            {VIDEO_MODEL_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label} ({p.cost})
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="dialog-field">

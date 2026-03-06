@@ -280,6 +280,52 @@ export async function saveImage(
   return filename;
 }
 
+// Matches variant video files: v1.mp4, v2.mp4, etc.
+const VIDEO_VARIANT_RE = /^v(\d+)\.mp4$/;
+
+export async function saveVideoFile(
+  projectDir: string,
+  zoneName: string,
+  videoId: string,
+  videoData: Uint8Array
+): Promise<string> {
+  const videoDir = await join(projectDir, "video", zoneName, videoId);
+
+  const dirExists = await exists(videoDir);
+  if (!dirExists) {
+    await mkdir(videoDir, { recursive: true });
+  }
+
+  let version = 1;
+  try {
+    const entries = await readDir(videoDir);
+    for (const f of entries) {
+      const match = f.name?.match(VIDEO_VARIANT_RE);
+      if (match) {
+        const v = parseInt(match[1], 10);
+        if (v >= version) version = v + 1;
+      }
+    }
+  } catch {
+    // Directory might be empty
+  }
+
+  const filename = `v${version}.mp4`;
+  const filePath = await join(videoDir, filename);
+  await writeFile(filePath, videoData);
+
+  return filename;
+}
+
+export async function getVideoPath(
+  projectDir: string,
+  zoneName: string,
+  videoId: string,
+  filename: string
+): Promise<string> {
+  return join(projectDir, "video", zoneName, videoId, filename);
+}
+
 // Matches variant audio files: v1.mp3, v2.mp3, etc.
 const AUDIO_VARIANT_RE = /^v(\d+)\.mp3$/;
 
