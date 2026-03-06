@@ -795,6 +795,14 @@ body {
   gap: var(--space-3);
 }
 
+.welcome-hint {
+  color: var(--text-disabled);
+  font-size: 0.82rem;
+  max-width: 440px;
+  text-align: center;
+  line-height: 1.6;
+}
+
 /* Progress bar */
 .progress-bar {
   height: 6px;

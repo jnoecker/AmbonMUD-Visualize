@@ -15,15 +15,23 @@ export function Sidebar() {
       {zoneKeys.map((zoneKey) => {
         const zone = project.zones[zoneKey];
         const parsed = parsedZones[zoneKey];
-        if (!parsed) return null;
+        const isBlankZone = !zone.sourceYamlPath;
 
         const isSpriteZone = !!zone.spriteConfig;
+
+        // For blank zones (no YAML source), show the entity tree with custom assets only
+        const entities = parsed?.entities ?? [];
+
+        // Skip non-blank zones that haven't been parsed yet
+        if (!parsed && !isBlankZone) return null;
 
         return (
           <div key={zoneKey}>
             <div className="glass-panel" style={{ marginBottom: "var(--space-3)" }}>
               <div className="glass-panel-header">
-                <span className="glass-panel-title">{zone.zoneName}</span>
+                <span className="glass-panel-title">
+                  {isBlankZone ? "Custom Assets" : zone.zoneName}
+                </span>
               </div>
               {isSpriteZone ? (
                 <SpriteSummary
@@ -34,19 +42,21 @@ export function Sidebar() {
               ) : (
                 <EntityTree
                   zoneKey={zoneKey}
-                  entities={parsed.entities}
+                  entities={entities}
                   assets={zone.assets}
                   selectedEntityId={selectedZone === zoneKey ? selectedEntityId : null}
                   onSelectEntity={(entityId) => selectEntity(zoneKey, entityId)}
                 />
               )}
             </div>
-            <ZoneVibePanel
-              zoneName={zone.zoneName}
-              vibe={zone.vibe}
-              defaultImages={zone.defaultImages}
-              allRoomDescriptions={parsed.allRoomDescriptions}
-            />
+            {!isBlankZone && (
+              <ZoneVibePanel
+                zoneName={zone.zoneName}
+                vibe={zone.vibe}
+                defaultImages={zone.defaultImages}
+                allRoomDescriptions={parsed?.allRoomDescriptions ?? ""}
+              />
+            )}
           </div>
         );
       })}

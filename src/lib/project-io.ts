@@ -71,6 +71,40 @@ export async function createProject(
   return project;
 }
 
+export async function createBlankProject(
+  projectDir: string,
+  projectName: string
+): Promise<ProjectFile> {
+  const dirExists = await exists(projectDir);
+  if (!dirExists) {
+    await mkdir(projectDir, { recursive: true });
+  }
+
+  // Create a synthetic "assets" zone for custom assets
+  const zoneImagesDir = await join(projectDir, "images", "assets");
+  await mkdir(zoneImagesDir, { recursive: true });
+
+  const project: ProjectFile = {
+    version: 1,
+    name: projectName,
+    createdAt: new Date().toISOString(),
+    zones: {
+      assets: {
+        zoneName: "assets",
+        sourceYamlPath: "",
+        vibe: null,
+        defaultImages: null,
+        assets: {},
+      },
+    },
+  };
+
+  const projectPath = await join(projectDir, PROJECT_FILE);
+  await writeTextFile(projectPath, JSON.stringify(project, null, 2));
+
+  return project;
+}
+
 export async function openProject(projectDir: string): Promise<ProjectFile> {
   const projectPath = await join(projectDir, PROJECT_FILE);
   const content = await readTextFile(projectPath);

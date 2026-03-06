@@ -12,6 +12,7 @@ import type { SpritePromptTemplate } from "../types/sprites";
 import { detectSpriteZone } from "../lib/sprite-parser";
 import {
   createProject,
+  createBlankProject,
   openProject,
   saveProject,
   saveImage,
@@ -43,6 +44,7 @@ interface ProjectContextValue {
   selectedZone: string | null;
 
   createNewProject: (dir: string, name: string, yamlPaths: string[]) => Promise<void>;
+  createNewBlankProject: (dir: string, name: string) => Promise<void>;
   openExistingProject: (dir: string) => Promise<void>;
   reloadProject: () => Promise<void>;
   closeProject: () => void;
@@ -177,6 +179,21 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       await parseAllZones(proj);
     },
     [parseAllZones]
+  );
+
+  const createNewBlankProject = useCallback(
+    async (dir: string, name: string) => {
+      const proj = await createBlankProject(dir, name);
+      projectRef.current = proj;
+      projectDirRef.current = dir;
+      setProject(proj);
+      setProjectDir(dir);
+      setSelectedEntityId(null);
+      setSelectedZone(null);
+      imageCache.current.clear();
+      setParsedZones({});
+    },
+    []
   );
 
   const openExistingProject = useCallback(
@@ -681,6 +698,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         selectedEntityId,
         selectedZone,
         createNewProject,
+        createNewBlankProject,
         openExistingProject,
         reloadProject,
         closeProject,

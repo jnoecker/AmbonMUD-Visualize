@@ -18,6 +18,7 @@ import { ExportDialog } from "./components/dialogs/ExportDialog";
 import { CustomAssetDialog } from "./components/dialogs/CustomAssetDialog";
 import { BatchRemoveBgDialog } from "./components/dialogs/BatchRemoveBgDialog";
 import { BatchRecompressDialog } from "./components/dialogs/BatchRecompressDialog";
+import { BlankProjectDialog } from "./components/dialogs/BlankProjectDialog";
 
 function AppInner() {
   const { project, projectDir, openExistingProject, reloadProject, closeProject } = useProject();
@@ -29,6 +30,7 @@ function AppInner() {
   const [showCustomAsset, setShowCustomAsset] = useState(false);
   const [showBatchRemoveBg, setShowBatchRemoveBg] = useState(false);
   const [showRecompress, setShowRecompress] = useState(false);
+  const [showBlankProject, setShowBlankProject] = useState(false);
 
   // Reopen last project on launch
   useEffect(() => {
@@ -93,6 +95,7 @@ function AppInner() {
           ) : (
             <WelcomeScreen
               onNewProject={() => setShowNewProject(true)}
+              onNewBlankProject={() => setShowBlankProject(true)}
               onOpenProject={handleOpenProject}
             />
           )
@@ -115,6 +118,7 @@ function AppInner() {
       {showCustomAsset && <CustomAssetDialog onClose={() => setShowCustomAsset(false)} />}
       {showBatchRemoveBg && <BatchRemoveBgDialog onClose={() => setShowBatchRemoveBg(false)} />}
       {showRecompress && <BatchRecompressDialog onClose={() => setShowRecompress(false)} />}
+      {showBlankProject && <BlankProjectDialog onClose={() => setShowBlankProject(false)} />}
     </>
   );
 }
