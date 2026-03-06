@@ -58,7 +58,4 @@ export const VIDEO_MODEL_PRESETS = [
   { id: "vidu:4@1", label: "Vidu Q3", cost: "$0.046/s · ~$0.46/10s" },
   { id: "minimax:4@1", label: "MiniMax Hailuo 2.3", cost: "~$0.56/10s (768p)" },
   { id: "lightricks:ltx@2.3", label: "LTX 2.3", cost: "$0.06/s · ~$0.60/10s" },
-  // Premium
-  { id: "klingai:kling-video@3-standard", label: "Kling 3.0 Standard", cost: "$0.084/s · ~$0.84/10s" },
-  { id: "klingai:kling-video@3-pro", label: "Kling 3.0 Pro", cost: "$0.112/s · ~$1.12/10s" },
 ] as const;
