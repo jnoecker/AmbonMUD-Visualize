@@ -19,9 +19,9 @@ export interface GenerateVideoResult {
 }
 
 const DIMENSIONS: Record<VideoAssetType, { width: number; height: number }> = {
-  zone_intro: { width: 1280, height: 720 },
-  boss_reveal: { width: 720, height: 720 },
-  item_reveal: { width: 720, height: 720 },
+  zone_intro: { width: 768, height: 512 },
+  boss_reveal: { width: 512, height: 512 },
+  item_reveal: { width: 512, height: 512 },
 };
 
 /**
