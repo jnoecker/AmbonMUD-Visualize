@@ -47,11 +47,11 @@ export const RUNWARE_MODEL_PRESETS = [
 ] as const;
 
 export const VIDEO_MODEL_PRESETS = [
-  { id: "lightricks:ltx@2.3", label: "LTX 2.3", cost: "$0.06/vid" },
-  { id: "lightricks:ltx@2.3-fast", label: "LTX 2.3 Fast", cost: "$0.04/vid" },
-  { id: "prunaai:p-video@0", label: "P-Video", cost: "$0.02/vid" },
-  { id: "vidu:3@2", label: "Vidu Q2 Turbo", cost: "$0.165/vid" },
-  { id: "vidu:4@1", label: "Vidu Q3", cost: "$0.046/vid" },
-  { id: "klingai:kling-video@3-standard", label: "Kling 3.0 Standard", cost: "$0.084/vid" },
-  { id: "klingai:kling-video@3-pro", label: "Kling 3.0 Pro", cost: "$0.112/vid" },
+  { id: "lightricks:ltx@2.3", label: "LTX 2.3", cost: "$0.06/s · ~$0.60/10s" },
+  { id: "lightricks:ltx@2.3-fast", label: "LTX 2.3 Fast", cost: "$0.04/s · ~$0.40/10s" },
+  { id: "prunaai:p-video@0", label: "P-Video", cost: "$0.02/s · ~$0.20/10s" },
+  { id: "vidu:3@2", label: "Vidu Q2 Turbo", cost: "~$0.165/8s" },
+  { id: "vidu:4@1", label: "Vidu Q3", cost: "$0.046/s · ~$0.46/10s" },
+  { id: "klingai:kling-video@3-standard", label: "Kling 3.0 Standard", cost: "$0.084/s · ~$0.84/10s" },
+  { id: "klingai:kling-video@3-pro", label: "Kling 3.0 Pro", cost: "$0.112/s · ~$1.12/10s" },
 ] as const;
