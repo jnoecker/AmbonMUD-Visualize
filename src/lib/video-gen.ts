@@ -18,11 +18,12 @@ export interface GenerateVideoResult {
   cost?: number;
 }
 
-// Model-specific configurations: resolution and duration constraints.
+// Model-specific configurations: resolution and supported durations.
 // Defaults (1080p) apply to LTX and most models.
-interface ModelSpec {
+export interface ModelSpec {
   dims: Record<VideoAssetType, { width: number; height: number }>;
-  duration: number;
+  /** Supported durations in seconds (first is default). */
+  durations: number[];
 }
 
 const DEFAULT_MODEL_SPEC: ModelSpec = {
@@ -32,7 +33,7 @@ const DEFAULT_MODEL_SPEC: ModelSpec = {
     boss_reveal: { width: 1080, height: 1920 },
     item_reveal: { width: 1080, height: 1920 },
   },
-  duration: 10,
+  durations: [6, 8, 10],
 };
 
 const DIMS_720P: ModelSpec["dims"] = {
@@ -50,24 +51,22 @@ const DIMS_768P: ModelSpec["dims"] = {
 };
 
 const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
-  // Seedance 1.5 Pro: 720p, 5s per-video
-  "bytedance:seedance@1.5-pro": { dims: DIMS_720P, duration: 5 },
-  // PixVerse v5.6: 720p, 5s per-video
-  "pixverse:1@7": { dims: DIMS_720P, duration: 5 },
-  // Vidu Q2 Turbo: 720p, 8s per-video
-  "vidu:3@2": { dims: DIMS_720P, duration: 8 },
-  // Vidu Q3 Turbo: 720p, 10s per-second
-  "vidu:4@2": { dims: DIMS_720P, duration: 10 },
-  // MiniMax Hailuo 2.3: 768p, 10s per-video
-  "minimax:4@1": { dims: DIMS_768P, duration: 10 },
+  "bytedance:seedance@1.5-pro": { dims: DIMS_720P, durations: [5, 10] },
+  "pixverse:1@7": { dims: DIMS_720P, durations: [5, 8] },
+  "vidu:3@2": { dims: DIMS_720P, durations: [4, 8] },
+  "vidu:4@1": { durations: [4, 8] },
+  "vidu:4@2": { dims: DIMS_720P, durations: [4, 8] },
+  "minimax:4@1": { dims: DIMS_768P, durations: [6, 10] },
+  "klingai:kling-video@3-standard": { durations: [5, 10] },
+  "klingai:kling-video@3-pro": { durations: [5, 10] },
 };
 
-function getModelSpec(model: string): ModelSpec {
+export function getModelSpec(model: string): ModelSpec {
   const override = MODEL_SPECS[model];
   if (!override) return DEFAULT_MODEL_SPEC;
   return {
     dims: override.dims ?? DEFAULT_MODEL_SPEC.dims,
-    duration: override.duration ?? DEFAULT_MODEL_SPEC.duration,
+    durations: override.durations ?? DEFAULT_MODEL_SPEC.durations,
   };
 }
 
@@ -85,11 +84,15 @@ export async function generateVideo(
   const runware = getRunware(apiKey);
   const spec = getModelSpec(model);
   const dims = spec.dims[videoType];
+  // Use the duration from config (user's choice), falling back to model default
+  const duration = config.duration && spec.durations.includes(config.duration)
+    ? config.duration
+    : spec.durations[0];
 
   const payload: Record<string, unknown> = {
     model,
     positivePrompt: config.prompt,
-    duration: spec.duration,
+    duration,
     width: dims.width,
     height: dims.height,
     numberResults: 1,

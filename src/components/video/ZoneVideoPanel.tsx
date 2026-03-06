@@ -4,6 +4,7 @@ import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
 import type { VideoAssetEntry, VideoConfig, VideoAssetType } from "../../types/video";
 import type { RoomSummary } from "../../lib/video-prompt-gen";
+import { getModelSpec } from "../../lib/video-gen";
 import type { Entity } from "../../types/entities";
 
 interface ZoneVideoPanelProps {
@@ -250,7 +251,7 @@ interface VideoCardProps {
   vibe: string | null;
   video: VideoAssetEntry;
   entities: Entity[];
-  settings: { runwareApiKey?: string };
+  settings: { runwareApiKey?: string; videoModel?: string };
   updateVideoConfig: (zoneKey: string, videoId: string, config: VideoConfig) => Promise<void>;
   approveVideoVariant: (zoneKey: string, videoId: string, variantIndex: number) => Promise<void>;
   getVideoDataUrl: (zoneKey: string, videoId: string, filename: string) => Promise<string>;
@@ -308,6 +309,15 @@ function VideoCard({
   const [editingPrompt, setEditingPrompt] = useState(false);
   const [promptText, setPromptText] = useState("");
   const [sourceImageB64, setSourceImageB64] = useState<string | null>(null);
+
+  // Duration picker — derived from the current video model
+  const modelSpec = getModelSpec(settings.videoModel ?? "");
+  const availableDurations = modelSpec.durations;
+  const [selectedDuration, setSelectedDuration] = useState(
+    video.currentConfig?.duration && availableDurations.includes(video.currentConfig.duration)
+      ? video.currentConfig.duration
+      : availableDurations[0]
+  );
 
   const currentVariant = viewingVariant >= 0 ? video.variants[viewingVariant] : undefined;
 
@@ -392,7 +402,7 @@ function VideoCard({
     startVideoGeneration(
       zoneKey,
       video.id,
-      video.currentConfig,
+      { ...video.currentConfig, duration: selectedDuration },
       video.videoType,
       sourceImageB64
     );
@@ -412,7 +422,7 @@ function VideoCard({
   const handleSavePrompt = async () => {
     await updateVideoConfig(zoneKey, video.id, {
       prompt: promptText,
-      duration: 6,
+      duration: selectedDuration,
       sourceEntityId: video.sourceEntityId,
     });
     setEditingPrompt(false);
@@ -448,7 +458,23 @@ function VideoCard({
       {video.currentConfig && !editingPrompt && (
         <div className="music-config-summary" onClick={handleEditPrompt} title="Click to edit">
           <div className="music-prompt-text">{video.currentConfig.prompt}</div>
-          <div className="music-config-meta">6s &middot; {hasApprovedSource && video.sourceEntityId ? "img2vid" : "txt2vid"}</div>
+          <div className="music-config-meta">{selectedDuration}s &middot; {hasApprovedSource && video.sourceEntityId ? "img2vid" : "txt2vid"}</div>
+        </div>
+      )}
+
+      {availableDurations.length > 1 && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.78rem", color: "var(--text-secondary)", padding: "2px 0" }}>
+          <span>Duration:</span>
+          {availableDurations.map((d) => (
+            <button
+              key={d}
+              className={`soft-button soft-button--small${d === selectedDuration ? " soft-button--primary" : ""}`}
+              style={{ minWidth: 36, padding: "2px 6px" }}
+              onClick={() => setSelectedDuration(d)}
+            >
+              {d}s
+            </button>
+          ))}
         </div>
       )}
 
