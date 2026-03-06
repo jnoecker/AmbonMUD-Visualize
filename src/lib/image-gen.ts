@@ -1,4 +1,5 @@
 import { Runware } from "@runware/sdk-js";
+import { removeBackground as imglyRemoveBackground } from "@imgly/background-removal";
 import type { EntityType } from "../types/entities";
 
 export class ContentPolicyError extends Error {
@@ -99,7 +100,7 @@ export async function generateImage(
   let bgRemovalFailed = false;
   if (options.removeBackground && options.entityType !== "room") {
     try {
-      bytes = await _removeBackground(runware, bytes);
+      bytes = await _removeBackgroundLocal(bytes);
     } catch (err) {
       console.warn("[image-gen] background removal failed, saving image without it:", err);
       bgRemovalFailed = true;
@@ -121,30 +122,16 @@ function base64ToBytes(b64: string): Uint8Array {
   return bytes;
 }
 
-function bytesToBase64(bytes: Uint8Array): string {
-  const CHUNK = 0x8000;
-  const parts: string[] = [];
-  for (let i = 0; i < bytes.length; i += CHUNK) {
-    parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
-  }
-  return btoa(parts.join(""));
-}
 
 export async function removeImageBackground(
-  apiKey: string,
+  _apiKey: string,
   imageBytes: Uint8Array,
   entityType?: EntityType
 ): Promise<Uint8Array> {
-  // Reuse the shared Runware connection — creating fresh connections per request
-  // triggers server-side rate limiting on new WebSocket handshakes. Serial
-  // processing (enforced by BatchRemoveBgDialog) keeps the shared connection
-  // healthy since only one request is in flight at a time.
-  const runware = getRunware(apiKey);
   const t0 = performance.now();
-  console.log(`[BG removal] starting — payload ${(imageBytes.length / 1024).toFixed(0)}KB`);
+  console.log(`[BG removal] starting local removal — payload ${(imageBytes.length / 1024).toFixed(0)}KB`);
   try {
-    let result = await _removeBackground(runware, imageBytes);
-    // Re-encode at target size if entity type provided
+    let result = await _removeBackgroundLocal(imageBytes);
     if (entityType) {
       result = await recompressForEntityType(result, entityType);
     }
@@ -333,32 +320,13 @@ export function flipImageHorizontally(
   });
 }
 
-async function _removeBackground(
-  runware: InstanceType<typeof Runware>,
+async function _removeBackgroundLocal(
   imageBytes: Uint8Array
 ): Promise<Uint8Array> {
-  const inputBase64 = bytesToBase64(imageBytes);
-  const dataUri = `data:image/png;base64,${inputBase64}`;
-
-  const t0 = performance.now();
-  console.log(`[BG removal] sending request — base64 ${(inputBase64.length / 1024).toFixed(0)}KB`);
-
-  const result = await runware.removeImageBackground({
-    inputImage: dataUri,
-    model: "runware:110@1",
-    outputType: "base64Data",
-    outputFormat: "PNG",
+  const blob = new Blob([imageBytes], { type: "image/png" });
+  const resultBlob = await imglyRemoveBackground(blob, {
+    output: { format: "image/png" },
   });
-
-  console.log(`[BG removal] SDK returned in ${((performance.now() - t0) / 1000).toFixed(1)}s — keys: ${Object.keys(result ?? {}).join(", ")}`);
-
-  const resultAny = result as any;
-  const outputB64: string | undefined =
-    resultAny?.imageBase64Data ?? resultAny?.base64Data;
-  if (!outputB64) {
-    console.error(`[BG removal] unexpected response shape:`, JSON.stringify(result).substring(0, 500));
-    throw new Error("No image data in background removal response");
-  }
-
-  return base64ToBytes(outputB64);
+  const buf = await resultBlob.arrayBuffer();
+  return new Uint8Array(buf);
 }
