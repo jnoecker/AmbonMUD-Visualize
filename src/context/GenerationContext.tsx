@@ -16,6 +16,9 @@ type JobType = "prompt" | "image";
 
 interface GenerationJob {
   type: JobType;
+  /** For multi-image jobs: total requested and completed so far. */
+  total?: number;
+  completed?: number;
 }
 
 interface GenerationContextValue {
@@ -43,6 +46,13 @@ interface GenerationContextValue {
     entityId: string,
     prompt: string,
     entityType: EntityType
+  ) => void;
+  startMultiImageGeneration: (
+    zoneKey: string,
+    entityId: string,
+    prompt: string,
+    entity: Entity,
+    count: number
   ) => void;
   getJob: (zoneKey: string, entityId: string) => GenerationJob | undefined;
   getError: (zoneKey: string, entityId: string) => string | undefined;
@@ -280,6 +290,78 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
     [addVariant, setViewingVariant, setJob, removeJob, setErrorForKey]
   );
 
+  const startMultiImageGeneration = useCallback(
+    (zoneKey: string, entityId: string, prompt: string, entity: Entity, count: number) => {
+      const key = entityKey(zoneKey, entityId);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "image", total: count, completed: 0 });
+
+      (async () => {
+        let completed = 0;
+        let lastIndex: number | undefined;
+        const errors: string[] = [];
+
+        // Run all generations concurrently
+        await Promise.all(
+          Array.from({ length: count }, () =>
+            (async () => {
+              try {
+                const result = await generateImage(
+                  settingsRef.current.runwareApiKey!,
+                  prompt,
+                  {
+                    aspectRatio: getAspectRatio(entity.type),
+                    entityType: entity.type,
+                    removeBackground: settingsRef.current.removeBackground,
+                  },
+                  settingsRef.current.runwareModel
+                );
+                const newIndex = await addVariant(zoneKey, entityId, result.bytes, prompt);
+                lastIndex = newIndex;
+                if (result.bgRemovalFailed) {
+                  errors.push("Background removal failed on one or more images.");
+                }
+              } catch (err) {
+                if (err instanceof ContentPolicyError) {
+                  errors.push(err.message);
+                } else {
+                  errors.push(err instanceof Error ? err.message : String(err));
+                }
+              } finally {
+                completed++;
+                setJob(key, { type: "image", total: count, completed });
+              }
+            })()
+          )
+        );
+
+        removeJob(key);
+
+        // Show the last generated variant
+        if (
+          lastIndex !== undefined &&
+          selectedZoneRef.current === zoneKey &&
+          selectedEntityIdRef.current === entityId
+        ) {
+          setViewingVariant(lastIndex);
+        }
+
+        if (errors.length > 0) {
+          // Deduplicate error messages
+          const unique = [...new Set(errors)];
+          setErrorForKey(key, unique.join(" "));
+        }
+      })();
+    },
+    [addVariant, setViewingVariant, setJob, removeJob, setErrorForKey]
+  );
+
   const getJob = useCallback(
     (zoneKey: string, entityId: string) => {
       return jobs.get(entityKey(zoneKey, entityId));
@@ -314,6 +396,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
         startCustomPromptGeneration,
         startImageGeneration,
         startCustomImageGeneration,
+        startMultiImageGeneration,
         getJob,
         getError,
         clearError,

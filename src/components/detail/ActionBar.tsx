@@ -6,11 +6,13 @@ interface ActionBarProps {
   isApproved: boolean;
   isGeneratingPrompt: boolean;
   isGeneratingImage: boolean;
+  imageJobProgress?: { total: number; completed: number };
   isRemovingBg: boolean;
   isFlipping?: boolean;
   entityType: EntityType;
   onGeneratePrompt: () => void;
   onGenerateImage: () => void;
+  onGenerateMultiImage?: () => void;
   onApprove: () => void;
   onRemoveBackground: () => void;
   onFlipHorizontal?: () => void;
@@ -22,11 +24,13 @@ export function ActionBar({
   isApproved,
   isGeneratingPrompt,
   isGeneratingImage,
+  imageJobProgress,
   isRemovingBg,
   isFlipping,
   entityType,
   onGeneratePrompt,
   onGenerateImage,
+  onGenerateMultiImage,
   onApprove,
   onRemoveBackground,
   onFlipHorizontal,
@@ -51,6 +55,18 @@ export function ActionBar({
         {isGeneratingImage && <span className="spinner spinner--small" />}
         {hasVariants ? "Generate Another" : "Generate Image"}
       </button>
+      {onGenerateMultiImage && (
+        <button
+          className="soft-button"
+          onClick={onGenerateMultiImage}
+          disabled={!hasPrompt || busy}
+        >
+          {isGeneratingImage && <span className="spinner spinner--small" />}
+          {isGeneratingImage && imageJobProgress
+            ? `${imageJobProgress.completed}/${imageJobProgress.total}`
+            : "Generate 4"}
+        </button>
+      )}
       {hasVariants && entityType !== "room" && (
         <button
           className="soft-button"

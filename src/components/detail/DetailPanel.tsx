@@ -32,6 +32,7 @@ export function DetailPanel() {
     startCustomPromptGeneration,
     startImageGeneration,
     startCustomImageGeneration,
+    startMultiImageGeneration,
     getJob,
     getError,
     clearError,
@@ -131,6 +132,18 @@ export function DetailPanel() {
     } else {
       startImageGeneration(selectedZone, entity.id, asset.currentPrompt, entity);
     }
+  };
+
+  const handleGenerateMultiImage = () => {
+    if (!entity || !selectedZone || !asset?.currentPrompt || isCustom) return;
+    if (!settings.runwareApiKey) {
+      setLocalError("Runware API key not set. Open Settings.");
+      return;
+    }
+
+    setLocalError(null);
+    if (selectedZone && selectedEntityId) clearError(selectedZone, selectedEntityId);
+    startMultiImageGeneration(selectedZone, entity.id, asset.currentPrompt, entity, 4);
   };
 
   const handleApprove = async () => {
@@ -278,11 +291,13 @@ export function DetailPanel() {
           isApproved={isApproved}
           isGeneratingPrompt={generatingPrompt}
           isGeneratingImage={generatingImage}
+          imageJobProgress={job?.total ? { total: job.total, completed: job.completed ?? 0 } : undefined}
           isRemovingBg={removingBg}
           isFlipping={flipping}
           entityType={entity.type}
           onGeneratePrompt={handleGeneratePrompt}
           onGenerateImage={handleGenerateImage}
+          onGenerateMultiImage={isCustom ? undefined : handleGenerateMultiImage}
           onApprove={handleApprove}
           onRemoveBackground={handleRemoveBackground}
           onFlipHorizontal={handleFlipHorizontal}
