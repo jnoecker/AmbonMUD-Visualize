@@ -6,11 +6,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry, EntityEdits } from "../types/project";
+import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry, DefaultImageEntityType, EntityEdits } from "../types/project";
 import type { Entity, EntityType, ParsedZone } from "../types/entities";
 import { applyEditsToEntity } from "../lib/entity-edits";
 import type { SpritePromptTemplate } from "../types/sprites";
 import { detectSpriteZone } from "../lib/sprite-parser";
+import { detectAbilityYaml, parseAbilities } from "../lib/ability-parser";
 import {
   createProject,
   createBlankProject,
@@ -65,11 +66,11 @@ interface ProjectContextValue {
 
   updateDefaultImage: (
     zoneKey: string,
-    entityType: EntityType,
+    entityType: DefaultImageEntityType,
     imageData: Uint8Array,
     prompt: string
   ) => Promise<void>;
-  getDefaultImageDataUrl: (zoneKey: string, entityType: EntityType) => Promise<string | null>;
+  getDefaultImageDataUrl: (zoneKey: string, entityType: DefaultImageEntityType) => Promise<string | null>;
 
   batchApprove: () => Promise<number>;
 
@@ -141,8 +142,31 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     let updatedProj = { ...proj, zones: { ...proj.zones } };
 
     for (const zone of Object.values(proj.zones)) {
+      if (!zone.sourceYamlPath) continue;
       try {
         const yamlContent = await readTextFile(zone.sourceYamlPath);
+
+        // Check if this is an ability definitions file
+        if (zone.abilityConfig || detectAbilityYaml(yamlContent)) {
+          const { entities, config } = parseAbilities(yamlContent);
+          parsed[zone.zoneName] = {
+            zoneName: zone.zoneName,
+            entities,
+            allRoomDescriptions: [],
+            rawZone: {},
+          };
+
+          // Auto-detect ability config
+          if (!zone.abilityConfig) {
+            updatedProj.zones[zone.zoneName] = {
+              ...updatedProj.zones[zone.zoneName],
+              abilityConfig: config,
+            };
+            projUpdated = true;
+          }
+          continue;
+        }
+
         const parsedZone = parseZone(yamlContent);
         parsed[zone.zoneName] = parsedZone;
 
@@ -164,7 +188,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
 
     setParsedZones(parsed);
 
-    // Persist sprite config detection
+    // Persist config detection
     if (projUpdated) {
       projectRef.current = updatedProj;
       setProject(updatedProj);
@@ -440,7 +464,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   const updateDefaultImage = useCallback(
     async (
       zoneKey: string,
-      entityType: EntityType,
+      entityType: DefaultImageEntityType,
       imageData: Uint8Array,
       prompt: string
     ) => {
@@ -484,7 +508,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   );
 
   const getDefaultImageDataUrl = useCallback(
-    async (zoneKey: string, entityType: EntityType): Promise<string | null> => {
+    async (zoneKey: string, entityType: DefaultImageEntityType): Promise<string | null> => {
       const p = projectRef.current;
       const dir = projectDirRef.current;
       if (!p || !dir) return null;

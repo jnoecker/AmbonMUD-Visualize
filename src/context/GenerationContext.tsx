@@ -9,6 +9,8 @@ import {
 import { useProject } from "./ProjectContext";
 import { useSettings } from "./SettingsContext";
 import { generateEntityPrompt, generateCustomAssetPrompt } from "../lib/prompt-gen";
+import { generateAbilityPrompt } from "../lib/ability-prompt-gen";
+import { getAbilityFromEntity } from "../lib/ability-parser";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
 import type { Entity, EntityType } from "../types/entities";
 
@@ -121,11 +123,21 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
 
       (async () => {
         try {
-          const prompt = await generateEntityPrompt(
-            settingsRef.current.anthropicApiKey!,
-            entity,
-            zoneVibe
-          );
+          let prompt: string;
+          if (entity.type === "ability") {
+            const ability = getAbilityFromEntity(entity);
+            prompt = await generateAbilityPrompt(
+              settingsRef.current.anthropicApiKey!,
+              entity,
+              ability
+            );
+          } else {
+            prompt = await generateEntityPrompt(
+              settingsRef.current.anthropicApiKey!,
+              entity,
+              zoneVibe
+            );
+          }
           await updatePrompt(zoneKey, entityId, prompt);
         } catch (err) {
           setErrorForKey(

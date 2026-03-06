@@ -1416,3 +1416,213 @@ body {
   color: var(--color-primary-pale-blue);
   margin-top: 2px;
 }
+
+/* ========== Ability Grid ========== */
+
+.ability-grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* Ability batch bar */
+.ability-batch-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.ability-batch-bar-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ability-batch-bar-stats {
+  display: flex;
+  gap: var(--space-2);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--text-disabled);
+}
+
+.ability-stat--approved { color: var(--color-primary-moss-green); }
+.ability-stat--generated { color: var(--color-primary-soft-gold); }
+.ability-stat--pending { color: var(--text-disabled); }
+
+.ability-batch-bar-actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Ability class tabs */
+.ability-class-tabs {
+  display: flex;
+  gap: 2px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ability-class-tab {
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-out-soft);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ability-class-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.ability-class-tab--active {
+  color: var(--text-primary);
+}
+
+.ability-class-tab-count {
+  font-size: 0.7rem;
+  color: var(--text-disabled);
+  background: var(--bg-deepest);
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+
+/* Ability grid */
+.ability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-2);
+}
+
+/* Ability cell */
+.ability-cell {
+  position: relative;
+  background: var(--bg-deepest);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s var(--ease-out-soft);
+}
+
+.ability-cell:hover {
+  border-color: var(--border-default);
+  transform: scale(1.03);
+}
+
+.ability-cell--selected {
+  border-color: var(--color-primary-lavender);
+}
+
+.ability-cell--approved {
+  border-color: var(--color-primary-moss-green);
+}
+
+.ability-cell--generating {
+  border-color: var(--color-primary-soft-gold);
+}
+
+.ability-cell-image {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ability-cell-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ability-cell-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.ability-cell-generating-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 41, 60, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.ability-cell-info {
+  padding: 4px 6px;
+  text-align: center;
+}
+
+.ability-cell-name {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ability-cell-level {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-disabled);
+}
+
+.ability-cell-status {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.ability-cell-status--generated {
+  background: var(--color-primary-soft-gold);
+}
+
+.ability-cell-status--approved {
+  background: var(--color-primary-moss-green);
+}
+
+/* Ability detail meta */
+.ability-detail-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-disabled);
+}
+
+.ability-detail-description {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  padding: var(--space-2) 0;
+  font-style: italic;
+}
+
+/* Entity type badge for ability */
+.entity-type-badge--ability {
+  background: var(--color-primary-lavender);
+  color: var(--bg-deepest);
+}

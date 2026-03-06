@@ -58,6 +58,7 @@ const FORMAT_BY_TYPE: Record<EntityType, string> = {
   room: "16:9 landscape background illustration, wide establishing shot, no characters in foreground",
   mob: '1:1 square character portrait centered in frame, full body visible, solid pale lavender (#d8d0e8) background',
   item: '1:1 square item icon centered in frame, floating on solid pale lavender (#d8d0e8) background, no hands or characters',
+  ability: '1:1 square ability icon centered in frame, symbolic/iconic representation, solid pale lavender (#d8d0e8) background',
 };
 
 export async function generateZoneVibe(
@@ -97,6 +98,7 @@ const DEFAULT_DESCRIPTION_BY_TYPE: Record<EntityType, string> = {
   room: "a generic room scene that captures the zone's atmosphere",
   mob: "a generic creature or character silhouette that fits the zone's atmosphere",
   item: "a generic magical item or artifact that fits the zone's atmosphere",
+  ability: "a generic magical ability icon with glowing arcane energy",
 };
 
 export async function generateDefaultImagePrompt(

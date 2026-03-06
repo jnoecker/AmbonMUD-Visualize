@@ -9,9 +9,10 @@ import {
   rename,
 } from "@tauri-apps/plugin-fs";
 import { join } from "@tauri-apps/api/path";
-import type { ProjectFile, AssetEntry, DefaultImageEntry } from "../types/project";
-import type { Entity, EntityType } from "../types/entities";
+import type { ProjectFile, AssetEntry, DefaultImageEntry, DefaultImageEntityType } from "../types/project";
+import type { Entity } from "../types/entities";
 import { parseZone } from "./yaml-parser";
+import { detectAbilityYaml, parseAbilities } from "./ability-parser";
 
 const PROJECT_FILE = "project.json";
 
@@ -36,6 +37,39 @@ export async function createProject(
   // Parse each YAML file and create zone data
   for (const yamlPath of yamlPaths) {
     const yamlContent = await readTextFile(yamlPath);
+
+    // Check if this is an ability definitions file
+    if (detectAbilityYaml(yamlContent)) {
+      const { entities, config } = parseAbilities(yamlContent);
+
+      const assets: Record<string, AssetEntry> = {};
+      for (const entity of entities) {
+        assets[entity.id] = {
+          entityId: entity.id,
+          entityType: entity.type,
+          title: entity.title,
+          status: "pending",
+          currentPrompt: null,
+          variants: [],
+          approvedVariantIndex: null,
+        };
+      }
+
+      const zoneName = "abilities";
+      const zoneImagesDir = await join(projectDir, "images", zoneName);
+      await mkdir(zoneImagesDir, { recursive: true });
+
+      project.zones[zoneName] = {
+        zoneName,
+        sourceYamlPath: yamlPath,
+        vibe: null,
+        defaultImages: null,
+        assets,
+        abilityConfig: config,
+      };
+      continue;
+    }
+
     const parsed = parseZone(yamlContent);
 
     const assets: Record<string, AssetEntry> = {};
@@ -262,7 +296,7 @@ export async function reconcileImages(
     }
 
     // Reconcile default images (default_room, default_mob, default_item dirs)
-    const DEFAULT_TYPES: EntityType[] = ["room", "mob", "item"];
+    const DEFAULT_TYPES: DefaultImageEntityType[] = ["room", "mob", "item"];
     let updatedDefaults = zone.defaultImages;
     for (const entityType of DEFAULT_TYPES) {
       const dirName = `default_${entityType}`;

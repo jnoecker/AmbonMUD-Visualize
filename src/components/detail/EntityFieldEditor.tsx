@@ -46,10 +46,16 @@ const ITEM_FIELDS: FieldDef[] = [
   { key: "basePrice", label: "Price", type: "number" },
 ];
 
+const ABILITY_FIELDS: FieldDef[] = [
+  { key: "displayName", label: "Display Name", type: "text" },
+  { key: "description", label: "Description", type: "textarea" },
+];
+
 const FIELDS_BY_TYPE: Record<EntityType, FieldDef[]> = {
   room: ROOM_FIELDS,
   mob: MOB_FIELDS,
   item: ITEM_FIELDS,
+  ability: ABILITY_FIELDS,
 };
 
 export function EntityFieldEditor({ entity, zoneKey, disabled }: Props) {

@@ -1,5 +1,6 @@
 import type { EntityType, RawYaml } from "./entities";
 import type { SpriteConfig, SpritePromptTemplate } from "./sprites";
+import type { AbilityConfig } from "./abilities";
 
 /** Partial edits for a single entity — only fields the user has changed. */
 export type EntityEdits = RawYaml;
@@ -18,6 +19,14 @@ export interface DefaultImageEntry {
   generatedAt: string | null;
 }
 
+export type DefaultImageEntityType = "room" | "mob" | "item";
+
+export interface DefaultImageMap {
+  room: DefaultImageEntry;
+  mob: DefaultImageEntry;
+  item: DefaultImageEntry;
+}
+
 export interface AssetEntry {
   entityId: string;
   entityType: EntityType;
@@ -34,16 +43,13 @@ export interface ZoneData {
   zoneName: string;
   sourceYamlPath: string;
   vibe: string | null;
-  defaultImages: {
-    room: DefaultImageEntry;
-    mob: DefaultImageEntry;
-    item: DefaultImageEntry;
-  } | null;
+  defaultImages: DefaultImageMap | null;
   assets: Record<string, AssetEntry>;
   /** User edits to entity fields, keyed by entity ID. Merged onto rawYaml at export. */
   entityEdits?: Record<string, EntityEdits>;
   spriteConfig?: SpriteConfig | null;
   spriteTemplate?: SpritePromptTemplate | null;
+  abilityConfig?: AbilityConfig | null;
 }
 
 export interface ProjectFile {

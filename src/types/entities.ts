@@ -1,4 +1,4 @@
-export type EntityType = "room" | "mob" | "item";
+export type EntityType = "room" | "mob" | "item" | "ability";
 
 /** The full raw YAML object for an entity, preserving all fields including ones we don't explicitly type. */
 export type RawYaml = Record<string, unknown>;

@@ -8,6 +8,7 @@ import { PromptEditor } from "./PromptEditor";
 import { ActionBar } from "./ActionBar";
 import { VariantStrip } from "./VariantStrip";
 import { SpriteGrid } from "../sprites/SpriteGrid";
+import { AbilityGrid } from "../abilities/AbilityGrid";
 import { EntityFieldEditor } from "./EntityFieldEditor";
 
 export function DetailPanel() {
@@ -214,6 +215,19 @@ export function DetailPanel() {
         zone={zone}
         entities={parsedZones[selectedZone].entities}
         spriteConfig={zone.spriteConfig!}
+      />
+    );
+  }
+
+  // If selected zone is an ability zone, show AbilityGrid
+  if (selectedZone && project?.zones[selectedZone]?.abilityConfig && parsedZones[selectedZone]) {
+    const zone = project.zones[selectedZone];
+    return (
+      <AbilityGrid
+        zoneKey={selectedZone}
+        zone={zone}
+        entities={parsedZones[selectedZone].entities}
+        abilityConfig={zone.abilityConfig!}
       />
     );
   }

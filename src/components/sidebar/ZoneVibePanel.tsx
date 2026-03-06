@@ -3,19 +3,14 @@ import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { generateZoneVibe, generateDefaultImagePrompt } from "../../lib/prompt-gen";
 import { generateImage, getAspectRatio } from "../../lib/image-gen";
-import type { EntityType } from "../../types/entities";
-import type { DefaultImageEntry } from "../../types/project";
+import type { DefaultImageEntry, DefaultImageEntityType } from "../../types/project";
 
-const DEFAULT_TYPES: EntityType[] = ["room", "mob", "item"];
+const DEFAULT_TYPES: DefaultImageEntityType[] = ["room", "mob", "item"];
 
 interface ZoneVibePanelProps {
   zoneName: string;
   vibe: string | null;
-  defaultImages: {
-    room: DefaultImageEntry;
-    mob: DefaultImageEntry;
-    item: DefaultImageEntry;
-  } | null;
+  defaultImages: Record<DefaultImageEntityType, DefaultImageEntry> | null;
   allRoomDescriptions: string[];
 }
 
@@ -28,10 +23,10 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
   const [error, setError] = useState<string | null>(null);
 
   // Per-type generation status
-  const [generatingDefaults, setGeneratingDefaults] = useState<Record<EntityType, boolean>>({
+  const [generatingDefaults, setGeneratingDefaults] = useState<Record<DefaultImageEntityType, boolean>>({
     room: false, mob: false, item: false,
   });
-  const [defaultThumbnails, setDefaultThumbnails] = useState<Record<EntityType, string | null>>({
+  const [defaultThumbnails, setDefaultThumbnails] = useState<Record<DefaultImageEntityType, string | null>>({
     room: null, mob: null, item: null,
   });
   const [defaultError, setDefaultError] = useState<string | null>(null);
@@ -51,7 +46,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
   }, [defaultImages, zoneName, getDefaultImageDataUrl]);
 
   const generateOneDefault = useCallback(
-    async (entityType: EntityType, vibeText: string) => {
+    async (entityType: DefaultImageEntityType, vibeText: string) => {
       if (!settings.anthropicApiKey || !settings.runwareApiKey) return;
 
       setGeneratingDefaults((prev) => ({ ...prev, [entityType]: true }));

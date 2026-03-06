@@ -29,12 +29,13 @@ const OUTPUT_SIZE_MAP: Record<EntityType, { width: number; height: number }> = {
   room: { width: 1024, height: 576 },
   mob: { width: 512, height: 512 },
   item: { width: 256, height: 256 },
+  ability: { width: 256, height: 256 },
 };
 
 // Rooms use JPEG (no transparency needed, ~20x smaller than PNG)
 const ROOM_JPEG_QUALITY = 0.85;
 
-export function getAspectRatio(entityType: EntityType): "16:9" | "1:1" {
+export function getAspectRatio(entityType: EntityType | string): "16:9" | "1:1" {
   return entityType === "room" ? "16:9" : "1:1";
 }
 

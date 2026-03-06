@@ -25,6 +25,8 @@ export function Sidebar() {
         // Skip non-blank zones that haven't been parsed yet
         if (!parsed && !isBlankZone) return null;
 
+        const isAbilityZone = !!zone.abilityConfig;
+
         return (
           <div key={zoneKey}>
             <div className="glass-panel" style={{ marginBottom: "var(--space-3)" }}>
@@ -39,6 +41,12 @@ export function Sidebar() {
                   selected={selectedZone === zoneKey}
                   onSelect={() => selectEntity(zoneKey, "")}
                 />
+              ) : isAbilityZone ? (
+                <AbilitySummary
+                  zone={zone}
+                  selected={selectedZone === zoneKey}
+                  onSelect={() => selectEntity(zoneKey, "")}
+                />
               ) : (
                 <EntityTree
                   zoneKey={zoneKey}
@@ -49,7 +57,7 @@ export function Sidebar() {
                 />
               )}
             </div>
-            {!isBlankZone && (
+            {!isBlankZone && !isAbilityZone && (
               <ZoneVibePanel
                 zoneName={zone.zoneName}
                 vibe={zone.vibe}
@@ -107,6 +115,50 @@ function SpriteSummary({
       {zone.spriteTemplate && (
         <div className="sprite-summary-template">Template ready</div>
       )}
+    </div>
+  );
+}
+
+function AbilitySummary({
+  zone,
+  selected,
+  onSelect,
+}: {
+  zone: ZoneData;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const assets = Object.values(zone.assets);
+  const abilities = assets.filter((a) => a.entityType === "ability");
+  const approved = abilities.filter((a) => a.status === "approved").length;
+  const generated = abilities.filter((a) => a.status === "generated" || a.status === "approved").length;
+
+  return (
+    <div
+      className={`sprite-summary${selected ? " sprite-summary--selected" : ""}`}
+      onClick={onSelect}
+    >
+      <div className="sprite-summary-label">
+        Ability Icons
+        <span className="sprite-summary-count">{abilities.length}</span>
+      </div>
+      <div className="sprite-summary-stats">
+        {approved > 0 && (
+          <span className="sprite-summary-stat sprite-summary-stat--approved">
+            {approved} approved
+          </span>
+        )}
+        {generated > approved && (
+          <span className="sprite-summary-stat sprite-summary-stat--generated">
+            {generated - approved} generated
+          </span>
+        )}
+        {abilities.length - generated > 0 && (
+          <span className="sprite-summary-stat sprite-summary-stat--pending">
+            {abilities.length - generated} pending
+          </span>
+        )}
+      </div>
     </div>
   );
 }

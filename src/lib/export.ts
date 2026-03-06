@@ -7,8 +7,7 @@ import {
 } from "@tauri-apps/plugin-fs";
 import { join, dirname } from "@tauri-apps/api/path";
 import YAML from "yaml";
-import type { ProjectFile, ZoneData } from "../types/project";
-import type { EntityType } from "../types/entities";
+import type { ProjectFile, ZoneData, DefaultImageEntityType } from "../types/project";
 import { getImagePath } from "./project-io";
 
 export interface ExportProgress {
@@ -36,7 +35,7 @@ export async function exportProject(
 ): Promise<void> {
   // Count total work
   let totalFiles = 0;
-  const defaultTypes: EntityType[] = ["room", "mob", "item"];
+  const defaultTypes: DefaultImageEntityType[] = ["room", "mob", "item"];
   for (const zone of Object.values(project.zones)) {
     totalFiles++; // YAML file
     for (const asset of Object.values(zone.assets)) {
@@ -120,12 +119,14 @@ export async function exportProject(
       }
     }
 
-    // Write YAML with image fields and entity edits
-    progress.currentFile = `${zone.zoneName}.yaml`;
-    onProgress?.({ ...progress });
+    // Write YAML with image fields and entity edits (skip for ability zones)
+    if (!zone.abilityConfig) {
+      progress.currentFile = `${zone.zoneName}.yaml`;
+      onProgress?.({ ...progress });
 
-    await exportZoneYaml(projectDir, zone, exportDir);
-    progress.completed++;
+      await exportZoneYaml(projectDir, zone, exportDir);
+      progress.completed++;
+    }
   }
 
   progress.currentFile = null;
@@ -218,7 +219,7 @@ async function exportZoneYaml(
 
   // Set zone-level default image block
   if (zone.defaultImages) {
-    const defaultTypes: EntityType[] = ["room", "mob", "item"];
+    const defaultTypes: DefaultImageEntityType[] = ["room", "mob", "item"];
     const entries: Record<string, string> = {};
     for (const t of defaultTypes) {
       if (zone.defaultImages[t]?.filename) {

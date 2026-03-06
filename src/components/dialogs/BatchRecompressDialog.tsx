@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { recompressForEntityType } from "../../lib/image-gen";
+import type { EntityType } from "../../types/entities";
 
 interface BatchRecompressDialogProps {
   onClose: () => void;
@@ -28,7 +29,7 @@ export function BatchRecompressDialog({ onClose }: BatchRecompressDialogProps) {
     zoneKey: string;
     entityId: string;
     title: string;
-    entityType: "room" | "mob" | "item";
+    entityType: EntityType;
     variantIndex: number;
     filename: string;
   }> = [];
