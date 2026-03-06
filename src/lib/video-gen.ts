@@ -24,6 +24,8 @@ export interface ModelSpec {
   dims: Record<VideoAssetType, { width: number; height: number }>;
   /** Supported durations in seconds (first is default). */
   durations: number[];
+  /** How to pass the source image for image-to-video. */
+  imageParam: "inputs" | "frameImages";
 }
 
 const DEFAULT_MODEL_SPEC: ModelSpec = {
@@ -34,6 +36,7 @@ const DEFAULT_MODEL_SPEC: ModelSpec = {
     item_reveal: { width: 1080, height: 1920 },
   },
   durations: [6, 8, 10],
+  imageParam: "frameImages",
 };
 
 const DIMS_720P: ModelSpec["dims"] = {
@@ -51,6 +54,11 @@ const DIMS_768P: ModelSpec["dims"] = {
 };
 
 const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
+  // LTX models use the older 'inputs' parameter
+  "lightricks:ltx@2.3": { imageParam: "inputs" },
+  "lightricks:ltx@2.3-fast": { imageParam: "inputs" },
+  "prunaai:p-video@0": { dims: DIMS_720P, imageParam: "inputs" },
+  // These use the standard 'frameImages' parameter
   "bytedance:seedance@1.5-pro": { dims: DIMS_720P, durations: [5, 10] },
   "pixverse:1@7": { dims: DIMS_720P, durations: [5, 8] },
   "vidu:3@2": { dims: DIMS_720P, durations: [4, 8] },
@@ -67,6 +75,7 @@ export function getModelSpec(model: string): ModelSpec {
   return {
     dims: override.dims ?? DEFAULT_MODEL_SPEC.dims,
     durations: override.durations ?? DEFAULT_MODEL_SPEC.durations,
+    imageParam: override.imageParam ?? DEFAULT_MODEL_SPEC.imageParam,
   };
 }
 
@@ -100,7 +109,11 @@ export async function generateVideo(
   };
 
   if (sourceImageBase64) {
-    payload.frameImages = [{ inputImage: sourceImageBase64, frame: "first" }];
+    if (spec.imageParam === "inputs") {
+      payload.inputs = { image: sourceImageBase64 };
+    } else {
+      payload.frameImages = [{ inputImage: sourceImageBase64, frame: "first" }];
+    }
   }
 
   let results: any;
