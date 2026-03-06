@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { MusicConfig } from "../types/music";
 
-const SYSTEM_PROMPT = `You are a music director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a zone description and its atmosphere, produce a JSON music configuration for ambient background music.
+const SYSTEM_PROMPT = `You are a music director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a zone description and its atmosphere, produce a concise text prompt for an AI music generator.
 
 The music should feel: gentle, atmospheric, dreamlike, enchanted but safe, slow and breathable. It should evoke the specific mood and environment of the zone.
 
@@ -12,27 +12,14 @@ Instrument guidelines:
 
 Style guidelines:
 - Keep it ambient and atmospheric — this plays on loop while exploring
-- Single section tracks work best for seamless looping
-- Duration of 30-60 seconds is ideal for looping ambient tracks
-- Instrumental only (empty lines array) unless there's a strong narrative reason for vocals
+- Instrumental only
+- Describe the mood, instruments, tempo, and texture concisely
+- Include genre tags and musical qualities
 
-Output ONLY valid JSON matching this structure (no markdown, no commentary):
-{
-  "positiveGlobalStyles": ["style1", "style2", ...],
-  "negativeGlobalStyles": ["style1", "style2", ...],
-  "sections": [
-    {
-      "sectionName": "name",
-      "positiveLocalStyles": ["style1", "style2", ...],
-      "negativeLocalStyles": ["style1", "style2", ...],
-      "duration": 45,
-      "lines": []
-    }
-  ]
-}`;
+Output ONLY the prompt text — no labels, no markdown, no commentary. Keep it under 200 words.`;
 
 /**
- * Use Claude to generate a structured music config from zone context.
+ * Use Claude to generate a music prompt from zone context.
  */
 export async function generateMusicConfig(
   apiKey: string,
@@ -48,7 +35,7 @@ export async function generateMusicConfig(
   const userContent = `Zone: ${zoneName}
 ${vibe ? `Atmosphere: ${vibe}` : "No atmosphere summary available."}${roomContext}
 
-Generate a music configuration for ambient background music for this zone.`;
+Generate an ambient music prompt for this zone.`;
 
   const client = new Anthropic({
     apiKey,
@@ -57,7 +44,7 @@ Generate a music configuration for ambient background music for this zone.`;
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-5-20250929",
-    max_tokens: 500,
+    max_tokens: 300,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: userContent }],
   });
@@ -67,23 +54,8 @@ Generate a music configuration for ambient background music for this zone.`;
     throw new Error("Unexpected response format from Claude");
   }
 
-  // Strip markdown code fences if present
-  let jsonText = block.text.trim();
-  if (jsonText.startsWith("```")) {
-    jsonText = jsonText.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
-  }
-
-  const config = JSON.parse(jsonText) as MusicConfig;
-
-  // Validate basic structure
-  if (
-    !Array.isArray(config.positiveGlobalStyles) ||
-    !Array.isArray(config.negativeGlobalStyles) ||
-    !Array.isArray(config.sections) ||
-    config.sections.length === 0
-  ) {
-    throw new Error("Invalid music config structure from Claude");
-  }
-
-  return config;
+  return {
+    prompt: block.text.trim(),
+    duration: 45,
+  };
 }

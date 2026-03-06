@@ -1697,33 +1697,37 @@ body {
   background: rgb(255 255 255 / 6%);
 }
 
-.music-config-styles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+.music-prompt-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
   margin-bottom: var(--space-1);
-}
-
-.music-style-tag {
-  font-size: 0.7rem;
-  padding: 1px 6px;
-  border-radius: var(--radius-sm);
-}
-
-.music-style-tag--positive {
-  background: rgb(141 169 123 / 20%);
-  color: var(--color-moss-green);
-}
-
-.music-style-tag--negative {
-  background: rgb(184 143 170 / 20%);
-  color: var(--color-dusty-rose);
-  text-decoration: line-through;
 }
 
 .music-config-meta {
   font-size: 0.75rem;
+  color: var(--text-disabled);
+}
+
+/* Duration slider */
+.music-duration-control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.music-duration-label {
+  font-size: 0.75rem;
   color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 90px;
+}
+
+.music-duration-slider {
+  flex: 1;
+  height: 4px;
+  accent-color: var(--color-primary-lavender);
 }
 
 /* Config editor */

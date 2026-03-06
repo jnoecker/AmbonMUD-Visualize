@@ -136,8 +136,9 @@ function MusicTrackCard({
     music.approvedVariantIndex ?? (music.variants.length > 0 ? music.variants.length - 1 : -1)
   );
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
-  const [editingConfig, setEditingConfig] = useState(false);
-  const [configText, setConfigText] = useState("");
+  const [editingPrompt, setEditingPrompt] = useState(false);
+  const [promptText, setPromptText] = useState("");
+  const [durationValue, setDurationValue] = useState(music.currentConfig?.duration ?? 45);
 
   const currentVariant = viewingVariant >= 0 ? music.variants[viewingVariant] : undefined;
 
@@ -170,7 +171,9 @@ function MusicTrackCard({
   const handleGenerateAudio = () => {
     if (!settings.runwareApiKey || !music.currentConfig) return;
     clearError(zoneKey, jobKey);
-    startMusicGeneration(zoneKey, music.id, music.currentConfig);
+    // Use the current duration value from the slider
+    const config = { ...music.currentConfig, duration: durationValue };
+    startMusicGeneration(zoneKey, music.id, config);
   };
 
   const handleApprove = () => {
@@ -179,22 +182,18 @@ function MusicTrackCard({
     }
   };
 
-  const handleEditConfig = () => {
-    setConfigText(JSON.stringify(music.currentConfig, null, 2));
-    setEditingConfig(true);
+  const handleEditPrompt = () => {
+    setPromptText(music.currentConfig?.prompt ?? "");
+    setEditingPrompt(true);
   };
 
-  const handleSaveConfig = async () => {
-    try {
-      const config = JSON.parse(configText) as MusicConfig;
-      await updateMusicConfig(zoneKey, music.id, config);
-      setEditingConfig(false);
-    } catch {
-      // Invalid JSON, don't save
-    }
+  const handleSavePrompt = async () => {
+    await updateMusicConfig(zoneKey, music.id, {
+      prompt: promptText,
+      duration: durationValue,
+    });
+    setEditingPrompt(false);
   };
-
-  const totalDuration = music.currentConfig?.sections.reduce((sum, s) => sum + s.duration, 0) ?? 0;
 
   return (
     <div className={`music-track-card${music.status === "approved" ? " music-track-card--approved" : ""}`}>
@@ -205,40 +204,48 @@ function MusicTrackCard({
         </span>
       </div>
 
-      {/* Config display/editor */}
-      {music.currentConfig && !editingConfig && (
-        <div className="music-config-summary" onClick={handleEditConfig} title="Click to edit">
-          <div className="music-config-styles">
-            {music.currentConfig.positiveGlobalStyles.map((s) => (
-              <span key={s} className="music-style-tag music-style-tag--positive">{s}</span>
-            ))}
-            {music.currentConfig.negativeGlobalStyles.map((s) => (
-              <span key={s} className="music-style-tag music-style-tag--negative">{s}</span>
-            ))}
-          </div>
-          <div className="music-config-meta">
-            {music.currentConfig.sections.length} section{music.currentConfig.sections.length !== 1 ? "s" : ""}
-            {" · "}{totalDuration}s
+      {/* Prompt display/editor */}
+      {music.currentConfig && !editingPrompt && (
+        <div className="music-config-summary" onClick={handleEditPrompt} title="Click to edit">
+          <div className="music-prompt-text">{music.currentConfig.prompt}</div>
+          <div className="music-config-meta">{music.currentConfig.duration}s</div>
+        </div>
+      )}
+
+      {editingPrompt && (
+        <div className="music-config-editor">
+          <textarea
+            className="prompt-textarea"
+            value={promptText}
+            onChange={(e) => setPromptText(e.target.value)}
+            rows={6}
+          />
+          <div className="music-config-editor-actions">
+            <button className="soft-button soft-button--small soft-button--primary" onClick={handleSavePrompt}>
+              Save
+            </button>
+            <button className="soft-button soft-button--small" onClick={() => setEditingPrompt(false)}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
 
-      {editingConfig && (
-        <div className="music-config-editor">
-          <textarea
-            className="prompt-textarea"
-            value={configText}
-            onChange={(e) => setConfigText(e.target.value)}
-            rows={12}
+      {/* Duration slider */}
+      {music.currentConfig && (
+        <div className="music-duration-control">
+          <label className="music-duration-label">
+            Duration: {durationValue}s
+          </label>
+          <input
+            type="range"
+            min={10}
+            max={120}
+            step={5}
+            value={durationValue}
+            onChange={(e) => setDurationValue(Number(e.target.value))}
+            className="music-duration-slider"
           />
-          <div className="music-config-editor-actions">
-            <button className="soft-button soft-button--small soft-button--primary" onClick={handleSaveConfig}>
-              Save
-            </button>
-            <button className="soft-button soft-button--small" onClick={() => setEditingConfig(false)}>
-              Cancel
-            </button>
-          </div>
         </div>
       )}
 
@@ -276,7 +283,7 @@ function MusicTrackCard({
           disabled={generatingConfig || !settings.anthropicApiKey}
           title={!settings.anthropicApiKey ? "Set Anthropic API key in Settings" : undefined}
         >
-          {generatingConfig ? "Generating..." : music.currentConfig ? "Regenerate Config" : "Generate Config"}
+          {generatingConfig ? "Generating..." : music.currentConfig ? "Regen Prompt" : "Generate Prompt"}
         </button>
 
         {music.currentConfig && (

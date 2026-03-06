@@ -19,6 +19,7 @@ export interface GenerateAudioResult {
 
 /**
  * Generate an ambient music track via Runware's audio inference API.
+ * Uses positivePrompt + duration (the SDK's supported interface).
  */
 export async function generateMusic(
   apiKey: string,
@@ -28,26 +29,19 @@ export async function generateMusic(
 
   let results: any;
   try {
-    results = await (runware as any).audioInference({
+    results = await runware.audioInference({
       model: "elevenlabs:1@1",
       outputType: "base64Data",
       outputFormat: "MP3",
       numberResults: 1,
-      music: {
-        positiveGlobalStyles: config.positiveGlobalStyles,
-        negativeGlobalStyles: config.negativeGlobalStyles,
-        sections: config.sections.map((s) => ({
-          sectionName: s.sectionName,
-          positiveLocalStyles: s.positiveLocalStyles,
-          negativeLocalStyles: s.negativeLocalStyles,
-          duration: s.duration,
-          lines: s.lines,
-        })),
-      },
+      positivePrompt: config.prompt,
+      duration: config.duration,
     });
   } catch (err: any) {
-    // Extract meaningful message from SDK error objects
-    const msg = err?.message ?? err?.error ?? (typeof err === "string" ? err : JSON.stringify(err));
+    const msg =
+      err?.message ??
+      err?.error?.message ??
+      (typeof err === "string" ? err : JSON.stringify(err));
     throw new Error(`Runware audio API error: ${msg}`);
   }
 

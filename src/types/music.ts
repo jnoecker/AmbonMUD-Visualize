@@ -1,15 +1,6 @@
-export interface MusicSection {
-  sectionName: string;
-  positiveLocalStyles: string[];
-  negativeLocalStyles: string[];
-  duration: number;
-  lines: string[];
-}
-
 export interface MusicConfig {
-  positiveGlobalStyles: string[];
-  negativeGlobalStyles: string[];
-  sections: MusicSection[];
+  prompt: string;
+  duration: number;
 }
 
 export interface MusicVariant {
