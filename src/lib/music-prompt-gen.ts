@@ -67,7 +67,13 @@ Generate a music configuration for ambient background music for this zone.`;
     throw new Error("Unexpected response format from Claude");
   }
 
-  const config = JSON.parse(block.text) as MusicConfig;
+  // Strip markdown code fences if present
+  let jsonText = block.text.trim();
+  if (jsonText.startsWith("```")) {
+    jsonText = jsonText.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
+  }
+
+  const config = JSON.parse(jsonText) as MusicConfig;
 
   // Validate basic structure
   if (
