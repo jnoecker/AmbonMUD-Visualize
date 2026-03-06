@@ -13,7 +13,7 @@ import { generateAbilityPrompt } from "../lib/ability-prompt-gen";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
 import { generateMusic } from "../lib/audio-gen";
 import { generateMusicConfig } from "../lib/music-prompt-gen";
-import type { MusicConfig } from "../types/music";
+import type { MusicConfig, AudioTrackType } from "../types/music";
 import type { Entity, EntityType } from "../types/entities";
 
 type JobType = "prompt" | "image";
@@ -63,7 +63,8 @@ interface GenerationContextValue {
     musicId: string,
     zoneName: string,
     vibe: string | null,
-    roomDescriptions: string[]
+    roomDescriptions: string[],
+    trackType: AudioTrackType
   ) => void;
   startMusicGeneration: (
     zoneKey: string,
@@ -394,7 +395,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
       musicId: string,
       zoneName: string,
       vibe: string | null,
-      roomDescriptions: string[]
+      roomDescriptions: string[],
+      trackType: AudioTrackType
     ) => {
       const key = entityKey(zoneKey, `music:${musicId}`);
 
@@ -412,7 +414,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
             settingsRef.current.anthropicApiKey!,
             zoneName,
             vibe,
-            roomDescriptions
+            roomDescriptions,
+            trackType
           );
           await updateMusicConfig(zoneKey, musicId, config);
         } catch (err) {

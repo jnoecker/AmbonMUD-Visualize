@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
-import type { MusicAssetEntry, MusicConfig, AudioTrackType } from "../../types/music";
+import type { MusicAssetEntry, MusicConfig } from "../../types/music";
+import type { AudioTrackType } from "../../types/music";
 
 interface ZoneMusicPanelProps {
   zoneKey: string;
@@ -155,7 +156,8 @@ interface MusicTrackCardProps {
     musicId: string,
     zoneName: string,
     vibe: string | null,
-    roomDescriptions: string[]
+    roomDescriptions: string[],
+    trackType: AudioTrackType
   ) => void;
   startMusicGeneration: (
     zoneKey: string,
@@ -220,7 +222,7 @@ function MusicTrackCard({
   const handleGenerateConfig = () => {
     if (!settings.anthropicApiKey) return;
     clearError(zoneKey, jobKey);
-    startMusicConfigGeneration(zoneKey, music.id, zoneName, vibe, roomDescriptions);
+    startMusicConfigGeneration(zoneKey, music.id, zoneName, vibe, roomDescriptions, music.trackType);
   };
 
   const handleGenerateAudio = () => {
