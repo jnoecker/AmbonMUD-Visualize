@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useProject } from "../../context/ProjectContext";
+import { useSettings } from "../../context/SettingsContext";
 import { exportProject, type ExportProgress } from "../../lib/export";
 
 interface ExportDialogProps {
@@ -9,11 +10,12 @@ interface ExportDialogProps {
 
 export function ExportDialog({ onClose }: ExportDialogProps) {
   const { project, projectDir } = useProject();
+  const { settings, updateSettings } = useSettings();
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [exportDir, setExportDir] = useState<string | null>(null);
+  const [exportDir, setExportDir] = useState<string | null>(settings.lastExportDir);
 
   // Count approved assets and default images
   let approvedCount = 0;
@@ -48,6 +50,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
     setError(null);
     try {
       await exportProject(projectDir, project, setProgress, exportDir ?? undefined);
+      updateSettings({ lastExportDir: exportDir });
       setDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export failed");

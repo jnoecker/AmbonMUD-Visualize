@@ -5,6 +5,7 @@ export interface AppSettings {
   batchConcurrency: number;
   removeBackground: boolean;
   lastProjectPath: string | null;
+  lastExportDir: string | null;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   batchConcurrency: 20,
   removeBackground: false,
   lastProjectPath: null,
+  lastExportDir: null,
 };
 
 export const RUNWARE_MODEL_PRESETS = [
