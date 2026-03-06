@@ -30,6 +30,8 @@ export interface ModelSpec {
    *  - "frameImages": Standard top-level `frameImages: [{ inputImage, frame }]`
    */
   imageParam: "inputs" | "inputsFrameImages" | "frameImages";
+  /** If true, use 'resolution' string instead of width/height. */
+  useResolution: boolean;
 }
 
 const DEFAULT_MODEL_SPEC: ModelSpec = {
@@ -41,6 +43,7 @@ const DEFAULT_MODEL_SPEC: ModelSpec = {
   },
   durations: [6, 8, 10],
   imageParam: "frameImages",
+  useResolution: false,
 };
 
 const DIMS_720P: ModelSpec["dims"] = {
@@ -69,8 +72,8 @@ const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
   "vidu:4@1": { durations: [4, 8] },
   "vidu:4@2": { dims: DIMS_720P, durations: [4, 8] },
   "minimax:4@1": { dims: DIMS_768P, durations: [6, 10] },
-  "klingai:kling-video@3-standard": { durations: [5, 10], imageParam: "inputsFrameImages" },
-  "klingai:kling-video@3-pro": { durations: [5, 10], imageParam: "inputsFrameImages" },
+  "klingai:kling-video@3-standard": { durations: [5, 10], imageParam: "inputsFrameImages", useResolution: true },
+  "klingai:kling-video@3-pro": { durations: [5, 10], imageParam: "inputsFrameImages", useResolution: true },
 };
 
 export function getModelSpec(model: string): ModelSpec {
@@ -80,6 +83,7 @@ export function getModelSpec(model: string): ModelSpec {
     dims: override.dims ?? DEFAULT_MODEL_SPEC.dims,
     durations: override.durations ?? DEFAULT_MODEL_SPEC.durations,
     imageParam: override.imageParam ?? DEFAULT_MODEL_SPEC.imageParam,
+    useResolution: override.useResolution ?? DEFAULT_MODEL_SPEC.useResolution,
   };
 }
 
@@ -106,11 +110,17 @@ export async function generateVideo(
     model,
     positivePrompt: config.prompt,
     duration,
-    width: dims.width,
-    height: dims.height,
     numberResults: 1,
     includeCost: true,
   };
+
+  if (spec.useResolution) {
+    // Kling-style: resolution string like "1920x1080"
+    payload.resolution = `${dims.width}x${dims.height}`;
+  } else {
+    payload.width = dims.width;
+    payload.height = dims.height;
+  }
 
   if (sourceImageBase64) {
     const frame = [{ inputImage: sourceImageBase64, frame: "first" }];
