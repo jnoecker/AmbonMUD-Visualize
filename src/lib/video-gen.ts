@@ -24,8 +24,12 @@ export interface ModelSpec {
   dims: Record<VideoAssetType, { width: number; height: number }>;
   /** Supported durations in seconds (first is default). */
   durations: number[];
-  /** How to pass the source image for image-to-video. */
-  imageParam: "inputs" | "frameImages";
+  /** How to pass the source image for image-to-video.
+   *  - "inputs": LTX-style `inputs: { image }`
+   *  - "inputsFrameImages": Kling-style `inputs: { frameImages: [{ inputImage, frame }] }`
+   *  - "frameImages": Standard top-level `frameImages: [{ inputImage, frame }]`
+   */
+  imageParam: "inputs" | "inputsFrameImages" | "frameImages";
 }
 
 const DEFAULT_MODEL_SPEC: ModelSpec = {
@@ -65,8 +69,8 @@ const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
   "vidu:4@1": { durations: [4, 8] },
   "vidu:4@2": { dims: DIMS_720P, durations: [4, 8] },
   "minimax:4@1": { dims: DIMS_768P, durations: [6, 10] },
-  "klingai:kling-video@3-standard": { durations: [5, 10] },
-  "klingai:kling-video@3-pro": { durations: [5, 10] },
+  "klingai:kling-video@3-standard": { durations: [5, 10], imageParam: "inputsFrameImages" },
+  "klingai:kling-video@3-pro": { durations: [5, 10], imageParam: "inputsFrameImages" },
 };
 
 export function getModelSpec(model: string): ModelSpec {
@@ -109,10 +113,13 @@ export async function generateVideo(
   };
 
   if (sourceImageBase64) {
+    const frame = [{ inputImage: sourceImageBase64, frame: "first" }];
     if (spec.imageParam === "inputs") {
       payload.inputs = { image: sourceImageBase64 };
+    } else if (spec.imageParam === "inputsFrameImages") {
+      payload.inputs = { frameImages: frame };
     } else {
-      payload.frameImages = [{ inputImage: sourceImageBase64, frame: "first" }];
+      payload.frameImages = frame;
     }
   }
 
