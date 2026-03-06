@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
-import type { MusicAssetEntry, MusicConfig } from "../../types/music";
+import type { MusicAssetEntry, MusicConfig, AudioTrackType } from "../../types/music";
 
 interface ZoneMusicPanelProps {
   zoneKey: string;
   zoneName: string;
   vibe: string | null;
   roomDescriptions: string[];
+  roomIds?: string[];
 }
 
 export function ZoneMusicPanel({
@@ -16,6 +17,7 @@ export function ZoneMusicPanel({
   zoneName,
   vibe,
   roomDescriptions,
+  roomIds,
 }: ZoneMusicPanelProps) {
   const {
     getMusicAssets,
@@ -34,22 +36,49 @@ export function ZoneMusicPanel({
   } = useGeneration();
 
   const musicAssets = getMusicAssets(zoneKey);
+  const [showAddMenu, setShowAddMenu] = useState(false);
 
-  const handleAddTrack = async () => {
-    const title = musicAssets.length === 0 ? "Ambient" : `Ambient ${musicAssets.length + 1}`;
-    await addMusicAsset(zoneKey, title);
+  const handleAddTrack = async (trackType: AudioTrackType, roomId?: string) => {
+    const label = trackType === "music" ? "Music" : "Ambient";
+    const suffix = roomId ? ` (${roomId})` : "";
+    const title = `${label}${suffix}`;
+    await addMusicAsset(zoneKey, title, trackType, roomId ?? null);
+    setShowAddMenu(false);
   };
+
+  // Group: zone-level first, then room-level
+  const zoneTracks = musicAssets.filter((m) => !m.roomId);
+  const roomTracks = musicAssets.filter((m) => !!m.roomId);
 
   return (
     <div className="glass-panel" style={{ marginBottom: "var(--space-3)" }}>
       <div className="glass-panel-header">
         <span className="glass-panel-title">Zone Music</span>
-        <button
-          className="soft-button soft-button--small"
-          onClick={handleAddTrack}
-        >
-          + Add Track
-        </button>
+        <div style={{ position: "relative" }}>
+          <button
+            className="soft-button soft-button--small"
+            onClick={() => setShowAddMenu(!showAddMenu)}
+          >
+            + Add Track
+          </button>
+          {showAddMenu && (
+            <div className="music-add-menu">
+              <button onClick={() => handleAddTrack("music")}>Zone Music</button>
+              <button onClick={() => handleAddTrack("ambient")}>Zone Ambient</button>
+              {roomIds && roomIds.length > 0 && (
+                <>
+                  <div className="music-add-menu-divider" />
+                  <div className="music-add-menu-label">Room Override</div>
+                  {roomIds.slice(0, 20).map((rid) => (
+                    <button key={rid} onClick={() => handleAddTrack("music", rid)}>
+                      {rid}
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {musicAssets.length === 0 ? (
@@ -58,25 +87,53 @@ export function ZoneMusicPanel({
         </div>
       ) : (
         <div className="music-track-list">
-          {musicAssets.map((music) => (
-            <MusicTrackCard
-              key={music.id}
-              zoneKey={zoneKey}
-              zoneName={zoneName}
-              vibe={vibe}
-              roomDescriptions={roomDescriptions}
-              music={music}
-              settings={settings}
-              updateMusicConfig={updateMusicConfig}
-              approveMusicVariant={approveMusicVariant}
-              getAudioDataUrl={getAudioDataUrl}
-              startMusicConfigGeneration={startMusicConfigGeneration}
-              startMusicGeneration={startMusicGeneration}
-              getJob={getJob}
-              getError={getError}
-              clearError={clearError}
-            />
-          ))}
+          {zoneTracks.length > 0 && (
+            <>
+              {zoneTracks.map((music) => (
+                <MusicTrackCard
+                  key={music.id}
+                  zoneKey={zoneKey}
+                  zoneName={zoneName}
+                  vibe={vibe}
+                  roomDescriptions={roomDescriptions}
+                  music={music}
+                  settings={settings}
+                  updateMusicConfig={updateMusicConfig}
+                  approveMusicVariant={approveMusicVariant}
+                  getAudioDataUrl={getAudioDataUrl}
+                  startMusicConfigGeneration={startMusicConfigGeneration}
+                  startMusicGeneration={startMusicGeneration}
+                  getJob={getJob}
+                  getError={getError}
+                  clearError={clearError}
+                />
+              ))}
+            </>
+          )}
+          {roomTracks.length > 0 && (
+            <>
+              <div className="music-section-label">Room Overrides</div>
+              {roomTracks.map((music) => (
+                <MusicTrackCard
+                  key={music.id}
+                  zoneKey={zoneKey}
+                  zoneName={zoneName}
+                  vibe={vibe}
+                  roomDescriptions={roomDescriptions}
+                  music={music}
+                  settings={settings}
+                  updateMusicConfig={updateMusicConfig}
+                  approveMusicVariant={approveMusicVariant}
+                  getAudioDataUrl={getAudioDataUrl}
+                  startMusicConfigGeneration={startMusicConfigGeneration}
+                  startMusicGeneration={startMusicGeneration}
+                  getJob={getJob}
+                  getError={getError}
+                  clearError={clearError}
+                />
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>
@@ -142,7 +199,6 @@ function MusicTrackCard({
 
   const currentVariant = viewingVariant >= 0 ? music.variants[viewingVariant] : undefined;
 
-  // Load audio data URL when variant changes
   useEffect(() => {
     if (!currentVariant) {
       setAudioSrc(null);
@@ -155,7 +211,6 @@ function MusicTrackCard({
     return () => { cancelled = true; };
   }, [zoneKey, music.id, currentVariant, getAudioDataUrl]);
 
-  // Update viewing variant when new variants are added
   useEffect(() => {
     if (music.variants.length > 0 && viewingVariant < 0) {
       setViewingVariant(music.variants.length - 1);
@@ -171,7 +226,6 @@ function MusicTrackCard({
   const handleGenerateAudio = () => {
     if (!settings.runwareApiKey || !music.currentConfig) return;
     clearError(zoneKey, jobKey);
-    // Use the current duration value from the slider
     const config = { ...music.currentConfig, duration: durationValue };
     startMusicGeneration(zoneKey, music.id, config);
   };
@@ -195,16 +249,23 @@ function MusicTrackCard({
     setEditingPrompt(false);
   };
 
+  const trackLabel = music.trackType === "music" ? "music" : "ambient";
+
   return (
     <div className={`music-track-card${music.status === "approved" ? " music-track-card--approved" : ""}`}>
       <div className="music-track-header">
-        <span className="music-track-title">{music.title}</span>
+        <div>
+          <span className="music-track-title">{music.title}</span>
+          <span className={`music-track-type music-track-type--${trackLabel}`}>{trackLabel}</span>
+          {music.roomId && (
+            <span className="music-track-room">{music.roomId}</span>
+          )}
+        </div>
         <span className={`music-track-status music-track-status--${music.status}`}>
           {music.status}
         </span>
       </div>
 
-      {/* Prompt display/editor */}
       {music.currentConfig && !editingPrompt && (
         <div className="music-config-summary" onClick={handleEditPrompt} title="Click to edit">
           <div className="music-prompt-text">{music.currentConfig.prompt}</div>
@@ -231,7 +292,6 @@ function MusicTrackCard({
         </div>
       )}
 
-      {/* Duration slider */}
       {music.currentConfig && (
         <div className="music-duration-control">
           <label className="music-duration-label">
@@ -249,14 +309,12 @@ function MusicTrackCard({
         </div>
       )}
 
-      {/* Audio player */}
       {audioSrc && (
         <div className="music-player">
           <audio controls src={audioSrc} style={{ width: "100%" }} />
         </div>
       )}
 
-      {/* Variant strip */}
       {music.variants.length > 1 && (
         <div className="music-variant-strip">
           {music.variants.map((v, i) => (
@@ -275,7 +333,6 @@ function MusicTrackCard({
         <div className="music-error">{error}</div>
       )}
 
-      {/* Actions */}
       <div className="music-track-actions">
         <button
           className="soft-button soft-button--small soft-button--primary"

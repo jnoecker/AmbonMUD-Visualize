@@ -71,6 +71,7 @@ export function Sidebar() {
                   zoneName={zone.zoneName}
                   vibe={zone.vibe}
                   roomDescriptions={parsed?.allRoomDescriptions ?? []}
+                  roomIds={parsed?.entities.filter((e) => e.type === "room").map((e) => e.bareId)}
                 />
               </>
             )}

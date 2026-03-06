@@ -278,6 +278,45 @@ async function exportZoneYaml(
     }
   }
 
+  // --- Insert audio fields for approved music tracks ---
+  if (zone.musicAssets) {
+    // Zone-level audio block
+    const zoneMusic = zone.musicAssets.find(
+      (m) => !m.roomId && m.trackType === "music" && m.approvedVariantIndex !== null
+    );
+    const zoneAmbient = zone.musicAssets.find(
+      (m) => !m.roomId && m.trackType === "ambient" && m.approvedVariantIndex !== null
+    );
+
+    if (zoneMusic || zoneAmbient) {
+      const audioBlock: Record<string, string> = {};
+      if (zoneMusic) {
+        audioBlock.music = `${zone.zoneName}/${zoneMusic.title.toLowerCase().replace(/\s+/g, "_")}.mp3`;
+      }
+      if (zoneAmbient) {
+        audioBlock.ambient = `${zone.zoneName}/${zoneAmbient.title.toLowerCase().replace(/\s+/g, "_")}.mp3`;
+      }
+      doc.set("audio", audioBlock);
+    }
+
+    // Room-level audio overrides
+    const roomOverrides = zone.musicAssets.filter(
+      (m) => m.roomId && m.approvedVariantIndex !== null
+    );
+    if (roomOverrides.length > 0) {
+      const roomsNode = doc.get("rooms", true) as YAML.YAMLMap | undefined;
+      if (roomsNode && YAML.isMap(roomsNode)) {
+        for (const track of roomOverrides) {
+          const roomNode = roomsNode.get(track.roomId!, true) as YAML.YAMLMap | undefined;
+          if (!roomNode || !YAML.isMap(roomNode)) continue;
+
+          const audioPath = `${zone.zoneName}/${track.title.toLowerCase().replace(/\s+/g, "_")}.mp3`;
+          roomNode.set(track.trackType, audioPath);
+        }
+      }
+    }
+  }
+
   // Write YAML — to exportDir if specified, otherwise back to source
   const output = doc.toString({ lineWidth: 0 });
   if (exportDir) {

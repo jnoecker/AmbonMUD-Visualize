@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry, DefaultImageEntityType, EntityEdits } from "../types/project";
-import type { MusicAssetEntry, MusicConfig, MusicVariant } from "../types/music";
+import type { MusicAssetEntry, MusicConfig, MusicVariant, AudioTrackType } from "../types/music";
 import type { Entity, EntityType, ParsedZone } from "../types/entities";
 import { applyEditsToEntity } from "../lib/entity-edits";
 import type { SpritePromptTemplate } from "../types/sprites";
@@ -118,7 +118,7 @@ interface ProjectContextValue {
     config: MusicConfig
   ) => Promise<number>;
   approveMusicVariant: (zoneKey: string, musicId: string, variantIndex: number) => Promise<void>;
-  addMusicAsset: (zoneKey: string, title: string) => Promise<string>;
+  addMusicAsset: (zoneKey: string, title: string, trackType: AudioTrackType, roomId?: string | null) => Promise<string>;
   getAudioDataUrl: (zoneKey: string, musicId: string, filename: string) => Promise<string>;
 }
 
@@ -773,7 +773,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   );
 
   const addMusicAsset = useCallback(
-    async (zoneKey: string, title: string): Promise<string> => {
+    async (zoneKey: string, title: string, trackType: AudioTrackType, roomId?: string | null): Promise<string> => {
       const p = projectRef.current;
       if (!p) return "";
       const zone = p.zones[zoneKey];
@@ -783,6 +783,8 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       const entry: MusicAssetEntry = {
         id,
         title,
+        trackType,
+        roomId: roomId ?? null,
         status: "pending",
         currentConfig: null,
         variants: [],

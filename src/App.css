@@ -1795,6 +1795,91 @@ body {
   padding: var(--space-1) 0;
 }
 
+/* Track type badge */
+.music-track-type {
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.music-track-type--music {
+  background: rgb(168 151 210 / 20%);
+  color: var(--color-primary-lavender);
+}
+
+.music-track-type--ambient {
+  background: rgb(141 169 123 / 20%);
+  color: var(--color-moss-green);
+}
+
+.music-track-room {
+  font-size: 0.7rem;
+  color: var(--text-disabled);
+  margin-left: var(--space-1);
+  font-family: var(--font-mono);
+}
+
+.music-section-label {
+  font-size: 0.75rem;
+  color: var(--text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--space-1) 0;
+  border-top: 1px solid var(--line-faint);
+  margin-top: var(--space-1);
+}
+
+/* Add track menu */
+.music-add-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 10;
+  margin-top: 4px;
+  min-width: 160px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line-faint);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 30%);
+  padding: var(--space-1);
+}
+
+.music-add-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.music-add-menu button:hover {
+  background: rgb(255 255 255 / 6%);
+}
+
+.music-add-menu-divider {
+  height: 1px;
+  background: var(--line-faint);
+  margin: var(--space-1) 0;
+}
+
+.music-add-menu-label {
+  font-size: 0.7rem;
+  color: var(--text-disabled);
+  padding: var(--space-1) var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 /* Track actions */
 .music-track-actions {
   display: flex;
