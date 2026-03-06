@@ -1,6 +1,7 @@
 import { useProject } from "../../context/ProjectContext";
 import { EntityTree } from "./EntityTree";
 import { ZoneVibePanel } from "./ZoneVibePanel";
+import { ZoneMusicPanel } from "../music/ZoneMusicPanel";
 import type { ZoneData } from "../../types/project";
 
 export function Sidebar() {
@@ -58,12 +59,20 @@ export function Sidebar() {
               )}
             </div>
             {!isBlankZone && !isAbilityZone && (
-              <ZoneVibePanel
-                zoneName={zone.zoneName}
-                vibe={zone.vibe}
-                defaultImages={zone.defaultImages}
-                allRoomDescriptions={parsed?.allRoomDescriptions ?? ""}
-              />
+              <>
+                <ZoneVibePanel
+                  zoneName={zone.zoneName}
+                  vibe={zone.vibe}
+                  defaultImages={zone.defaultImages}
+                  allRoomDescriptions={parsed?.allRoomDescriptions ?? ""}
+                />
+                <ZoneMusicPanel
+                  zoneKey={zoneKey}
+                  zoneName={zone.zoneName}
+                  vibe={zone.vibe}
+                  roomDescriptions={parsed?.allRoomDescriptions ?? []}
+                />
+              </>
             )}
           </div>
         );

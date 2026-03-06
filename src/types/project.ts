@@ -1,6 +1,7 @@
 import type { EntityType, RawYaml } from "./entities";
 import type { SpriteConfig, SpritePromptTemplate } from "./sprites";
 import type { AbilityConfig } from "./abilities";
+import type { MusicAssetEntry } from "./music";
 
 /** Partial edits for a single entity — only fields the user has changed. */
 export type EntityEdits = RawYaml;
@@ -50,6 +51,7 @@ export interface ZoneData {
   spriteConfig?: SpriteConfig | null;
   spriteTemplate?: SpritePromptTemplate | null;
   abilityConfig?: AbilityConfig | null;
+  musicAssets?: MusicAssetEntry[];
 }
 
 export interface ProjectFile {

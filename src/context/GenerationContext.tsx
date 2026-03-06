@@ -11,6 +11,9 @@ import { useSettings } from "./SettingsContext";
 import { generateEntityPrompt, generateCustomAssetPrompt } from "../lib/prompt-gen";
 import { generateAbilityPrompt } from "../lib/ability-prompt-gen";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
+import { generateMusic } from "../lib/audio-gen";
+import { generateMusicConfig } from "../lib/music-prompt-gen";
+import type { MusicConfig } from "../types/music";
 import type { Entity, EntityType } from "../types/entities";
 
 type JobType = "prompt" | "image";
@@ -55,6 +58,18 @@ interface GenerationContextValue {
     entity: Entity,
     count: number
   ) => void;
+  startMusicConfigGeneration: (
+    zoneKey: string,
+    musicId: string,
+    zoneName: string,
+    vibe: string | null,
+    roomDescriptions: string[]
+  ) => void;
+  startMusicGeneration: (
+    zoneKey: string,
+    musicId: string,
+    config: MusicConfig
+  ) => void;
   getJob: (zoneKey: string, entityId: string) => GenerationJob | undefined;
   getError: (zoneKey: string, entityId: string) => string | undefined;
   clearError: (zoneKey: string, entityId: string) => void;
@@ -67,8 +82,10 @@ function entityKey(zoneKey: string, entityId: string) {
 }
 
 export function GenerationProvider({ children }: { children: ReactNode }) {
-  const { updatePrompt, addVariant, selectedZone, selectedEntityId, setViewingVariant } =
-    useProject();
+  const {
+    updatePrompt, addVariant, selectedZone, selectedEntityId, setViewingVariant,
+    updateMusicConfig, addMusicVariant,
+  } = useProject();
   const { settings } = useSettings();
 
   // Using useState with Map for reactivity
@@ -371,6 +388,77 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
     [addVariant, setViewingVariant, setJob, removeJob, setErrorForKey]
   );
 
+  const startMusicConfigGeneration = useCallback(
+    (
+      zoneKey: string,
+      musicId: string,
+      zoneName: string,
+      vibe: string | null,
+      roomDescriptions: string[]
+    ) => {
+      const key = entityKey(zoneKey, `music:${musicId}`);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "prompt" });
+
+      (async () => {
+        try {
+          const config = await generateMusicConfig(
+            settingsRef.current.anthropicApiKey!,
+            zoneName,
+            vibe,
+            roomDescriptions
+          );
+          await updateMusicConfig(zoneKey, musicId, config);
+        } catch (err) {
+          setErrorForKey(
+            key,
+            err instanceof Error ? err.message : "Failed to generate music config"
+          );
+        } finally {
+          removeJob(key);
+        }
+      })();
+    },
+    [updateMusicConfig, setJob, removeJob, setErrorForKey]
+  );
+
+  const startMusicGeneration = useCallback(
+    (zoneKey: string, musicId: string, config: MusicConfig) => {
+      const key = entityKey(zoneKey, `music:${musicId}`);
+
+      setErrors((prev) => {
+        const next = new Map(prev);
+        next.delete(key);
+        return next;
+      });
+
+      setJob(key, { type: "image" }); // reuse "image" job type for audio
+
+      (async () => {
+        try {
+          const result = await generateMusic(
+            settingsRef.current.runwareApiKey!,
+            config
+          );
+          await addMusicVariant(zoneKey, musicId, result.bytes, config);
+        } catch (err) {
+          console.error("[music gen] error:", err);
+          const msg = err instanceof Error ? err.message : String(err);
+          setErrorForKey(key, msg);
+        } finally {
+          removeJob(key);
+        }
+      })();
+    },
+    [addMusicVariant, setJob, removeJob, setErrorForKey]
+  );
+
   const getJob = useCallback(
     (zoneKey: string, entityId: string) => {
       return jobs.get(entityKey(zoneKey, entityId));
@@ -406,6 +494,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
         startImageGeneration,
         startCustomImageGeneration,
         startMultiImageGeneration,
+        startMusicConfigGeneration,
+        startMusicGeneration,
         getJob,
         getError,
         clearError,

@@ -8,7 +8,7 @@ import {
 import { join, dirname } from "@tauri-apps/api/path";
 import YAML from "yaml";
 import type { ProjectFile, ZoneData, DefaultImageEntityType } from "../types/project";
-import { getImagePath } from "./project-io";
+import { getImagePath, getAudioPath } from "./project-io";
 import { getDefinitionPaths } from "./ability-parser";
 
 export interface ExportProgress {
@@ -48,6 +48,12 @@ export async function exportProject(
     if (zone.defaultImages) {
       for (const t of defaultTypes) {
         if (zone.defaultImages[t]?.filename) totalFiles++;
+      }
+    }
+    // Count approved music tracks
+    if (zone.musicAssets) {
+      for (const m of zone.musicAssets) {
+        if (m.approvedVariantIndex !== null) totalFiles++;
       }
     }
   }
@@ -142,6 +148,31 @@ export async function exportProject(
       await exportZoneYaml(projectDir, zone, exportDir);
     }
     progress.completed++;
+
+    // Copy approved music tracks
+    if (zone.musicAssets) {
+      const audioBaseDir = await join(worldDir, "audio");
+      for (const music of zone.musicAssets) {
+        if (music.approvedVariantIndex === null) continue;
+        const variant = music.variants[music.approvedVariantIndex];
+        if (!variant) continue;
+
+        const zoneAudioDir = await join(audioBaseDir, zone.zoneName);
+        await mkdir(zoneAudioDir, { recursive: true });
+
+        const srcPath = await getAudioPath(projectDir, zone.zoneName, music.id, variant.filename);
+        const destPath = await join(zoneAudioDir, `${music.title.toLowerCase().replace(/\s+/g, "_")}.mp3`);
+
+        progress.currentFile = `${music.title}.mp3`;
+        onProgress?.({ ...progress });
+
+        const srcExists = await exists(srcPath);
+        if (srcExists) {
+          await copyFile(srcPath, destPath);
+        }
+        progress.completed++;
+      }
+    }
   }
 
   progress.currentFile = null;

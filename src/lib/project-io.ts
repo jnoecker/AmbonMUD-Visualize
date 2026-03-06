@@ -280,6 +280,52 @@ export async function saveImage(
   return filename;
 }
 
+// Matches variant audio files: v1.mp3, v2.mp3, etc.
+const AUDIO_VARIANT_RE = /^v(\d+)\.mp3$/;
+
+export async function saveAudioFile(
+  projectDir: string,
+  zoneName: string,
+  musicId: string,
+  audioData: Uint8Array
+): Promise<string> {
+  const audioDir = await join(projectDir, "audio", zoneName, musicId);
+
+  const dirExists = await exists(audioDir);
+  if (!dirExists) {
+    await mkdir(audioDir, { recursive: true });
+  }
+
+  let version = 1;
+  try {
+    const entries = await readDir(audioDir);
+    for (const f of entries) {
+      const match = f.name?.match(AUDIO_VARIANT_RE);
+      if (match) {
+        const v = parseInt(match[1], 10);
+        if (v >= version) version = v + 1;
+      }
+    }
+  } catch {
+    // Directory might be empty
+  }
+
+  const filename = `v${version}.mp3`;
+  const filePath = await join(audioDir, filename);
+  await writeFile(filePath, audioData);
+
+  return filename;
+}
+
+export async function getAudioPath(
+  projectDir: string,
+  zoneName: string,
+  musicId: string,
+  filename: string
+): Promise<string> {
+  return join(projectDir, "audio", zoneName, musicId, filename);
+}
+
 export async function getImagePath(
   projectDir: string,
   zoneName: string,

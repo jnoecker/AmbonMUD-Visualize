@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { ProjectFile, AssetEntry, ImageVariant, DefaultImageEntry, DefaultImageEntityType, EntityEdits } from "../types/project";
+import type { MusicAssetEntry, MusicConfig, MusicVariant } from "../types/music";
 import type { Entity, EntityType, ParsedZone } from "../types/entities";
 import { applyEditsToEntity } from "../lib/entity-edits";
 import type { SpritePromptTemplate } from "../types/sprites";
@@ -18,7 +19,9 @@ import {
   openProject,
   saveProject,
   saveImage,
+  saveAudioFile,
   getImagePath,
+  getAudioPath,
   reconcileImages,
   swapEntityImages,
 } from "../lib/project-io";
@@ -104,6 +107,19 @@ interface ProjectContextValue {
   getAsset: (zoneKey: string, entityId: string) => AssetEntry | undefined;
   getImageDataUrl: (zoneKey: string, entityId: string, filename: string) => Promise<string>;
   getApprovalCounts: () => { approved: number; total: number };
+
+  // Music
+  getMusicAssets: (zoneKey: string) => MusicAssetEntry[];
+  updateMusicConfig: (zoneKey: string, musicId: string, config: MusicConfig) => Promise<void>;
+  addMusicVariant: (
+    zoneKey: string,
+    musicId: string,
+    audioData: Uint8Array,
+    config: MusicConfig
+  ) => Promise<number>;
+  approveMusicVariant: (zoneKey: string, musicId: string, variantIndex: number) => Promise<void>;
+  addMusicAsset: (zoneKey: string, title: string) => Promise<string>;
+  getAudioDataUrl: (zoneKey: string, musicId: string, filename: string) => Promise<string>;
 }
 
 const ProjectCtx = createContext<ProjectContextValue>(null!);
@@ -747,6 +763,166 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  // --- Music asset management ---
+
+  const getMusicAssets = useCallback(
+    (zoneKey: string): MusicAssetEntry[] => {
+      return project?.zones[zoneKey]?.musicAssets ?? [];
+    },
+    [project]
+  );
+
+  const addMusicAsset = useCallback(
+    async (zoneKey: string, title: string): Promise<string> => {
+      const p = projectRef.current;
+      if (!p) return "";
+      const zone = p.zones[zoneKey];
+      if (!zone) return "";
+
+      const id = `music_${Date.now()}`;
+      const entry: MusicAssetEntry = {
+        id,
+        title,
+        status: "pending",
+        currentConfig: null,
+        variants: [],
+        approvedVariantIndex: null,
+      };
+
+      const next: ProjectFile = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: {
+            ...zone,
+            musicAssets: [...(zone.musicAssets ?? []), entry],
+          },
+        },
+      };
+      await commitProject(next);
+      return id;
+    },
+    [commitProject]
+  );
+
+  const updateMusicConfig = useCallback(
+    async (zoneKey: string, musicId: string, config: MusicConfig) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const musicAssets = (zone.musicAssets ?? []).map((m) =>
+        m.id === musicId ? { ...m, currentConfig: config } : m
+      );
+
+      const next: ProjectFile = {
+        ...p,
+        zones: { ...p.zones, [zoneKey]: { ...zone, musicAssets } },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const addMusicVariant = useCallback(
+    async (
+      zoneKey: string,
+      musicId: string,
+      audioData: Uint8Array,
+      config: MusicConfig
+    ): Promise<number> => {
+      const p = projectRef.current;
+      const dir = projectDirRef.current;
+      if (!p || !dir) return 0;
+      const zone = p.zones[zoneKey];
+      if (!zone) return 0;
+
+      const filename = await saveAudioFile(dir, zoneKey, musicId, audioData);
+
+      // Cache the audio data URL
+      const key = `audio/${zoneKey}/${musicId}/${filename}`;
+      const b64parts: string[] = [];
+      const CHUNK = 0x8000;
+      for (let i = 0; i < audioData.length; i += CHUNK) {
+        b64parts.push(String.fromCharCode(...audioData.subarray(i, i + CHUNK)));
+      }
+      imageCache.current.set(key, `data:audio/mpeg;base64,${btoa(b64parts.join(""))}`);
+
+      const variant: MusicVariant = {
+        filename,
+        generatedAt: new Date().toISOString(),
+        config,
+      };
+
+      const latest = projectRef.current!;
+      const latestZone = latest.zones[zoneKey];
+      const musicAssets = (latestZone.musicAssets ?? []).map((m) => {
+        if (m.id !== musicId) return m;
+        return {
+          ...m,
+          status: (m.status === "pending" ? "generated" : m.status) as MusicAssetEntry["status"],
+          variants: [...m.variants, variant],
+        };
+      });
+
+      const next: ProjectFile = {
+        ...latest,
+        zones: { ...latest.zones, [zoneKey]: { ...latestZone, musicAssets } },
+      };
+      await commitProject(next);
+
+      const updated = musicAssets.find((m) => m.id === musicId);
+      return updated ? updated.variants.length - 1 : 0;
+    },
+    [commitProject]
+  );
+
+  const approveMusicVariant = useCallback(
+    async (zoneKey: string, musicId: string, variantIndex: number) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+
+      const musicAssets = (zone.musicAssets ?? []).map((m) =>
+        m.id === musicId
+          ? { ...m, status: "approved" as const, approvedVariantIndex: variantIndex }
+          : m
+      );
+
+      const next: ProjectFile = {
+        ...p,
+        zones: { ...p.zones, [zoneKey]: { ...zone, musicAssets } },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const getAudioDataUrl = useCallback(
+    async (zoneKey: string, musicId: string, filename: string): Promise<string> => {
+      const dir = projectDirRef.current;
+      if (!dir) throw new Error("No project open");
+
+      const key = `audio/${zoneKey}/${musicId}/${filename}`;
+      const cached = imageCache.current.get(key);
+      if (cached) return cached;
+
+      const filePath = await getAudioPath(dir, zoneKey, musicId, filename);
+      const bytes = await readFile(filePath);
+      const CHUNK = 0x8000;
+      const parts: string[] = [];
+      for (let i = 0; i < bytes.length; i += CHUNK) {
+        parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
+      }
+      const dataUrl = `data:audio/mpeg;base64,${btoa(parts.join(""))}`;
+      imageCache.current.set(key, dataUrl);
+      return dataUrl;
+    },
+    []
+  );
+
   const getApprovalCounts = useCallback(() => {
     if (!project) return { approved: 0, total: 0 };
     let approved = 0;
@@ -794,6 +970,12 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         getAsset,
         getImageDataUrl,
         getApprovalCounts,
+        getMusicAssets,
+        updateMusicConfig,
+        addMusicVariant,
+        approveMusicVariant,
+        addMusicAsset,
+        getAudioDataUrl,
       }}
     >
       {children}
