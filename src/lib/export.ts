@@ -309,19 +309,10 @@ async function exportZoneYaml(
     }
   }
 
-  // --- Insert video fields for approved video clips ---
+  // --- Insert video fields for approved video clips (per-entity only) ---
   if (zone.videoAssets) {
-    // Zone-level video (zone intro)
-    const zoneIntro = zone.videoAssets.find(
-      (v) => v.videoType === "zone_intro" && v.approvedVariantIndex !== null
-    );
-    if (zoneIntro) {
-      doc.set("video", `${zone.zoneName}/${zoneIntro.title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}.mp4`);
-    }
-
-    // Per-entity videos (boss reveals, item reveals)
     const entityVideos = zone.videoAssets.filter(
-      (v) => v.sourceEntityId && v.videoType !== "zone_intro" && v.approvedVariantIndex !== null
+      (v) => v.sourceEntityId && v.approvedVariantIndex !== null
     );
     if (entityVideos.length > 0) {
       for (const section of ENTITY_SECTIONS) {

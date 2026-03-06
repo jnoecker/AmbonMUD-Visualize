@@ -19,6 +19,22 @@ Example motions: aerial drift from misty forest edge across canopy to a glowing 
 
 Output ONLY the motion prompt text — no labels, no markdown, no commentary. Keep it under 120 words.`;
 
+const ROOM_CINEMATIC_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a room description, produce a concise motion/animation prompt for an AI video generator to create a short room cinematic.
+
+This is a 6-10 second establishing shot that plays when a player enters a specific room. The source frame is the room's existing painted background in the Surreal Gentle Magic style.
+
+Guidelines:
+- Describe MOTION and CAMERA MOVEMENT within this specific room, not the broader zone
+- Favor slow, dreamy camera movements: gentle pan, slow dolly, subtle zoom
+- Add subtle environmental motion: drifting motes of light, swaying foliage, rippling water, floating particles
+- Keep motion gentle and atmospheric — no fast cuts, no jarring transitions
+- The mood should match the room's specific character and atmosphere
+- Include 2-3 specific motion elements layered at different depths
+
+Example motions: slow forward dolly through archway, gentle lateral pan revealing interior details, subtle upward tilt from ground-level glow to ceiling, ambient particles drifting across frame
+
+Output ONLY the motion prompt text — no labels, no markdown, no commentary. Keep it under 100 words.`;
+
 const BOSS_REVEAL_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a boss mob description, produce a concise motion/animation prompt for an AI video generator to create a dramatic boss reveal clip.
 
 This is a 6-second reveal animation when a player encounters a boss mob. The source frame is the boss's existing character portrait in the Surreal Gentle Magic style.
@@ -53,6 +69,7 @@ Output ONLY the motion prompt text — no labels, no markdown, no commentary. Ke
 
 const SYSTEM_PROMPTS: Record<VideoAssetType, string> = {
   zone_intro: ZONE_INTRO_SYSTEM_PROMPT,
+  room_cinematic: ROOM_CINEMATIC_SYSTEM_PROMPT,
   boss_reveal: BOSS_REVEAL_SYSTEM_PROMPT,
   item_reveal: ITEM_REVEAL_SYSTEM_PROMPT,
 };
@@ -76,6 +93,7 @@ export async function generateVideoConfig(
 ): Promise<VideoConfig> {
   const typeLabels: Record<VideoAssetType, string> = {
     zone_intro: "zone flyover cinematic",
+    room_cinematic: "room cinematic",
     boss_reveal: "boss reveal clip",
     item_reveal: "epic item reveal clip",
   };

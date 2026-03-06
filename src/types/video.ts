@@ -11,7 +11,7 @@ export interface VideoVariant {
 }
 
 export type VideoStatus = "pending" | "generated" | "approved";
-export type VideoAssetType = "zone_intro" | "boss_reveal" | "item_reveal";
+export type VideoAssetType = "zone_intro" | "room_cinematic" | "boss_reveal" | "item_reveal";
 
 export interface VideoAssetEntry {
   id: string;

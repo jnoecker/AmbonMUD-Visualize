@@ -28,6 +28,7 @@ interface ModelSpec {
 const DEFAULT_MODEL_SPEC: ModelSpec = {
   dims: {
     zone_intro: { width: 1920, height: 1080 },
+    room_cinematic: { width: 1920, height: 1080 },
     boss_reveal: { width: 1080, height: 1920 },
     item_reveal: { width: 1080, height: 1920 },
   },
@@ -38,6 +39,7 @@ const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
   "vidu:3@2": {
     dims: {
       zone_intro: { width: 1280, height: 720 },
+      room_cinematic: { width: 1280, height: 720 },
       boss_reveal: { width: 720, height: 1280 },
       item_reveal: { width: 720, height: 1280 },
     },

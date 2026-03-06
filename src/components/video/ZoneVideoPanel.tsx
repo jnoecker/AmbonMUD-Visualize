@@ -54,6 +54,7 @@ export function ZoneVideoPanel({
   const handleAddVideo = async (videoType: VideoAssetType, sourceEntity: Entity | null) => {
     const labels: Record<VideoAssetType, string> = {
       zone_intro: "Zone Intro",
+      room_cinematic: "Room Cinematic",
       boss_reveal: "Boss Reveal",
       item_reveal: "Item Reveal",
     };
@@ -66,6 +67,7 @@ export function ZoneVideoPanel({
 
   // Group by type
   const intros = videoAssets.filter((v) => v.videoType === "zone_intro");
+  const roomCinematics = videoAssets.filter((v) => v.videoType === "room_cinematic");
   const bossReveals = videoAssets.filter((v) => v.videoType === "boss_reveal");
   const itemReveals = videoAssets.filter((v) => v.videoType === "item_reveal");
 
@@ -82,12 +84,23 @@ export function ZoneVideoPanel({
           </button>
           {showAddMenu && (
             <div className="music-add-menu">
-              <div className="music-add-menu-label">Zone Intro Cinematic</div>
-              {rooms.map((room) => (
-                <button key={room.id} onClick={() => handleAddVideo("zone_intro", room)}>
-                  {room.title}
-                </button>
-              ))}
+              {rooms.length > 0 && (
+                <>
+                  <div className="music-add-menu-label">Zone Intro (flyover)</div>
+                  {rooms.map((room) => (
+                    <button key={`zi-${room.id}`} onClick={() => handleAddVideo("zone_intro", room)}>
+                      {room.title}
+                    </button>
+                  ))}
+                  <div className="music-add-menu-divider" />
+                  <div className="music-add-menu-label">Room Cinematic</div>
+                  {rooms.map((room) => (
+                    <button key={`rc-${room.id}`} onClick={() => handleAddVideo("room_cinematic", room)}>
+                      {room.title}
+                    </button>
+                  ))}
+                </>
+              )}
               {rooms.length === 0 && (
                 <button onClick={() => handleAddVideo("zone_intro", null)}>
                   Zone Intro (text-to-video)
@@ -147,6 +160,32 @@ export function ZoneVideoPanel({
               clearError={clearError}
             />
           ))}
+          {roomCinematics.length > 0 && (
+            <>
+              <div className="music-section-label">Room Cinematics</div>
+              {roomCinematics.map((video) => (
+                <VideoCard
+                  key={video.id}
+                  zoneKey={zoneKey}
+                  zoneName={zoneName}
+                  vibe={vibe}
+                  video={video}
+                  entities={entities}
+                  settings={settings}
+                  updateVideoConfig={updateVideoConfig}
+                  approveVideoVariant={approveVideoVariant}
+                  getVideoDataUrl={getVideoDataUrl}
+                  getAsset={getAsset}
+                  getImageDataUrl={getImageDataUrl}
+                  startVideoConfigGeneration={startVideoConfigGeneration}
+                  startVideoGeneration={startVideoGeneration}
+                  getJob={getJob}
+                  getError={getError}
+                  clearError={clearError}
+                />
+              ))}
+            </>
+          )}
           {bossReveals.length > 0 && (
             <>
               <div className="music-section-label">Boss Reveals</div>
@@ -381,6 +420,7 @@ function VideoCard({
 
   const typeLabels: Record<VideoAssetType, string> = {
     zone_intro: "intro",
+    room_cinematic: "room",
     boss_reveal: "boss",
     item_reveal: "item",
   };
