@@ -3,6 +3,7 @@ import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { useGeneration } from "../../context/GenerationContext";
 import type { VideoAssetEntry, VideoConfig, VideoAssetType } from "../../types/video";
+import type { RoomSummary } from "../../lib/video-prompt-gen";
 import type { Entity } from "../../types/entities";
 
 interface ZoneVideoPanelProps {
@@ -222,7 +223,8 @@ interface VideoCardProps {
     videoType: VideoAssetType,
     entityTitle: string,
     entityDescription: string,
-    zoneVibe: string | null
+    zoneVibe: string | null,
+    allRooms?: RoomSummary[]
   ) => void;
   startVideoGeneration: (
     zoneKey: string,
@@ -325,13 +327,23 @@ function VideoCard({
 
   const handleGenerateConfig = () => {
     clearError(zoneKey, jobKey);
+
+    // For zone intros, pass all room summaries so the LLM creates a zone-wide flyover
+    const roomSummaries: RoomSummary[] | undefined =
+      video.videoType === "zone_intro"
+        ? entities
+            .filter((e) => e.type === "room")
+            .map((e) => ({ title: e.title, description: e.description }))
+        : undefined;
+
     startVideoConfigGeneration(
       zoneKey,
       video.id,
       video.videoType,
-      sourceEntity?.title ?? zoneName,
-      sourceEntity?.description ?? "",
-      vibe
+      video.videoType === "zone_intro" ? zoneName : (sourceEntity?.title ?? zoneName),
+      video.videoType === "zone_intro" ? "" : (sourceEntity?.description ?? ""),
+      vibe,
+      roomSummaries
     );
   };
 

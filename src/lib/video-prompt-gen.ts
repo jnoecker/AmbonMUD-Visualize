@@ -1,21 +1,23 @@
 import { llmGenerate, type LlmCallOptions } from "./llm";
 import type { VideoConfig, VideoAssetType } from "../types/video";
 
-const ZONE_INTRO_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a zone description, produce a concise motion/animation prompt for an AI video generator to create a short zone intro cinematic.
+const ZONE_INTRO_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a zone name, its atmosphere, and a list of all rooms in the zone, produce a concise motion/animation prompt for an AI video generator to create a sweeping zone flyover cinematic.
 
-This is a 6-second establishing shot that plays when a player enters a new zone. The source frame is an existing painted room background in the Surreal Gentle Magic style.
+This is a 6-10 second aerial/panoramic flyover that introduces the ENTIRE zone — not a single room. The source frame (if provided) is a starting point, but the motion prompt should evoke a journey across the whole zone landscape.
 
 Guidelines:
-- Describe MOTION and CAMERA MOVEMENT, not the scene itself (the scene comes from the source image)
-- Favor slow, dreamy camera movements: gentle pan, slow dolly, subtle zoom
+- Describe a sweeping CAMERA JOURNEY that conveys the breadth and variety of the zone
+- Reference key landmarks and transitions between areas (e.g., "gliding from the harbor docks over rooftops to the cathedral spire")
+- Favor slow, dreamy camera movements: aerial drift, sweeping crane, gentle flyover
 - Add subtle environmental motion: drifting motes of light, swaying foliage, rippling water, floating particles
 - Keep motion gentle and atmospheric — no fast cuts, no jarring transitions
 - The mood should be inviting, mysterious, and magical
+- Convey the zone's overall character and geography, not just one location
 - Include 2-3 specific motion elements layered at different depths
 
-Example motions: slow forward dolly through archway, gentle lateral pan revealing landscape, subtle upward tilt from ground-level glow to sky, ambient particles drifting across frame
+Example motions: aerial drift from misty forest edge across canopy to a glowing clearing, sweeping crane over village rooftops revealing a distant castle, slow glide along a river from cavern mouth to open valley
 
-Output ONLY the motion prompt text — no labels, no markdown, no commentary. Keep it under 100 words.`;
+Output ONLY the motion prompt text — no labels, no markdown, no commentary. Keep it under 120 words.`;
 
 const BOSS_REVEAL_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a boss mob description, produce a concise motion/animation prompt for an AI video generator to create a dramatic boss reveal clip.
 
@@ -55,29 +57,51 @@ const SYSTEM_PROMPTS: Record<VideoAssetType, string> = {
   item_reveal: ITEM_REVEAL_SYSTEM_PROMPT,
 };
 
+export interface RoomSummary {
+  title: string;
+  description: string;
+}
+
 /**
  * Use LLM to generate a video motion prompt from entity context.
+ * For zone_intro, pass allRooms to generate a zone-wide flyover prompt.
  */
 export async function generateVideoConfig(
   llmOpts: LlmCallOptions,
   videoType: VideoAssetType,
   entityTitle: string,
   entityDescription: string,
-  zoneVibe: string | null
+  zoneVibe: string | null,
+  allRooms?: RoomSummary[]
 ): Promise<VideoConfig> {
   const typeLabels: Record<VideoAssetType, string> = {
-    zone_intro: "zone intro cinematic",
+    zone_intro: "zone flyover cinematic",
     boss_reveal: "boss reveal clip",
     item_reveal: "epic item reveal clip",
   };
 
-  const userContent = `Entity: ${entityTitle}
+  let userContent: string;
+
+  if (videoType === "zone_intro" && allRooms && allRooms.length > 0) {
+    const roomList = allRooms
+      .map((r) => `- ${r.title}${r.description ? `: ${r.description}` : ""}`)
+      .join("\n");
+    userContent = `Zone: ${entityTitle}
+${zoneVibe ? `Zone atmosphere: ${zoneVibe}` : ""}
+
+Rooms in this zone:
+${roomList}
+
+Generate a ${typeLabels[videoType]} motion prompt that sweeps across the whole zone.`;
+  } else {
+    userContent = `Entity: ${entityTitle}
 ${entityDescription ? `Description: ${entityDescription}` : ""}
 ${zoneVibe ? `Zone atmosphere: ${zoneVibe}` : ""}
 
 Generate a ${typeLabels[videoType]} motion prompt.`;
+  }
 
-  const text = await llmGenerate(llmOpts, SYSTEM_PROMPTS[videoType], userContent, 200);
+  const text = await llmGenerate(llmOpts, SYSTEM_PROMPTS[videoType], userContent, 250);
 
   return {
     prompt: text.trim(),

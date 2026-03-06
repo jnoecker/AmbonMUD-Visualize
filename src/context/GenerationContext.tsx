@@ -14,7 +14,7 @@ import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-
 import { generateMusic } from "../lib/audio-gen";
 import { generateMusicConfig } from "../lib/music-prompt-gen";
 import { generateVideo } from "../lib/video-gen";
-import { generateVideoConfig } from "../lib/video-prompt-gen";
+import { generateVideoConfig, type RoomSummary } from "../lib/video-prompt-gen";
 import { runwareEnhancePrompt } from "../lib/runware-llm";
 import type { LlmCallOptions } from "../lib/llm";
 import type { MusicConfig, AudioTrackType } from "../types/music";
@@ -82,7 +82,8 @@ interface GenerationContextValue {
     videoType: VideoAssetType,
     entityTitle: string,
     entityDescription: string,
-    zoneVibe: string | null
+    zoneVibe: string | null,
+    allRooms?: RoomSummary[]
   ) => void;
   startVideoGeneration: (
     zoneKey: string,
@@ -506,7 +507,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
       videoType: VideoAssetType,
       entityTitle: string,
       entityDescription: string,
-      zoneVibe: string | null
+      zoneVibe: string | null,
+      allRooms?: RoomSummary[]
     ) => {
       const key = entityKey(zoneKey, `video:${videoId}`);
 
@@ -525,7 +527,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
             videoType,
             entityTitle,
             entityDescription,
-            zoneVibe
+            zoneVibe,
+            allRooms
           );
           await updateVideoConfig(zoneKey, videoId, config);
         } catch (err) {
