@@ -43,7 +43,7 @@ export async function generateVideo(
   const payload: Record<string, unknown> = {
     model,
     positivePrompt: config.prompt,
-    duration: 6,
+    duration: 10,
     width: dims.width,
     height: dims.height,
     numberResults: 1,
