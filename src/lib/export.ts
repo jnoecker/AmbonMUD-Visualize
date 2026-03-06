@@ -9,6 +9,7 @@ import { join, dirname } from "@tauri-apps/api/path";
 import YAML from "yaml";
 import type { ProjectFile, ZoneData, DefaultImageEntityType } from "../types/project";
 import { getImagePath } from "./project-io";
+import { getDefinitionPaths } from "./ability-parser";
 
 export interface ExportProgress {
   total: number;
@@ -84,7 +85,17 @@ export async function exportProject(
         asset.entityId,
         variant.filename
       );
-      const destPath = await join(zoneImgDir, `${bareId}.png`);
+
+      // For ability zones, export into section subdirectories (abilities/, statusEffects/)
+      let destPath: string;
+      if (zone.abilityConfig && asset.entityId.includes(":")) {
+        const section = asset.entityId.split(":")[0]; // "abilities" or "statusEffects"
+        const sectionDir = await join(imagesBaseDir, section);
+        await mkdir(sectionDir, { recursive: true });
+        destPath = await join(sectionDir, `${bareId}.png`);
+      } else {
+        destPath = await join(zoneImgDir, `${bareId}.png`);
+      }
 
       progress.currentFile = `${bareId}.png`;
       onProgress?.({ ...progress });
@@ -119,14 +130,18 @@ export async function exportProject(
       }
     }
 
-    // Write YAML with image fields and entity edits (skip for ability zones)
-    if (!zone.abilityConfig) {
-      progress.currentFile = `${zone.zoneName}.yaml`;
-      onProgress?.({ ...progress });
+    // Write YAML with image fields and entity edits
+    progress.currentFile = zone.abilityConfig
+      ? zone.sourceYamlPath.split(/[/\\]/).pop() ?? "application.yaml"
+      : `${zone.zoneName}.yaml`;
+    onProgress?.({ ...progress });
 
+    if (zone.abilityConfig) {
+      await exportAbilityYaml(zone, exportDir);
+    } else {
       await exportZoneYaml(projectDir, zone, exportDir);
-      progress.completed++;
     }
+    progress.completed++;
   }
 
   progress.currentFile = null;
@@ -240,5 +255,111 @@ async function exportZoneYaml(
     await writeTextFile(destPath, output);
   } else {
     await writeTextFile(zone.sourceYamlPath, output);
+  }
+}
+
+/**
+ * Export ability/status-effect zone: read the source YAML (typically application.yaml),
+ * insert `image:` fields into ability and status-effect definitions for approved assets,
+ * and write the full file back — everything else untouched.
+ */
+async function exportAbilityYaml(
+  zone: ZoneData,
+  exportDir?: string
+): Promise<void> {
+  let yamlText: string;
+  try {
+    yamlText = await readTextFile(zone.sourceYamlPath);
+  } catch {
+    return;
+  }
+
+  const doc = YAML.parseDocument(yamlText);
+  const { abilitiesPath, statusEffectsPath } = getDefinitionPaths(yamlText);
+
+  // Build image map: bareId -> image path
+  const imageMap = new Map<string, string>();
+  for (const asset of Object.values(zone.assets)) {
+    if (asset.approvedVariantIndex === null) continue;
+    imageMap.set(asset.entityId, `${zone.zoneName}/${asset.entityId.replace(/:/g, "_")}.png`);
+  }
+
+  // Insert image fields into ability definitions
+  if (abilitiesPath.length > 0) {
+    const defsNode = navigateToMap(doc, abilitiesPath);
+    if (defsNode) {
+      insertImageFields(defsNode, "abilities", imageMap);
+    }
+  }
+
+  // Insert image fields into status effect definitions
+  if (statusEffectsPath.length > 0) {
+    const defsNode = navigateToMap(doc, statusEffectsPath);
+    if (defsNode) {
+      insertImageFields(defsNode, "statusEffects", imageMap);
+    }
+  }
+
+  // Write back — to exportDir if specified, otherwise in-place to source
+  const output = doc.toString({ lineWidth: 0 });
+  if (exportDir) {
+    const filename = zone.sourceYamlPath.split(/[/\\]/).pop() ?? "application.yaml";
+    const destPath = await join(exportDir, filename);
+    await writeTextFile(destPath, output);
+  } else {
+    await writeTextFile(zone.sourceYamlPath, output);
+  }
+}
+
+/** Navigate a YAML document down a series of keys to reach a YAMLMap. */
+function navigateToMap(
+  doc: YAML.Document,
+  path: string[]
+): YAML.YAMLMap | null {
+  let node: unknown = doc.contents;
+  for (const key of path) {
+    if (!YAML.isMap(node)) return null;
+    node = (node as YAML.YAMLMap).get(key, true);
+  }
+  return YAML.isMap(node) ? (node as YAML.YAMLMap) : null;
+}
+
+/**
+ * For each entry in a definitions YAMLMap, if the entity has an approved image,
+ * set or update its `image:` field. The image path uses the MUD's conventional
+ * `/images/{section}/{bareId}.png` format.
+ */
+function insertImageFields(
+  defsMap: YAML.YAMLMap,
+  section: string,
+  imageMap: Map<string, string>
+): void {
+  for (const item of defsMap.items) {
+    const key = YAML.isScalar(item.key) ? String(item.key.value) : null;
+    if (!key) continue;
+
+    // Entity IDs in the project are prefixed: "abilities:power_strike" or "statusEffects:ignite"
+    const entityId = `${section}:${key}`;
+    if (!imageMap.has(entityId)) continue;
+
+    const entityNode = item.value;
+    if (!YAML.isMap(entityNode)) continue;
+
+    // Use the MUD's standard image path format
+    const imgPath = `/images/${section}/${key}.png`;
+
+    // Delete existing image field and re-insert after displayName
+    entityNode.delete("image");
+    const imgPair = new YAML.Pair(new YAML.Scalar("image"), new YAML.Scalar(imgPath));
+
+    // Insert after displayName if present, otherwise at position 0
+    const displayNameIdx = entityNode.items.findIndex(
+      (p: any) => YAML.isScalar(p.key) && p.key.value === "displayName"
+    );
+    if (displayNameIdx >= 0) {
+      entityNode.items.splice(displayNameIdx + 1, 0, imgPair as any);
+    } else {
+      entityNode.items.unshift(imgPair as any);
+    }
   }
 }

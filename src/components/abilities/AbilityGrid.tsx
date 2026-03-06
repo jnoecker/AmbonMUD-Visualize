@@ -16,11 +16,14 @@ interface AbilityGridProps {
   abilityConfig: AbilityConfig;
 }
 
+const STATUS_EFFECTS_TAB = "__STATUS_EFFECTS__";
+
 const CLASS_COLORS: Record<string, string> = {
   WARRIOR: "var(--color-gold)",
   MAGE: "var(--color-lavender)",
   CLERIC: "var(--color-pale-blue)",
   ROGUE: "var(--color-dusty-rose)",
+  [STATUS_EFFECTS_TAB]: "var(--color-moss-green)",
 };
 
 function capitalize(s: string) {
@@ -41,17 +44,31 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
     getJob,
   } = useGeneration();
 
-  const [activeClass, setActiveClass] = useState(abilityConfig.classes[0]);
+  const [activeTab, setActiveTab] = useState(abilityConfig.classes[0]);
   const [detailEntityId, setDetailEntityId] = useState<string | null>(null);
   const [batchGenerating, setBatchGenerating] = useState(false);
 
-  // Group entities by class
+  // Split entities: abilities (have requiredClass) vs status effects
+  const { abilityEntities, statusEffectEntities } = useMemo(() => {
+    const abilities: Entity[] = [];
+    const statusEffects: Entity[] = [];
+    for (const entity of entities) {
+      if (entity.id.startsWith("statusEffects:")) {
+        statusEffects.push(entity);
+      } else {
+        abilities.push(entity);
+      }
+    }
+    return { abilityEntities: abilities, statusEffectEntities: statusEffects };
+  }, [entities]);
+
+  // Group ability entities by class
   const entitiesByClass = useMemo(() => {
     const groups: Record<string, Entity[]> = {};
     for (const cls of abilityConfig.classes) {
       groups[cls] = [];
     }
-    for (const entity of entities) {
+    for (const entity of abilityEntities) {
       const ability = getAbilityFromEntity(entity);
       if (groups[ability.requiredClass]) {
         groups[ability.requiredClass].push(entity);
@@ -66,11 +83,19 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
       });
     }
     return groups;
-  }, [entities, abilityConfig.classes]);
+  }, [abilityEntities, abilityConfig.classes]);
 
-  const visibleEntities = entitiesByClass[activeClass] || [];
+  const hasStatusEffects = statusEffectEntities.length > 0;
+  const tabs = hasStatusEffects
+    ? [...abilityConfig.classes, STATUS_EFFECTS_TAB]
+    : abilityConfig.classes;
 
-  // Stats for active class
+  const visibleEntities =
+    activeTab === STATUS_EFFECTS_TAB
+      ? statusEffectEntities
+      : entitiesByClass[activeTab] || [];
+
+  // Stats for active tab
   const stats = useMemo(() => {
     const assets = visibleEntities.map((e) => getAsset(zoneKey, e.id));
     const total = assets.length;
@@ -98,7 +123,7 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
     [zoneKey, getImageDataUrl]
   );
 
-  // Batch generate prompts for all abilities in the active class that don't have one
+  // Batch generate prompts for all visible entities that don't have one
   const handleBatchGeneratePrompts = useCallback(async () => {
     if (!settings.anthropicApiKey) return;
     setBatchGenerating(true);
@@ -109,11 +134,10 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
         startPromptGeneration(zoneKey, entity.id, entity, "");
       }
     }
-    // Note: batch flag is cosmetic; individual jobs tracked by GenerationContext
     setBatchGenerating(false);
   }, [visibleEntities, zoneKey, getAsset, settings.anthropicApiKey, startPromptGeneration]);
 
-  // Batch generate images for all abilities in the active class that have prompts but no images
+  // Batch generate images for all visible entities that have prompts but no images
   const handleBatchGenerateImages = useCallback(async () => {
     if (!settings.runwareApiKey) return;
 
@@ -135,13 +159,16 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
     return a?.currentPrompt && a.variants.length === 0;
   }).length;
 
+  const tabLabel =
+    activeTab === STATUS_EFFECTS_TAB ? "Status Effects" : `${capitalize(activeTab)} Abilities`;
+
   return (
     <div className="ability-grid-container">
       {/* Batch bar */}
       <div className="ability-batch-bar glass-panel">
-        <div className="ability-batch-bar-title">Ability Icons</div>
+        <div className="ability-batch-bar-title">{tabLabel}</div>
         <div className="ability-batch-bar-stats">
-          <span>{stats.total} abilities</span>
+          <span>{stats.total} icons</span>
           {stats.approved > 0 && (
             <span className="ability-stat ability-stat--approved">{stats.approved} approved</span>
           )}
@@ -185,34 +212,43 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
         />
       ) : (
         <>
-          {/* Class tabs */}
+          {/* Class + status effect tabs */}
           <div className="ability-class-tabs">
-            {abilityConfig.classes.map((cls) => (
-              <button
-                key={cls}
-                className={`ability-class-tab${cls === activeClass ? " ability-class-tab--active" : ""}`}
-                onClick={() => setActiveClass(cls)}
-                style={cls === activeClass ? { borderBottomColor: CLASS_COLORS[cls] || "var(--color-lavender)" } : undefined}
-              >
-                {capitalize(cls)}
-                <span className="ability-class-tab-count">
-                  {(entitiesByClass[cls] || []).length}
-                </span>
-              </button>
-            ))}
+            {tabs.map((tab) => {
+              const isStatusTab = tab === STATUS_EFFECTS_TAB;
+              const label = isStatusTab ? "Status Effects" : capitalize(tab);
+              const count = isStatusTab
+                ? statusEffectEntities.length
+                : (entitiesByClass[tab] || []).length;
+
+              return (
+                <button
+                  key={tab}
+                  className={`ability-class-tab${tab === activeTab ? " ability-class-tab--active" : ""}`}
+                  onClick={() => setActiveTab(tab)}
+                  style={tab === activeTab ? { borderBottomColor: CLASS_COLORS[tab] || "var(--color-lavender)" } : undefined}
+                >
+                  {label}
+                  <span className="ability-class-tab-count">{count}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {/* Grid of ability cells */}
+          {/* Grid of cells */}
           <div className="ability-grid">
             {visibleEntities.map((entity) => {
-              const ability = getAbilityFromEntity(entity);
+              const raw = entity.rawYaml as Record<string, unknown>;
+              const label = (raw.displayName as string) || entity.title;
+              const level = (raw.levelRequired as number) ?? 0;
+
               return (
                 <AbilityCell
                   key={entity.id}
                   entityId={entity.id}
                   asset={getAsset(zoneKey, entity.id)}
-                  label={ability.displayName}
-                  level={ability.levelRequired}
+                  label={label}
+                  level={level}
                   selected={entity.id === selectedEntityId}
                   generating={!!getJob(zoneKey, entity.id)}
                   onClick={() => handleCellClick(entity.id)}

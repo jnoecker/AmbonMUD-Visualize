@@ -8,13 +8,50 @@ import {
   writeFile,
   rename,
 } from "@tauri-apps/plugin-fs";
-import { join } from "@tauri-apps/api/path";
+import { join, dirname } from "@tauri-apps/api/path";
 import type { ProjectFile, AssetEntry, DefaultImageEntry, DefaultImageEntityType } from "../types/project";
 import type { Entity } from "../types/entities";
 import { parseZone } from "./yaml-parser";
 import { detectAbilityYaml, parseAbilities } from "./ability-parser";
 
 const PROJECT_FILE = "project.json";
+
+/**
+ * Try to import an existing image referenced by an entity's `image` field.
+ * Resolves the path relative to the YAML source directory, trying several
+ * common locations. Returns the saved variant filename if successful.
+ */
+async function tryImportEntityImage(
+  projectDir: string,
+  zoneName: string,
+  entityId: string,
+  imagePath: string,
+  yamlDir: string
+): Promise<string | null> {
+  // Strip leading slash if present (e.g. "/images/abilities/foo.png" -> "images/abilities/foo.png")
+  const cleanPath = imagePath.replace(/^\/+/, "");
+
+  // Try multiple resolution strategies
+  const candidates = [
+    await join(yamlDir, cleanPath),
+    await join(yamlDir, "images", cleanPath),
+    await join(yamlDir, imagePath),
+  ];
+
+  for (const candidate of candidates) {
+    try {
+      if (await exists(candidate)) {
+        const imageData = await readFile(candidate);
+        const ext = candidate.endsWith(".jpg") || candidate.endsWith(".jpeg") ? "jpg" as const : "png" as const;
+        const filename = await saveImage(projectDir, zoneName, entityId, imageData, ext);
+        return filename;
+      }
+    } catch {
+      // Try next candidate
+    }
+  }
+  return null;
+}
 
 export async function createProject(
   projectDir: string,
@@ -41,6 +78,7 @@ export async function createProject(
     // Check if this is an ability definitions file
     if (detectAbilityYaml(yamlContent)) {
       const { entities, config } = parseAbilities(yamlContent);
+      const yamlDir = await dirname(yamlPath);
 
       const assets: Record<string, AssetEntry> = {};
       for (const entity of entities) {
@@ -59,6 +97,25 @@ export async function createProject(
       const zoneImagesDir = await join(projectDir, "images", zoneName);
       await mkdir(zoneImagesDir, { recursive: true });
 
+      // Auto-import existing images referenced in the YAML
+      for (const entity of entities) {
+        const raw = entity.rawYaml as Record<string, unknown>;
+        const imagePath = raw.image as string | undefined;
+        if (!imagePath) continue;
+
+        const filename = await tryImportEntityImage(
+          projectDir, zoneName, entity.id, imagePath, yamlDir
+        );
+        if (filename) {
+          assets[entity.id] = {
+            ...assets[entity.id],
+            status: "approved",
+            variants: [{ filename, generatedAt: new Date().toISOString(), prompt: "" }],
+            approvedVariantIndex: 0,
+          };
+        }
+      }
+
       project.zones[zoneName] = {
         zoneName,
         sourceYamlPath: yamlPath,
@@ -71,6 +128,7 @@ export async function createProject(
     }
 
     const parsed = parseZone(yamlContent);
+    const yamlDir = await dirname(yamlPath);
 
     const assets: Record<string, AssetEntry> = {};
     for (const entity of parsed.entities) {
@@ -88,6 +146,25 @@ export async function createProject(
     // Create zone images directory
     const zoneImagesDir = await join(projectDir, "images", parsed.zoneName);
     await mkdir(zoneImagesDir, { recursive: true });
+
+    // Auto-import existing images referenced in the YAML
+    for (const entity of parsed.entities) {
+      const raw = entity.rawYaml as Record<string, unknown>;
+      const imagePath = raw.image as string | undefined;
+      if (!imagePath) continue;
+
+      const filename = await tryImportEntityImage(
+        projectDir, parsed.zoneName, entity.id, imagePath, yamlDir
+      );
+      if (filename) {
+        assets[entity.id] = {
+          ...assets[entity.id],
+          status: "approved",
+          variants: [{ filename, generatedAt: new Date().toISOString(), prompt: "" }],
+          approvedVariantIndex: 0,
+        };
+      }
+    }
 
     project.zones[parsed.zoneName] = {
       zoneName: parsed.zoneName,

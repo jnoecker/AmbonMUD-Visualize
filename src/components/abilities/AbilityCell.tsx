@@ -76,7 +76,7 @@ export function AbilityCell({
       </div>
       <div className="ability-cell-info">
         <div className="ability-cell-name">{label}</div>
-        <div className="ability-cell-level">Lv {level}</div>
+        {level > 0 && <div className="ability-cell-level">Lv {level}</div>}
       </div>
       {status !== "pending" && (
         <div className={`ability-cell-status ability-cell-status--${status}`} />

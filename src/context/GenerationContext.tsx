@@ -10,7 +10,6 @@ import { useProject } from "./ProjectContext";
 import { useSettings } from "./SettingsContext";
 import { generateEntityPrompt, generateCustomAssetPrompt } from "../lib/prompt-gen";
 import { generateAbilityPrompt } from "../lib/ability-prompt-gen";
-import { getAbilityFromEntity } from "../lib/ability-parser";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
 import type { Entity, EntityType } from "../types/entities";
 
@@ -125,11 +124,9 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
         try {
           let prompt: string;
           if (entity.type === "ability") {
-            const ability = getAbilityFromEntity(entity);
             prompt = await generateAbilityPrompt(
               settingsRef.current.anthropicApiKey!,
-              entity,
-              ability
+              entity
             );
           } else {
             prompt = await generateEntityPrompt(
