@@ -3,7 +3,7 @@ import type { VideoConfig, VideoAssetType } from "../types/video";
 
 const ZONE_INTRO_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a zone description, produce a concise motion/animation prompt for an AI video generator to create a short zone intro cinematic.
 
-This is a 5-second establishing shot that plays when a player enters a new zone. The source frame is an existing painted room background in the Surreal Gentle Magic style.
+This is a 6-second establishing shot that plays when a player enters a new zone. The source frame is an existing painted room background in the Surreal Gentle Magic style.
 
 Guidelines:
 - Describe MOTION and CAMERA MOVEMENT, not the scene itself (the scene comes from the source image)
@@ -19,7 +19,7 @@ Output ONLY the motion prompt text — no labels, no markdown, no commentary. Ke
 
 const BOSS_REVEAL_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a boss mob description, produce a concise motion/animation prompt for an AI video generator to create a dramatic boss reveal clip.
 
-This is a 5-second reveal animation when a player encounters a boss mob. The source frame is the boss's existing character portrait in the Surreal Gentle Magic style.
+This is a 6-second reveal animation when a player encounters a boss mob. The source frame is the boss's existing character portrait in the Surreal Gentle Magic style.
 
 Guidelines:
 - Describe MOTION and EFFECTS, not the character itself (the character comes from the source image)
@@ -35,7 +35,7 @@ Output ONLY the motion prompt text — no labels, no markdown, no commentary. Ke
 
 const ITEM_REVEAL_SYSTEM_PROMPT = `You are a cinematic director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given an item description, produce a concise motion/animation prompt for an AI video generator to create an epic item reveal clip.
 
-This is a 5-second reveal animation when a player obtains a rare or epic item. The source frame is the item's existing icon in the Surreal Gentle Magic style.
+This is a 6-second reveal animation when a player obtains a rare or epic item. The source frame is the item's existing icon in the Surreal Gentle Magic style.
 
 Guidelines:
 - Describe MOTION and EFFECTS, not the item itself (the item comes from the source image)
@@ -81,7 +81,7 @@ Generate a ${typeLabels[videoType]} motion prompt.`;
 
   return {
     prompt: text.trim(),
-    duration: 5,
+    duration: 6,
     sourceEntityId: null,
   };
 }

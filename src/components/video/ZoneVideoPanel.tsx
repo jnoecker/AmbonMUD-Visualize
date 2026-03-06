@@ -353,7 +353,7 @@ function VideoCard({
   const handleSavePrompt = async () => {
     await updateVideoConfig(zoneKey, video.id, {
       prompt: promptText,
-      duration: 5,
+      duration: 6,
       sourceEntityId: video.sourceEntityId,
     });
     setEditingPrompt(false);
@@ -388,7 +388,7 @@ function VideoCard({
       {video.currentConfig && !editingPrompt && (
         <div className="music-config-summary" onClick={handleEditPrompt} title="Click to edit">
           <div className="music-prompt-text">{video.currentConfig.prompt}</div>
-          <div className="music-config-meta">5s &middot; {hasApprovedSource && video.sourceEntityId ? "img2vid" : "txt2vid"}</div>
+          <div className="music-config-meta">6s &middot; {hasApprovedSource && video.sourceEntityId ? "img2vid" : "txt2vid"}</div>
         </div>
       )}
 
