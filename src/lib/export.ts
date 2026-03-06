@@ -18,17 +18,21 @@ export interface ExportProgress {
 }
 
 /**
- * Export approved images and updated YAML directly into the AmbonMUD world directory.
+ * Export approved images and updated YAML.
  *
- * - Modifies each zone's source YAML in-place, inserting `image:` fields
- * - Copies approved PNGs to `images/{zone}/{bareId}.png` alongside the YAML files
- * - YAML `image:` values are relative paths like `wesleyalis/clearing.png`
- *   (the Ktor server prepends `/images/`)
+ * @param exportDir  Target directory for the exported YAML and images.
+ *                   When omitted, falls back to the directory containing
+ *                   each zone's source YAML (legacy in-place behaviour).
+ *
+ * Layout inside exportDir:
+ *   {zone}.yaml
+ *   images/{zone}/{bareId}.png
  */
 export async function exportProject(
   projectDir: string,
   project: ProjectFile,
-  onProgress?: (progress: ExportProgress) => void
+  onProgress?: (progress: ExportProgress) => void,
+  exportDir?: string
 ): Promise<void> {
   // Count total work
   let totalFiles = 0;
@@ -55,11 +59,11 @@ export async function exportProject(
   };
 
   for (const zone of Object.values(project.zones)) {
-    // The world directory is where the source YAML lives
-    const worldDir = await dirname(zone.sourceYamlPath);
+    // Determine output directory: explicit exportDir or fall back to source YAML location
+    const worldDir = exportDir ?? await dirname(zone.sourceYamlPath);
     const imagesBaseDir = await join(worldDir, "images");
 
-    // Create zone images directory: world/images/{zoneName}/
+    // Create zone images directory: {worldDir}/images/{zoneName}/
     const zoneImgDir = await join(imagesBaseDir, zone.zoneName);
     await mkdir(zoneImgDir, { recursive: true });
 
@@ -116,11 +120,11 @@ export async function exportProject(
       }
     }
 
-    // Modify YAML in-place with image fields
+    // Write YAML with image fields and entity edits
     progress.currentFile = `${zone.zoneName}.yaml`;
     onProgress?.({ ...progress });
 
-    await exportZoneYaml(projectDir, zone);
+    await exportZoneYaml(projectDir, zone, exportDir);
     progress.completed++;
   }
 
@@ -133,7 +137,8 @@ const ENTITY_SECTIONS = ["rooms", "mobs", "items"] as const;
 
 async function exportZoneYaml(
   _projectDir: string,
-  zone: ZoneData
+  zone: ZoneData,
+  exportDir?: string
 ): Promise<void> {
   let yamlText: string;
   try {
@@ -226,7 +231,13 @@ async function exportZoneYaml(
     }
   }
 
-  // Write back, preserving original formatting as much as possible
+  // Write YAML — to exportDir if specified, otherwise back to source
   const output = doc.toString({ lineWidth: 0 });
-  await writeTextFile(zone.sourceYamlPath, output);
+  if (exportDir) {
+    // Derive filename from zone name
+    const destPath = await join(exportDir, `${zone.zoneName}.yaml`);
+    await writeTextFile(destPath, output);
+  } else {
+    await writeTextFile(zone.sourceYamlPath, output);
+  }
 }

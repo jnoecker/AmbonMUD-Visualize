@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useProject } from "../../context/ProjectContext";
 import { exportProject, type ExportProgress } from "../../lib/export";
 
@@ -12,14 +13,13 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [exportDir, setExportDir] = useState<string | null>(null);
 
   // Count approved assets and default images
   let approvedCount = 0;
   let defaultImageCount = 0;
-  let zonePaths: string[] = [];
   if (project) {
     for (const zone of Object.values(project.zones)) {
-      zonePaths.push(zone.sourceYamlPath);
       for (const asset of Object.values(zone.assets)) {
         if (asset.status === "approved") approvedCount++;
       }
@@ -32,13 +32,22 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
   }
   const canExport = approvedCount > 0 || defaultImageCount > 0;
 
+  const handlePickDir = async () => {
+    const result = await openDialog({ directory: true, multiple: false });
+    if (typeof result === "string") {
+      setExportDir(result);
+    }
+  };
+
+  const handleClearDir = () => setExportDir(null);
+
   const handleExport = async () => {
     if (!project || !projectDir) return;
 
     setExporting(true);
     setError(null);
     try {
-      await exportProject(projectDir, project, setProgress);
+      await exportProject(projectDir, project, setProgress, exportDir ?? undefined);
       setDone(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export failed");
@@ -47,6 +56,11 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
     }
   };
 
+  // Display description of where files will go
+  const targetDescription = exportDir
+    ? exportDir
+    : "Source YAML directory (in-place)";
+
   return (
     <div className="dialog-overlay" onClick={exporting ? undefined : onClose}>
       <div className="dialog" onClick={(e) => e.stopPropagation()}>
@@ -54,36 +68,60 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
 
         {!done && !exporting && (
           <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-            <p>This will export directly into the AmbonMUD world directory:</p>
-            <ul style={{ paddingLeft: 20, marginTop: 8 }}>
-              <li>
-                Modify source YAML{zonePaths.length > 1 ? " files" : ""} in-place
-                with <code>image:</code> fields
-              </li>
-              <li>
-                Copy {approvedCount} approved image{approvedCount !== 1 ? "s" : ""}
-                {defaultImageCount > 0 && ` + ${defaultImageCount} default image${defaultImageCount !== 1 ? "s" : ""}`}
-                {" "}to <code>images/{"{zone}/"}</code> alongside the YAML
-              </li>
-            </ul>
-            {zonePaths.length > 0 && (
+            <p style={{ marginBottom: 8 }}>Export directory:</p>
+            <div
+              style={{
+                display: "flex",
+                gap: "var(--space-2)",
+                alignItems: "center",
+                marginBottom: 12,
+              }}
+            >
               <div
                 style={{
-                  marginTop: 12,
+                  flex: 1,
                   padding: "var(--space-2) var(--space-3)",
                   background: "var(--surface-subpanel)",
                   borderRadius: "var(--radius-md)",
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.78rem",
-                  color: "var(--text-disabled)",
+                  color: exportDir ? "var(--text-primary)" : "var(--text-disabled)",
                   wordBreak: "break-all",
+                  minHeight: 32,
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
-                {zonePaths.map((p, i) => (
-                  <div key={i}>{p}</div>
-                ))}
+                {targetDescription}
               </div>
-            )}
+              <button className="soft-button" onClick={handlePickDir}>
+                Browse
+              </button>
+              {exportDir && (
+                <button
+                  className="soft-button"
+                  onClick={handleClearDir}
+                  title="Reset to in-place export"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+
+            <p>This will:</p>
+            <ul style={{ paddingLeft: 20, marginTop: 8 }}>
+              <li>
+                {exportDir
+                  ? <>Write zone YAML files to the export directory</>
+                  : <>Modify source YAML files in-place</>}
+                {" "}with <code>image:</code> fields and entity edits
+              </li>
+              <li>
+                Copy {approvedCount} approved image{approvedCount !== 1 ? "s" : ""}
+                {defaultImageCount > 0 && ` + ${defaultImageCount} default image${defaultImageCount !== 1 ? "s" : ""}`}
+                {" "}to <code>images/{"{zone}/"}</code>
+              </li>
+            </ul>
           </div>
         )}
 
@@ -107,7 +145,10 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
 
         {done && (
           <div style={{ color: "var(--color-success)", fontSize: "0.85rem" }}>
-            Export complete! YAML files updated and images copied.
+            Export complete!
+            {exportDir
+              ? ` Files written to ${exportDir}`
+              : " YAML files updated and images copied."}
           </div>
         )}
 
@@ -133,7 +174,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
                 disabled={exporting || !canExport}
               >
                 {exporting && <span className="spinner spinner--small" />}
-                Export to World
+                Export
               </button>
             </>
           )}
