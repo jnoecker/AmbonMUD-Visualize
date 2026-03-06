@@ -7,10 +7,12 @@ export interface LlmCallOptions {
   anthropicApiKey?: string;
   runwareApiKey?: string;
   runwareLlmModel?: string;
+  openRouterApiKey?: string;
+  openRouterModel?: string;
 }
 
 /**
- * Unified LLM call — routes to Claude or Runware textInference based on provider setting.
+ * Unified LLM call — routes to Claude, Runware, or OpenRouter based on provider setting.
  */
 export async function llmGenerate(
   opts: LlmCallOptions,
@@ -24,6 +26,18 @@ export async function llmGenerate(
     return runwareTextInference(
       opts.runwareApiKey,
       opts.runwareLlmModel,
+      systemPrompt,
+      userMessage,
+      maxTokens
+    );
+  }
+
+  if (opts.provider === "openrouter") {
+    if (!opts.openRouterApiKey) throw new Error("OpenRouter API key not set");
+    if (!opts.openRouterModel) throw new Error("OpenRouter model not set. Pick a model in Settings.");
+    return openRouterGenerate(
+      opts.openRouterApiKey,
+      opts.openRouterModel,
       systemPrompt,
       userMessage,
       maxTokens
@@ -49,4 +63,43 @@ export async function llmGenerate(
     return block.text;
   }
   throw new Error("Unexpected response format from Claude");
+}
+
+/**
+ * Call OpenRouter's OpenAI-compatible chat completions API.
+ */
+async function openRouterGenerate(
+  apiKey: string,
+  model: string,
+  systemPrompt: string,
+  userMessage: string,
+  maxTokens: number
+): Promise<string> {
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`OpenRouter API error (${response.status}): ${body}`);
+  }
+
+  const data = await response.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (typeof text !== "string" || !text) {
+    throw new Error(`No text in OpenRouter response: ${JSON.stringify(data)}`);
+  }
+  return text;
 }

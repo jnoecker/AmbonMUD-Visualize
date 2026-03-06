@@ -131,6 +131,8 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
       anthropicApiKey: s.anthropicApiKey,
       runwareApiKey: s.runwareApiKey,
       runwareLlmModel: s.runwareLlmModel,
+      openRouterApiKey: s.openRouterApiKey,
+      openRouterModel: s.openRouterModel,
     };
   }
 

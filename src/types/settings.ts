@@ -1,4 +1,4 @@
-export type PromptLlmProvider = "claude" | "runware";
+export type PromptLlmProvider = "claude" | "runware" | "openrouter";
 
 export interface AppSettings {
   anthropicApiKey: string;
@@ -6,6 +6,8 @@ export interface AppSettings {
   runwareModel: string;
   promptLlm: PromptLlmProvider;
   runwareLlmModel: string;
+  openRouterApiKey: string;
+  openRouterModel: string;
   enhancePrompts: boolean;
   batchConcurrency: number;
   removeBackground: boolean;
@@ -20,6 +22,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   runwareModel: "runware:101@1",
   promptLlm: "claude",
   runwareLlmModel: "",
+  openRouterApiKey: "",
+  openRouterModel: "deepseek/deepseek-chat-v3-0324",
   enhancePrompts: true,
   batchConcurrency: 20,
   removeBackground: false,
@@ -27,6 +31,15 @@ export const DEFAULT_SETTINGS: AppSettings = {
   lastProjectPath: null,
   lastExportDir: null,
 };
+
+export const OPENROUTER_MODEL_PRESETS = [
+  { id: "deepseek/deepseek-chat-v3-0324", label: "DeepSeek V3 0324" },
+  { id: "deepseek/deepseek-r1", label: "DeepSeek R1" },
+  { id: "meta-llama/llama-3.1-8b-instruct", label: "Llama 3.1 8B" },
+  { id: "meta-llama/llama-3.1-70b-instruct", label: "Llama 3.1 70B" },
+  { id: "google/gemini-2.5-flash-preview", label: "Gemini 2.5 Flash" },
+  { id: "qwen/qwen-2.5-72b-instruct", label: "Qwen 2.5 72B" },
+] as const;
 
 export const RUNWARE_MODEL_PRESETS = [
   { id: "runware:101@1", label: "FLUX Dev", cost: "$0.0038/img" },

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSettings } from "../../context/SettingsContext";
-import { RUNWARE_MODEL_PRESETS, VIDEO_MODEL_PRESETS } from "../../types/settings";
+import { RUNWARE_MODEL_PRESETS, VIDEO_MODEL_PRESETS, OPENROUTER_MODEL_PRESETS } from "../../types/settings";
 
 interface SettingsDialogProps {
   onClose: () => void;
@@ -17,6 +17,8 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
   const [promptLlm, setPromptLlm] = useState(settings.promptLlm);
   const [runwareLlmModel, setRunwareLlmModel] = useState(settings.runwareLlmModel);
   const [enhancePrompts, setEnhancePrompts] = useState(settings.enhancePrompts);
+  const [openRouterKey, setOpenRouterKey] = useState(settings.openRouterApiKey);
+  const [openRouterModel, setOpenRouterModel] = useState(settings.openRouterModel);
   const [videoModel, setVideoModel] = useState(settings.videoModel);
 
   const isPreset = RUNWARE_MODEL_PRESETS.some((p) => p.id === settings.runwareModel);
@@ -34,6 +36,8 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
       removeBackground: removeBg,
       promptLlm,
       runwareLlmModel,
+      openRouterApiKey: openRouterKey,
+      openRouterModel,
       enhancePrompts,
       videoModel,
     });
@@ -112,15 +116,55 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
           <select
             className="dialog-input"
             value={promptLlm}
-            onChange={(e) => setPromptLlm(e.target.value as "claude" | "runware")}
+            onChange={(e) => setPromptLlm(e.target.value as "claude" | "runware" | "openrouter")}
           >
             <option value="claude">Claude (Anthropic)</option>
+            <option value="openrouter">OpenRouter</option>
             <option value="runware">Runware Text Inference</option>
           </select>
           <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
-            Which LLM generates image/music prompts. Claude is higher quality; Runware is cheaper.
+            Which LLM generates image/music/video prompts.
           </div>
         </div>
+
+        {promptLlm === "openrouter" && (
+          <>
+            <div className="dialog-field">
+              <label className="dialog-label">OpenRouter API Key</label>
+              <input
+                className="dialog-input"
+                type="password"
+                value={openRouterKey}
+                onChange={(e) => setOpenRouterKey(e.target.value)}
+                placeholder="sk-or-..."
+              />
+            </div>
+            <div className="dialog-field">
+              <label className="dialog-label">OpenRouter Model</label>
+              <select
+                className="dialog-input"
+                value={OPENROUTER_MODEL_PRESETS.some((p) => p.id === openRouterModel) ? openRouterModel : "__custom__"}
+                onChange={(e) => {
+                  if (e.target.value !== "__custom__") setOpenRouterModel(e.target.value);
+                }}
+              >
+                {OPENROUTER_MODEL_PRESETS.map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
+                <option value="__custom__">Custom model ID...</option>
+              </select>
+              {!OPENROUTER_MODEL_PRESETS.some((p) => p.id === openRouterModel) && (
+                <input
+                  className="dialog-input"
+                  style={{ marginTop: 6 }}
+                  value={openRouterModel}
+                  onChange={(e) => setOpenRouterModel(e.target.value)}
+                  placeholder="e.g. deepseek/deepseek-chat-v3-0324"
+                />
+              )}
+            </div>
+          </>
+        )}
 
         {promptLlm === "runware" && (
           <div className="dialog-field">
