@@ -65,8 +65,8 @@ const MODEL_SPECS: Record<string, Partial<ModelSpec>> = {
   "vidu:4@1": { durations: [4, 8] },
   "vidu:4@2": { dims: DIMS_720P, durations: [4, 8] },
   "minimax:4@1": { dims: DIMS_768P, durations: [6, 10] },
-  "klingai:kling-video@3-standard": { durations: [5, 10] },
-  "klingai:kling-video@3-pro": { durations: [5, 10] },
+  "klingai:kling-video@3-standard": { durations: [5, 10], imageParam: "inputs" },
+  "klingai:kling-video@3-pro": { durations: [5, 10], imageParam: "inputs" },
 };
 
 export function getModelSpec(model: string): ModelSpec {
