@@ -122,12 +122,13 @@ export function SpriteBatchBar({
 
               // Generate image (reuse from previous attempt if available)
               if (!generatedImage) {
-                generatedImage = await generateImage(
+                const result = await generateImage(
                   settings.runwareApiKey!,
                   prompt,
                   { aspectRatio: getAspectRatio(entity.type), entityType: entity.type, removeBackground: settings.removeBackground },
                   settings.runwareModel
                 );
+                generatedImage = result.bytes;
               }
               await addVariant(zoneKey, entityId, generatedImage, prompt);
               succeeded = true;

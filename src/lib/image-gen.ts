@@ -48,12 +48,17 @@ function getRunware(apiKey: string): InstanceType<typeof Runware> {
   return runwareInstance;
 }
 
+export interface GenerateImageResult {
+  bytes: Uint8Array;
+  bgRemovalFailed: boolean;
+}
+
 export async function generateImage(
   apiKey: string,
   prompt: string,
   options: GenerateOptions,
   model = "runware:101@1"
-): Promise<Uint8Array> {
+): Promise<GenerateImageResult> {
   const runware = getRunware(apiKey);
 
   const { width, height } = GEN_SIZE_MAP[options.aspectRatio];
@@ -77,23 +82,34 @@ export async function generateImage(
   }
 
   const image = images?.[0] as any;
+  if (image) {
+    console.log("[image-gen] response keys:", Object.keys(image).join(", "));
+  } else {
+    console.error("[image-gen] empty response array:", images);
+  }
   const b64: string | undefined = image?.imageBase64Data;
   if (!b64) {
-    throw new Error("No image data in Runware response");
+    throw new Error(`No image data in Runware response (keys: ${image ? Object.keys(image).join(", ") : "none"})`);
   }
 
   // Convert base64 to Uint8Array
   let bytes = base64ToBytes(b64);
 
   // Post-process: remove background for mobs/items if requested
+  let bgRemovalFailed = false;
   if (options.removeBackground && options.entityType !== "room") {
-    bytes = await _removeBackground(runware, bytes);
+    try {
+      bytes = await _removeBackground(runware, bytes);
+    } catch (err) {
+      console.warn("[image-gen] background removal failed, saving image without it:", err);
+      bgRemovalFailed = true;
+    }
   }
 
   // Downscale to target output size and compress (JPEG for rooms, PNG for others)
   bytes = await recompressForEntityType(bytes, options.entityType);
 
-  return bytes;
+  return { bytes, bgRemovalFailed };
 }
 
 function base64ToBytes(b64: string): Uint8Array {

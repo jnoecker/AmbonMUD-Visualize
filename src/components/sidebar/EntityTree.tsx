@@ -110,7 +110,7 @@ function CustomSection({
   onSelectEntity: (entityId: string) => void;
 }) {
   const [open, setOpen] = useState(true);
-  const { getJob } = useGeneration();
+  const gen = useGeneration();
 
   return (
     <div className="entity-tree-section">
@@ -129,7 +129,7 @@ function CustomSection({
               title={asset.title}
               status={asset.status}
               selected={asset.entityId === selectedEntityId}
-              generating={!!getJob(zoneKey, asset.entityId)}
+              generating={!!gen?.getJob(zoneKey, asset.entityId)}
               onClick={() => onSelectEntity(asset.entityId)}
             />
           ))}

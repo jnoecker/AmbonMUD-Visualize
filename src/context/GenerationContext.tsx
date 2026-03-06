@@ -185,7 +185,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
 
       (async () => {
         try {
-          const imageData = await generateImage(
+          const result = await generateImage(
             settingsRef.current.runwareApiKey!,
             prompt,
             {
@@ -195,7 +195,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
             },
             settingsRef.current.runwareModel
           );
-          const newIndex = await addVariant(zoneKey, entityId, imageData, prompt);
+          const newIndex = await addVariant(zoneKey, entityId, result.bytes, prompt);
 
           // Auto-select the new variant only if user is still viewing this entity
           if (
@@ -205,14 +205,18 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
           ) {
             setViewingVariant(newIndex);
           }
+          if (result.bgRemovalFailed) {
+            setErrorForKey(key, "Image saved, but background removal failed. You can retry it manually.");
+          }
         } catch (err) {
+          console.error("[image gen] error:", err);
           if (err instanceof ContentPolicyError) {
             setErrorForKey(key, err.message);
           } else {
-            setErrorForKey(
-              key,
-              err instanceof Error ? err.message : "Failed to generate image"
-            );
+            const msg = err instanceof Error ? err.message
+              : typeof err === "string" ? err
+              : `Image generation failed: ${JSON.stringify(err)}`;
+            setErrorForKey(key, msg);
           }
         } finally {
           removeJob(key);
@@ -236,7 +240,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
 
       (async () => {
         try {
-          const imageData = await generateImage(
+          const result = await generateImage(
             settingsRef.current.runwareApiKey!,
             prompt,
             {
@@ -246,7 +250,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
             },
             settingsRef.current.runwareModel
           );
-          const newIndex = await addVariant(zoneKey, entityId, imageData, prompt);
+          const newIndex = await addVariant(zoneKey, entityId, result.bytes, prompt);
 
           if (
             newIndex !== undefined &&
@@ -255,14 +259,18 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
           ) {
             setViewingVariant(newIndex);
           }
+          if (result.bgRemovalFailed) {
+            setErrorForKey(key, "Image saved, but background removal failed. You can retry it manually.");
+          }
         } catch (err) {
+          console.error("[custom image gen] error:", err);
           if (err instanceof ContentPolicyError) {
             setErrorForKey(key, err.message);
           } else {
-            setErrorForKey(
-              key,
-              err instanceof Error ? err.message : "Failed to generate image"
-            );
+            const msg = err instanceof Error ? err.message
+              : typeof err === "string" ? err
+              : `Image generation failed: ${JSON.stringify(err)}`;
+            setErrorForKey(key, msg);
           }
         } finally {
           removeJob(key);

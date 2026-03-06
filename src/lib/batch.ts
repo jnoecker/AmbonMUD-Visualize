@@ -15,7 +15,7 @@ export interface BatchOptions {
   concurrency: number;
   skipGenerated: boolean;
   generatePrompt: (entity: Entity, vibe: string) => Promise<string>;
-  generateImage: (prompt: string, entity: Entity) => Promise<Uint8Array>;
+  generateImage: (prompt: string, entity: Entity) => Promise<{ bytes: Uint8Array; bgRemovalFailed: boolean }>;
   onSaveImage: (entityId: string, data: Uint8Array, prompt: string) => Promise<void>;
   onProgress: (progress: BatchProgress) => void;
   abortSignal?: AbortSignal;
@@ -65,7 +65,7 @@ export async function runBatch(options: BatchOptions): Promise<BatchProgress> {
 
       let succeeded = false;
       let generatedPrompt: string | null = null;
-      let generatedImage: Uint8Array | null = null;
+      let generatedImage: { bytes: Uint8Array; bgRemovalFailed: boolean } | null = null;
       for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
         try {
           // Generate prompt if needed (reuse from previous attempt if available)
@@ -87,7 +87,7 @@ export async function runBatch(options: BatchOptions): Promise<BatchProgress> {
           if (abortSignal?.aborted) return;
 
           // Save
-          await onSaveImage(entity.id, generatedImage, generatedPrompt);
+          await onSaveImage(entity.id, generatedImage.bytes, generatedPrompt);
           succeeded = true;
         } catch (err) {
           if (attempt === 1) {

@@ -52,7 +52,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
           return prompt;
         },
         generateImage: async (prompt: string, entity: Entity) => {
-          return generateImage(settings.runwareApiKey, prompt, {
+          return await generateImage(settings.runwareApiKey, prompt, {
             aspectRatio: getAspectRatio(entity.type),
             entityType: entity.type,
             removeBackground: settings.removeBackground,

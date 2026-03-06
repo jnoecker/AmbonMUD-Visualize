@@ -63,18 +63,18 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
           vibeText
         );
 
-        const imageData = await generateImage(settings.runwareApiKey, prompt, {
+        const result = await generateImage(settings.runwareApiKey, prompt, {
           aspectRatio: getAspectRatio(entityType),
           entityType,
           removeBackground: settings.removeBackground,
         }, settings.runwareModel);
 
-        await updateDefaultImage(zoneName, entityType, imageData, prompt);
+        await updateDefaultImage(zoneName, entityType, result.bytes, prompt);
 
         // Update thumbnail from the raw bytes
         let binary = "";
-        for (let i = 0; i < imageData.length; i++) {
-          binary += String.fromCharCode(imageData[i]);
+        for (let i = 0; i < result.bytes.length; i++) {
+          binary += String.fromCharCode(result.bytes[i]);
         }
         const dataUrl = `data:image/png;base64,${btoa(binary)}`;
         setDefaultThumbnails((prev) => ({ ...prev, [entityType]: dataUrl }));
