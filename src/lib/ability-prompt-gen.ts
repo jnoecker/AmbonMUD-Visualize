@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { llmGenerate, type LlmCallOptions } from "./llm";
 import { STYLE_SUFFIX } from "./prompt-gen";
 import type { Entity } from "../types/entities";
 import type { AbilityDefinition, StatusEffectDefinition } from "../types/abilities";
@@ -34,7 +34,7 @@ Output ONLY the prompt text — no labels, no markdown, no commentary.`;
  * Generate an image prompt for an ability/spell icon.
  */
 export async function generateAbilityPrompt(
-  apiKey: string,
+  llmOpts: LlmCallOptions,
   entity: Entity
 ): Promise<string> {
   const raw = entity.rawYaml as Record<string, unknown>;
@@ -75,21 +75,5 @@ Required style suffix (include verbatim at the end):
 ${STYLE_SUFFIX}`;
   }
 
-  const client = new Anthropic({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
-
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 500,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: userContent }],
-  });
-
-  const block = response.content[0];
-  if (block.type === "text") {
-    return block.text;
-  }
-  throw new Error("Unexpected response format from Claude");
+  return llmGenerate(llmOpts, SYSTEM_PROMPT, userContent, 500);
 }

@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { llmGenerate, type LlmCallOptions } from "./llm";
 import type { MusicConfig, AudioTrackType } from "../types/music";
 
 const MUSIC_SYSTEM_PROMPT = `You are a music director for a fantasy RPG that uses the "Surreal Gentle Magic" aesthetic. Given a zone description and its atmosphere, produce a concise text prompt for an AI music generator.
@@ -39,10 +39,10 @@ Guidelines:
 Output ONLY the prompt text — no labels, no markdown, no commentary. Keep it under 150 words.`;
 
 /**
- * Use Claude to generate a music or ambient sound prompt from zone context.
+ * Use LLM to generate a music or ambient sound prompt from zone context.
  */
 export async function generateMusicConfig(
-  apiKey: string,
+  llmOpts: LlmCallOptions,
   zoneName: string,
   vibe: string | null,
   roomDescriptions: string[],
@@ -60,25 +60,12 @@ ${vibe ? `Atmosphere: ${vibe}` : "No atmosphere summary available."}${roomContex
 
 Generate a ${typeLabel} prompt for this zone.`;
 
-  const client = new Anthropic({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
+  const systemPrompt = trackType === "music" ? MUSIC_SYSTEM_PROMPT : AMBIENT_SYSTEM_PROMPT;
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 300,
-    system: trackType === "music" ? MUSIC_SYSTEM_PROMPT : AMBIENT_SYSTEM_PROMPT,
-    messages: [{ role: "user", content: userContent }],
-  });
-
-  const block = response.content[0];
-  if (block.type !== "text") {
-    throw new Error("Unexpected response format from Claude");
-  }
+  const text = await llmGenerate(llmOpts, systemPrompt, userContent, 300);
 
   return {
-    prompt: block.text.trim(),
+    prompt: text.trim(),
     duration: trackType === "music" ? 45 : 30,
   };
 }

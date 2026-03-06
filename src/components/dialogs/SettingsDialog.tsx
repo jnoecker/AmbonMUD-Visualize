@@ -14,6 +14,9 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
   const [runwareKey, setRunwareKey] = useState(settings.runwareApiKey);
   const [concurrency, setConcurrency] = useState(settings.batchConcurrency);
   const [removeBg, setRemoveBg] = useState(settings.removeBackground);
+  const [promptLlm, setPromptLlm] = useState(settings.promptLlm);
+  const [runwareLlmModel, setRunwareLlmModel] = useState(settings.runwareLlmModel);
+  const [enhancePrompts, setEnhancePrompts] = useState(settings.enhancePrompts);
 
   const isPreset = RUNWARE_MODEL_PRESETS.some((p) => p.id === settings.runwareModel);
   const [modelSelect, setModelSelect] = useState(isPreset ? settings.runwareModel : CUSTOM_VALUE);
@@ -28,6 +31,9 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
       runwareModel: resolvedModel || "runware:101@1",
       batchConcurrency: concurrency,
       removeBackground: removeBg,
+      promptLlm,
+      runwareLlmModel,
+      enhancePrompts,
     });
     onClose();
   };
@@ -82,6 +88,51 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
               placeholder="e.g. civitai:102438@133677"
             />
           )}
+        </div>
+
+        <div className="dialog-field">
+          <label className="dialog-label">Prompt LLM Provider</label>
+          <select
+            className="dialog-input"
+            value={promptLlm}
+            onChange={(e) => setPromptLlm(e.target.value as "claude" | "runware")}
+          >
+            <option value="claude">Claude (Anthropic)</option>
+            <option value="runware">Runware Text Inference</option>
+          </select>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+            Which LLM generates image/music prompts. Claude is higher quality; Runware is cheaper.
+          </div>
+        </div>
+
+        {promptLlm === "runware" && (
+          <div className="dialog-field">
+            <label className="dialog-label">Runware LLM Model ID</label>
+            <input
+              className="dialog-input"
+              value={runwareLlmModel}
+              onChange={(e) => setRunwareLlmModel(e.target.value)}
+              placeholder="e.g. openai:gpt-4o-mini"
+            />
+            <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+              A text-only instruct model ID from Runware's model catalog.
+            </div>
+          </div>
+        )}
+
+        <div className="dialog-field">
+          <label className="checkbox-field">
+            <input
+              className="checkbox-input"
+              type="checkbox"
+              checked={enhancePrompts}
+              onChange={(e) => setEnhancePrompts(e.target.checked)}
+            />
+            Enhance image prompts (Runware Prompt Enhancer)
+          </label>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+            Post-processes LLM-generated image prompts through Runware's free Prompt Enhancer (Llama 3.1 8B).
+          </div>
         </div>
 
         <div className="dialog-field">

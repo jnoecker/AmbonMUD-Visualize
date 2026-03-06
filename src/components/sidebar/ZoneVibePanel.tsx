@@ -3,6 +3,8 @@ import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { generateZoneVibe, generateDefaultImagePrompt } from "../../lib/prompt-gen";
 import { generateImage, getAspectRatio } from "../../lib/image-gen";
+import { runwareEnhancePrompt } from "../../lib/runware-llm";
+import type { LlmCallOptions } from "../../lib/llm";
 import type { DefaultImageEntry, DefaultImageEntityType } from "../../types/project";
 
 const DEFAULT_TYPES: DefaultImageEntityType[] = ["room", "mob", "item"];
@@ -45,18 +47,29 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
     }
   }, [defaultImages, zoneName, getDefaultImageDataUrl]);
 
+  const getLlmOpts = useCallback((): LlmCallOptions => ({
+    provider: settings.promptLlm,
+    anthropicApiKey: settings.anthropicApiKey,
+    runwareApiKey: settings.runwareApiKey,
+    runwareLlmModel: settings.runwareLlmModel,
+  }), [settings.promptLlm, settings.anthropicApiKey, settings.runwareApiKey, settings.runwareLlmModel]);
+
   const generateOneDefault = useCallback(
     async (entityType: DefaultImageEntityType, vibeText: string) => {
-      if (!settings.anthropicApiKey || !settings.runwareApiKey) return;
+      if (!settings.runwareApiKey) return;
 
       setGeneratingDefaults((prev) => ({ ...prev, [entityType]: true }));
       try {
-        const prompt = await generateDefaultImagePrompt(
-          settings.anthropicApiKey,
+        let prompt = await generateDefaultImagePrompt(
+          getLlmOpts(),
           entityType,
           zoneName,
           vibeText
         );
+
+        if (settings.enhancePrompts && settings.runwareApiKey) {
+          prompt = await runwareEnhancePrompt(settings.runwareApiKey, prompt);
+        }
 
         const result = await generateImage(settings.runwareApiKey, prompt, {
           aspectRatio: getAspectRatio(entityType),
@@ -81,31 +94,27 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
         setGeneratingDefaults((prev) => ({ ...prev, [entityType]: false }));
       }
     },
-    [settings.anthropicApiKey, settings.runwareApiKey, zoneName, updateDefaultImage]
+    [settings.runwareApiKey, settings.enhancePrompts, zoneName, updateDefaultImage, getLlmOpts]
   );
 
   const generateAllDefaults = useCallback(
     async (vibeText: string) => {
-      if (!settings.anthropicApiKey || !settings.runwareApiKey) {
+      if (!settings.runwareApiKey) {
         setDefaultError("API keys not set. Open Settings to configure.");
         return;
       }
       setDefaultError(null);
       await Promise.all(DEFAULT_TYPES.map((t) => generateOneDefault(t, vibeText)));
     },
-    [settings.anthropicApiKey, settings.runwareApiKey, generateOneDefault]
+    [settings.runwareApiKey, generateOneDefault]
   );
 
   const handleGenerate = async () => {
-    if (!settings.anthropicApiKey) {
-      setError("Anthropic API key not set. Open Settings to configure.");
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
       const newVibe = await generateZoneVibe(
-        settings.anthropicApiKey,
+        getLlmOpts(),
         zoneName,
         allRoomDescriptions
       );

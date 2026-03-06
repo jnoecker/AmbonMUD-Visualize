@@ -13,6 +13,8 @@ import { generateAbilityPrompt } from "../lib/ability-prompt-gen";
 import { generateImage, getAspectRatio, ContentPolicyError } from "../lib/image-gen";
 import { generateMusic } from "../lib/audio-gen";
 import { generateMusicConfig } from "../lib/music-prompt-gen";
+import { runwareEnhancePrompt } from "../lib/runware-llm";
+import type { LlmCallOptions } from "../lib/llm";
 import type { MusicConfig, AudioTrackType } from "../types/music";
 import type { Entity, EntityType } from "../types/entities";
 
@@ -101,6 +103,24 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
 
+  /** Build LlmCallOptions from current settings. */
+  function getLlmOpts(): LlmCallOptions {
+    const s = settingsRef.current;
+    return {
+      provider: s.promptLlm,
+      anthropicApiKey: s.anthropicApiKey,
+      runwareApiKey: s.runwareApiKey,
+      runwareLlmModel: s.runwareLlmModel,
+    };
+  }
+
+  /** Optionally run prompt through Runware Prompt Enhancer. */
+  async function maybeEnhancePrompt(prompt: string): Promise<string> {
+    const s = settingsRef.current;
+    if (!s.enhancePrompts || !s.runwareApiKey) return prompt;
+    return runwareEnhancePrompt(s.runwareApiKey, prompt);
+  }
+
   const setJob = useCallback((key: string, job: GenerationJob) => {
     setJobs((prev) => {
       const next = new Map(prev);
@@ -142,16 +162,9 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
         try {
           let prompt: string;
           if (entity.type === "ability") {
-            prompt = await generateAbilityPrompt(
-              settingsRef.current.anthropicApiKey!,
-              entity
-            );
+            prompt = await generateAbilityPrompt(getLlmOpts(), entity);
           } else {
-            prompt = await generateEntityPrompt(
-              settingsRef.current.anthropicApiKey!,
-              entity,
-              zoneVibe
-            );
+            prompt = await generateEntityPrompt(getLlmOpts(), entity, zoneVibe);
           }
           await updatePrompt(zoneKey, entityId, prompt);
         } catch (err) {
@@ -188,7 +201,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
       (async () => {
         try {
           const prompt = await generateCustomAssetPrompt(
-            settingsRef.current.anthropicApiKey!,
+            getLlmOpts(),
             description,
             entityType,
             zoneVibe
@@ -222,9 +235,10 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
 
       (async () => {
         try {
+          const finalPrompt = await maybeEnhancePrompt(prompt);
           const result = await generateImage(
             settingsRef.current.runwareApiKey!,
-            prompt,
+            finalPrompt,
             {
               aspectRatio: getAspectRatio(entity.type),
               entityType: entity.type,
@@ -277,9 +291,10 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
 
       (async () => {
         try {
+          const finalPrompt = await maybeEnhancePrompt(prompt);
           const result = await generateImage(
             settingsRef.current.runwareApiKey!,
-            prompt,
+            finalPrompt,
             {
               aspectRatio: getAspectRatio(entityType),
               entityType,
@@ -334,6 +349,9 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
         let lastIndex: number | undefined;
         const errors: string[] = [];
 
+        // Enhance prompt once before running all variants
+        const finalPrompt = await maybeEnhancePrompt(prompt);
+
         // Run all generations concurrently
         await Promise.all(
           Array.from({ length: count }, () =>
@@ -341,7 +359,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
               try {
                 const result = await generateImage(
                   settingsRef.current.runwareApiKey!,
-                  prompt,
+                  finalPrompt,
                   {
                     aspectRatio: getAspectRatio(entity.type),
                     entityType: entity.type,
@@ -349,7 +367,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
                   },
                   settingsRef.current.runwareModel
                 );
-                const newIndex = await addVariant(zoneKey, entityId, result.bytes, prompt);
+                const newIndex = await addVariant(zoneKey, entityId, result.bytes, finalPrompt);
                 lastIndex = newIndex;
                 if (result.bgRemovalFailed) {
                   errors.push("Background removal failed on one or more images.");
@@ -411,7 +429,7 @@ export function GenerationProvider({ children }: { children: ReactNode }) {
       (async () => {
         try {
           const config = await generateMusicConfig(
-            settingsRef.current.anthropicApiKey!,
+            getLlmOpts(),
             zoneName,
             vibe,
             roomDescriptions,

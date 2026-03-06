@@ -1,7 +1,12 @@
+export type PromptLlmProvider = "claude" | "runware";
+
 export interface AppSettings {
   anthropicApiKey: string;
   runwareApiKey: string;
   runwareModel: string;
+  promptLlm: PromptLlmProvider;
+  runwareLlmModel: string;
+  enhancePrompts: boolean;
   batchConcurrency: number;
   removeBackground: boolean;
   lastProjectPath: string | null;
@@ -12,6 +17,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
   anthropicApiKey: "",
   runwareApiKey: "",
   runwareModel: "runware:101@1",
+  promptLlm: "claude",
+  runwareLlmModel: "",
+  enhancePrompts: true,
   batchConcurrency: 20,
   removeBackground: false,
   lastProjectPath: null,

@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { llmGenerate, type LlmCallOptions } from "./llm";
 import type { Entity, EntityType } from "../types/entities";
 
 /**
@@ -62,36 +62,19 @@ const FORMAT_BY_TYPE: Record<EntityType, string> = {
 };
 
 export async function generateZoneVibe(
-  apiKey: string,
+  llmOpts: LlmCallOptions,
   zoneName: string,
   allRoomDescriptions: string[]
 ): Promise<string> {
-  const client = new Anthropic({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
-
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 300,
-    system: `You are an art director for a fantasy MUD game working within the Surreal Gentle Magic design system.
+  const systemPrompt = `You are an art director for a fantasy MUD game working within the Surreal Gentle Magic design system.
 
 ${STYLE_GUIDE_REFERENCE}
 
-Given a list of room descriptions from a zone, produce a 2-3 sentence atmosphere/vibe summary that captures the zone's overall visual identity AS IT WOULD APPEAR in the Surreal Gentle Magic style. Focus on lighting, mood, dominant colors from the approved palette, and environmental feel. Even if the zone descriptions reference modern or mundane settings, describe the vibe as it would look after being transformed into this dreamy, painterly aesthetic. Be evocative but concise.`,
-    messages: [
-      {
-        role: "user",
-        content: `Zone: ${zoneName}\n\nRoom descriptions:\n${allRoomDescriptions.join("\n\n")}`,
-      },
-    ],
-  });
+Given a list of room descriptions from a zone, produce a 2-3 sentence atmosphere/vibe summary that captures the zone's overall visual identity AS IT WOULD APPEAR in the Surreal Gentle Magic style. Focus on lighting, mood, dominant colors from the approved palette, and environmental feel. Even if the zone descriptions reference modern or mundane settings, describe the vibe as it would look after being transformed into this dreamy, painterly aesthetic. Be evocative but concise.`;
 
-  const block = response.content[0];
-  if (block.type === "text") {
-    return block.text;
-  }
-  throw new Error("Unexpected response format from Claude");
+  const userMessage = `Zone: ${zoneName}\n\nRoom descriptions:\n${allRoomDescriptions.join("\n\n")}`;
+
+  return llmGenerate(llmOpts, systemPrompt, userMessage, 300);
 }
 
 const DEFAULT_DESCRIPTION_BY_TYPE: Record<EntityType, string> = {
@@ -102,31 +85,21 @@ const DEFAULT_DESCRIPTION_BY_TYPE: Record<EntityType, string> = {
 };
 
 export async function generateDefaultImagePrompt(
-  apiKey: string,
+  llmOpts: LlmCallOptions,
   entityType: EntityType,
   zoneName: string,
   zoneVibe: string
 ): Promise<string> {
-  const client = new Anthropic({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
-
   const formatSpec = FORMAT_BY_TYPE[entityType];
   const description = DEFAULT_DESCRIPTION_BY_TYPE[entityType];
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 500,
-    system: `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
+  const systemPrompt = `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
 
 ${STYLE_GUIDE_REFERENCE}
 
-Generate a fallback/default image prompt for this zone. The image should be atmospheric and representative of the zone without depicting any specific named entity. You must actively reimagine any modern or mundane elements as dreamy fantasy equivalents — replace fluorescent lights with ambient magical glow, replace concrete with weathered enchanted stone, replace sharp angles with gently curved organic forms. The result must look like a painterly storybook illustration, never a photograph. Output ONLY the prompt text — no labels, no markdown, no commentary.`,
-    messages: [
-      {
-        role: "user",
-        content: `Format: ${formatSpec}
+Generate a fallback/default image prompt for this zone. The image should be atmospheric and representative of the zone without depicting any specific named entity. You must actively reimagine any modern or mundane elements as dreamy fantasy equivalents — replace fluorescent lights with ambient magical glow, replace concrete with weathered enchanted stone, replace sharp angles with gently curved organic forms. The result must look like a painterly storybook illustration, never a photograph. Output ONLY the prompt text — no labels, no markdown, no commentary.`;
+
+  const userMessage = `Format: ${formatSpec}
 
 Generate a default ${entityType} image: ${description}
 
@@ -134,34 +107,19 @@ Zone: ${zoneName}
 Zone atmosphere: ${zoneVibe}
 
 Required style suffix (include verbatim at the end):
-${STYLE_SUFFIX}`,
-      },
-    ],
-  });
+${STYLE_SUFFIX}`;
 
-  const block = response.content[0];
-  if (block.type === "text") {
-    return block.text;
-  }
-  throw new Error("Unexpected response format from Claude");
+  return llmGenerate(llmOpts, systemPrompt, userMessage, 500);
 }
 
 export async function generateEntityPrompt(
-  apiKey: string,
+  llmOpts: LlmCallOptions,
   entity: Entity,
   zoneVibe: string
 ): Promise<string> {
-  const client = new Anthropic({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
-
   const formatSpec = FORMAT_BY_TYPE[entity.type];
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 500,
-    system: `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
+  const systemPrompt = `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
 
 ${STYLE_GUIDE_REFERENCE}
 
@@ -173,11 +131,9 @@ Given an entity from a fantasy MUD zone, write a single optimized image generati
 - Ensure the palette stays within the approved tones (lavender, pale blue, dusty rose, moss green, soft gold on deep dark backgrounds)
 - Replace any references to readable text, signs, plaques, banners, or inscriptions with glowing runes, arcane glyphs, or mysterious luminous symbols — AI cannot render legible text
 
-Every scene must feel like a softly luminous storybook illustration — gentle, breathable, and quietly enchanted. Output ONLY the prompt text — no labels, no markdown, no commentary.`,
-    messages: [
-      {
-        role: "user",
-        content: `Format: ${formatSpec}
+Every scene must feel like a softly luminous storybook illustration — gentle, breathable, and quietly enchanted. Output ONLY the prompt text — no labels, no markdown, no commentary.`;
+
+  const userMessage = `Format: ${formatSpec}
 
 Entity type: ${entity.type}
 Name: ${entity.title}
@@ -189,38 +145,23 @@ ${entity.extraContext}
 Zone atmosphere: ${zoneVibe}
 
 Required style suffix (include verbatim at the end):
-${STYLE_SUFFIX}`,
-      },
-    ],
-  });
+${STYLE_SUFFIX}`;
 
-  const block = response.content[0];
-  if (block.type === "text") {
-    return block.text;
-  }
-  throw new Error("Unexpected response format from Claude");
+  return llmGenerate(llmOpts, systemPrompt, userMessage, 500);
 }
 
 export async function generateCustomAssetPrompt(
-  apiKey: string,
+  llmOpts: LlmCallOptions,
   description: string,
   entityType: EntityType,
   zoneVibe: string | null
 ): Promise<string> {
-  const client = new Anthropic({
-    apiKey,
-    dangerouslyAllowBrowser: true,
-  });
-
   const formatSpec = FORMAT_BY_TYPE[entityType];
   const vibeContext = zoneVibe
     ? `\n\nZone atmosphere (use as additional context for mood/palette): ${zoneVibe}`
     : "";
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20250929",
-    max_tokens: 500,
-    system: `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
+  const systemPrompt = `You are an expert image prompt engineer for AI image generators. You work exclusively within the Surreal Gentle Magic design system.
 
 ${STYLE_GUIDE_REFERENCE}
 
@@ -230,23 +171,14 @@ The user will provide a free-form description of an image they want generated. T
 - Ensure the palette stays within approved tones
 - Replace any references to readable text with glowing runes or arcane glyphs
 
-Output ONLY the prompt text — no labels, no markdown, no commentary.`,
-    messages: [
-      {
-        role: "user",
-        content: `Format: ${formatSpec}
+Output ONLY the prompt text — no labels, no markdown, no commentary.`;
+
+  const userMessage = `Format: ${formatSpec}
 
 User description: ${description}${vibeContext}
 
 Required style suffix (include verbatim at the end):
-${STYLE_SUFFIX}`,
-      },
-    ],
-  });
+${STYLE_SUFFIX}`;
 
-  const textBlock = response.content[0];
-  if (textBlock.type === "text") {
-    return textBlock.text;
-  }
-  throw new Error("Unexpected response format from Claude");
+  return llmGenerate(llmOpts, systemPrompt, userMessage, 500);
 }

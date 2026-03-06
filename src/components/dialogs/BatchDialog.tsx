@@ -4,6 +4,8 @@ import { useSettings } from "../../context/SettingsContext";
 import { runBatch, type BatchProgress } from "../../lib/batch";
 import { generateEntityPrompt } from "../../lib/prompt-gen";
 import { generateImage, getAspectRatio } from "../../lib/image-gen";
+import { runwareEnhancePrompt } from "../../lib/runware-llm";
+import type { LlmCallOptions } from "../../lib/llm";
 import type { Entity } from "../../types/entities";
 
 interface BatchDialogProps {
@@ -23,9 +25,8 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
 
   const handleStart = useCallback(async () => {
     if (!project) return;
-    if (!settings.anthropicApiKey || !settings.runwareApiKey) {
-      return;
-    }
+    if (!settings.runwareApiKey) return;
+    if (settings.promptLlm === "claude" && !settings.anthropicApiKey) return;
     if (runningRef.current) return;
     runningRef.current = true;
 
@@ -43,16 +44,22 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
         concurrency: settings.batchConcurrency,
         skipGenerated,
         generatePrompt: async (entity: Entity, vibe: string) => {
-          const prompt = await generateEntityPrompt(
-            settings.anthropicApiKey,
-            entity,
-            vibe
-          );
+          const llmOpts: LlmCallOptions = {
+            provider: settings.promptLlm,
+            anthropicApiKey: settings.anthropicApiKey,
+            runwareApiKey: settings.runwareApiKey,
+            runwareLlmModel: settings.runwareLlmModel,
+          };
+          const prompt = await generateEntityPrompt(llmOpts, entity, vibe);
           await updatePrompt(zoneKey, entity.id, prompt);
           return prompt;
         },
         generateImage: async (prompt: string, entity: Entity) => {
-          return await generateImage(settings.runwareApiKey, prompt, {
+          let finalPrompt = prompt;
+          if (settings.enhancePrompts && settings.runwareApiKey) {
+            finalPrompt = await runwareEnhancePrompt(settings.runwareApiKey, prompt);
+          }
+          return await generateImage(settings.runwareApiKey, finalPrompt, {
             aspectRatio: getAspectRatio(entity.type),
             entityType: entity.type,
             removeBackground: settings.removeBackground,
@@ -153,9 +160,14 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
               </div>
             )}
 
-            {(!settings.anthropicApiKey || !settings.runwareApiKey) && (
+            {!settings.runwareApiKey && (
               <div style={{ color: "var(--color-error)", fontSize: "0.85rem", marginBottom: 12 }}>
-                Both API keys must be configured in Settings.
+                Runware API key must be configured in Settings.
+              </div>
+            )}
+            {settings.promptLlm === "claude" && !settings.anthropicApiKey && (
+              <div style={{ color: "var(--color-error)", fontSize: "0.85rem", marginBottom: 12 }}>
+                Anthropic API key required when using Claude for prompt generation.
               </div>
             )}
 
@@ -240,8 +252,8 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
                 onClick={handleStart}
                 disabled={
                   totalToProcess === 0 ||
-                  !settings.anthropicApiKey ||
-                  !settings.runwareApiKey
+                  !settings.runwareApiKey ||
+                  (settings.promptLlm === "claude" && !settings.anthropicApiKey)
                 }
               >
                 Start ({totalToProcess})

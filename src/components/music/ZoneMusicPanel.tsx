@@ -220,7 +220,6 @@ function MusicTrackCard({
   }, [music.variants.length, viewingVariant]);
 
   const handleGenerateConfig = () => {
-    if (!settings.anthropicApiKey) return;
     clearError(zoneKey, jobKey);
     startMusicConfigGeneration(zoneKey, music.id, zoneName, vibe, roomDescriptions, music.trackType);
   };
@@ -339,8 +338,7 @@ function MusicTrackCard({
         <button
           className="soft-button soft-button--small soft-button--primary"
           onClick={handleGenerateConfig}
-          disabled={generatingConfig || !settings.anthropicApiKey}
-          title={!settings.anthropicApiKey ? "Set Anthropic API key in Settings" : undefined}
+          disabled={generatingConfig}
         >
           {generatingConfig ? "Generating..." : music.currentConfig ? "Regen Prompt" : "Generate Prompt"}
         </button>
