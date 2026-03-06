@@ -18,10 +18,12 @@ export interface GenerateVideoResult {
   cost?: number;
 }
 
+// LTX 2.3 only supports standard broadcast resolutions (1080p, 1440p, 4K).
+// All video types use 1080p landscape — cheapest option at $0.06/s.
 const DIMENSIONS: Record<VideoAssetType, { width: number; height: number }> = {
-  zone_intro: { width: 768, height: 512 },
-  boss_reveal: { width: 512, height: 512 },
-  item_reveal: { width: 512, height: 512 },
+  zone_intro: { width: 1920, height: 1080 },
+  boss_reveal: { width: 1080, height: 1920 },
+  item_reveal: { width: 1080, height: 1920 },
 };
 
 /**
