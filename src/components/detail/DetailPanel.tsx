@@ -135,7 +135,7 @@ export function DetailPanel() {
   };
 
   const handleGenerateMultiImage = () => {
-    if (!entity || !selectedZone || !asset?.currentPrompt || isCustom) return;
+    if (!entity || !selectedZone || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
       setLocalError("Runware API key not set. Open Settings.");
       return;
@@ -297,7 +297,7 @@ export function DetailPanel() {
           entityType={entity.type}
           onGeneratePrompt={handleGeneratePrompt}
           onGenerateImage={handleGenerateImage}
-          onGenerateMultiImage={isCustom ? undefined : handleGenerateMultiImage}
+          onGenerateMultiImage={handleGenerateMultiImage}
           onApprove={handleApprove}
           onRemoveBackground={handleRemoveBackground}
           onFlipHorizontal={handleFlipHorizontal}
