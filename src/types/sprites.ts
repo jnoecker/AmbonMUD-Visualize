@@ -70,7 +70,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   sylflorae: {
     displayName: "Sylflorae",
-    bodyDescription: "Living plant being, body formed of woven petals and vines, leaf hair with seasonal blooms, no visible skin, flowers budding at joints",
+    bodyDescription: "Living plant being with a humanoid shape, entire body formed of densely woven petals vines and bark with no visible skin anywhere, leaf hair with seasonal blooms, flowers budding at joints, the torso is a solid trunk of interwoven bark and moss with no anatomical features — completely flat chest like a tree trunk, no human body shape visible beneath the plant matter, an alien botanical creature not a person wrapped in vines",
   },
   orphirae: {
     displayName: "Orphirae",
