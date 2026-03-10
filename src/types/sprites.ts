@@ -74,7 +74,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   orphirae: {
     displayName: "Orphirae",
-    bodyDescription: "A humanoid person with draconic aquatic features — a human-shaped body with two arms and two legs covered in sleek iridescent scales of deep blue and green, elegant aquatic fins along the forearms and spine, angular androgynous face with subtle draconic features, deep-ocean adapted, powerful build, wearing scale-patterned armor that covers the chest and torso, no gendered features",
+    bodyDescription: "A humanoid person with draconic aquatic features — a human-shaped body with two arms and two legs entirely covered head to toe in sleek iridescent scales of deep blue and green with no human skin visible anywhere, elegant aquatic fins along the forearms and spine, face fully covered in scales with reptilian slit-pupil eyes and no human lips or nose, deep-ocean adapted, powerful build, wearing a loose draped robe of woven kelp and coral beads over the scaled body, completely flat chest with no gendered features, boyish androgynous figure",
   },
 };
 
