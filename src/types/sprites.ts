@@ -30,7 +30,7 @@ export interface SpritePromptTemplate {
 export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescription: string }> = {
   archae: {
     displayName: "Archae",
-    bodyDescription: "Androgynous humanoid, angular features, adaptable athletic build, warm skin tones, ageless face, no gendered features",
+    bodyDescription: "Androgynous humanoid adventurer, angular refined features, lean athletic build, warm skin tones, ageless face with quiet confidence, wearing a simple tunic, completely flat chest with no gendered features",
   },
   mycorae: {
     displayName: "Mycorae",
@@ -62,11 +62,11 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   medusae: {
     displayName: "Medusae",
-    bodyDescription: "Bioluminescent jellyfish humanoid, translucent flowing tendrils for hair, pulsing color glow beneath translucent skin, graceful aquatic form",
+    bodyDescription: "Bioluminescent jellyfish humanoid with a humanoid torso and limbs, translucent flowing tendrils for hair, pulsing color glow beneath translucent skin, graceful aquatic form, wearing a flowing draped robe of luminous fabric that covers the chest and torso, androgynous with no gendered features",
   },
   kitsarae: {
     displayName: "Kitsarae",
-    bodyDescription: "Fox-spirit humanoid, large fuzzy pointed ears, multiple fluffy tails, golden amber eyes, sharp androgynous features, mischievous expression",
+    bodyDescription: "A humanoid person with fox-spirit features — a human-shaped body and face with large fuzzy pointed fox ears on top of the head, multiple fluffy fox tails, golden amber slit-pupil eyes, sharp androgynous angular features, mischievous expression, wearing a light kimono-style garment, completely flat chest with no gendered features",
   },
   sylflorae: {
     displayName: "Sylflorae",
@@ -74,7 +74,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   orphirae: {
     displayName: "Orphirae",
-    bodyDescription: "Draconic serpentine humanoid, sleek iridescent scaled body, aquatic fins along arms and spine, deep-ocean adapted, powerful and sinuous",
+    bodyDescription: "A humanoid person with draconic aquatic features — a human-shaped body with two arms and two legs covered in sleek iridescent scales of deep blue and green, elegant aquatic fins along the forearms and spine, angular androgynous face with subtle draconic features, deep-ocean adapted, powerful build, wearing scale-patterned armor that covers the chest and torso, no gendered features",
   },
 };
 

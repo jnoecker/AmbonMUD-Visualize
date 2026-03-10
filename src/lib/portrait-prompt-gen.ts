@@ -117,7 +117,7 @@ Zone atmosphere: ${zoneVibe}`,
  * the image generator receives strong style steering at the very start.
  */
 const PORTRAIT_PROMPT_PREFIX =
-  "Digital fantasy painting in the Surreal Gentle Magic style (surreal_softmagic_v1), dreamy storybook illustration with visible soft painterly brushwork and textured rendering throughout, soft lavender and pale blue undertones, ambient diffused magical lighting with no clear source, gentle atmospheric haze with floating motes of light. NOT a photograph, NOT a 3D render, NOT concept art. 2:3 portrait orientation.";
+  "Digital fantasy painting in the Surreal Gentle Magic style (surreal_softmagic_v1), dreamy storybook illustration with visible soft painterly brushwork and textured rendering throughout, soft lavender and pale blue undertones, ambient diffused magical lighting with no clear source, gentle atmospheric haze with floating motes of light. NOT a photograph, NOT a 3D render, NOT concept art. 2:3 portrait orientation. All figures are fully clothed and androgynous with completely flat chests — no breasts, no cleavage, no exposed skin on the torso. All figures have a humanoid body shape with two arms and two legs.";
 
 /**
  * Fill a portrait template for a specific entity. Pure string substitution, no API call.
