@@ -46,7 +46,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   lustriae: {
     displayName: "Lustriae",
-    bodyDescription: "Petite fae figure wearing a leafy tunic that covers the chest and torso, eternally youthful androgynous face with sharp angular features and short-cropped hair, large vivid brightly-colored butterfly wings with bold jewel-tone stained-glass patterns and a soft glowing luminous aura outline around each wing edge, short and slight build with narrow shoulders and completely flat chest, wings fully opaque with saturated color not translucent, no gendered features, androgynous not feminine",
+    bodyDescription: "Petite fae figure wearing a leafy tunic that covers the chest and torso, eternally youthful androgynous Peter Pan face — sharp jawline, mischievous boyish grin, short tousled pixie-cut hair, pointed ears, large vivid brightly-colored butterfly wings with bold jewel-tone stained-glass patterns and a soft glowing luminous aura outline around each wing edge, short and slight build with narrow shoulders and completely flat chest, wings fully opaque with saturated color not translucent, no gendered features, looks like a young boy not a girl",
   },
   lithae: {
     displayName: "Lithae",
