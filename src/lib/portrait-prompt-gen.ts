@@ -10,7 +10,7 @@ const RACE_FORMAT_SPEC =
   `2:3 portrait orientation character portrait. ${PORTRAIT_STYLE_PREAMBLE} Close-up to mid-shot framing, richly detailed painterly environment background with soft atmospheric depth`;
 
 const CLASS_FORMAT_SPEC =
-  `2:3 portrait orientation action portrait of an Archae (androgynous humanoid with angular features, warm skin tones, ageless face). ${PORTRAIT_STYLE_PREAMBLE} Mid-shot framing, dynamic or atmospheric pose, richly detailed painterly environment background`;
+  `2:3 portrait orientation action portrait of a fantasy race character (race varies per class). ${PORTRAIT_STYLE_PREAMBLE} Mid-shot framing, dynamic or atmospheric pose, richly detailed painterly environment background`;
 
 /**
  * Generate a portrait prompt template with a single Claude call.
@@ -64,7 +64,7 @@ Your task: produce a JSON object with these fields:
 
 1. "raceTemplate" — a prompt template for RACE portraits using the placeholder {race_description}. The template MUST begin with "Digital fantasy painting in the Surreal Gentle Magic style, dreamy storybook illustration with visible painterly brushwork," followed by the portrait description. The race portrait shows the race in a fitting atmospheric environment. Close-up to mid-shot framing. No class outfit — just the race's natural form.
 
-2. "classTemplate" — a prompt template for CLASS portraits using placeholders {race_description} and {class_outfit}. The template MUST begin with "Digital fantasy painting in the Surreal Gentle Magic style, dreamy storybook illustration with visible painterly brushwork," followed by the portrait description. Class portraits depict an Archae in the class outfit in an atmospheric scene. Mid-shot framing.
+2. "classTemplate" — a prompt template for CLASS portraits using placeholders {race_description} and {class_outfit}. The template MUST begin with "Digital fantasy painting in the Surreal Gentle Magic style, dreamy storybook illustration with visible painterly brushwork," followed by the portrait description. Class portraits depict a character (race varies — described by {race_description}) wearing the class outfit in an atmospheric scene. Mid-shot framing.
 
 3. "raceDescriptions" — an object mapping each race key to an optimized prompt-fragment for that race's appearance. Lean into alien/fantastical. All androgynous. For humanoid races, explicitly note angular androgynous features, no gendered body features.
 
@@ -132,6 +132,23 @@ const PORTRAIT_PROMPT_PREFIX =
   "Digital fantasy painting in the Surreal Gentle Magic style (surreal_softmagic_v1), dreamy storybook illustration with visible soft painterly brushwork and textured rendering throughout, soft lavender and pale blue undertones, ambient diffused magical lighting with no clear source, gentle atmospheric haze with floating motes of light. NOT a photograph, NOT a 3D render, NOT concept art. 2:3 portrait orientation. All figures are fully clothed and androgynous with completely flat chests — no breasts, no cleavage, no exposed skin on the torso. All figures have a humanoid body shape with two arms and two legs.";
 
 /**
+ * Curated race for each class portrait — showcases racial diversity
+ * instead of always using Archae.
+ */
+const CLASS_SHOWCASE_RACE: Record<string, string> = {
+  bulwark: "lithae",
+  warden: "orphirae",
+  arcanist: "aetherae",
+  faeweaver: "sylflorae",
+  necromancer: "archae",
+  veil: "mycorae",
+  binder: "kitsarae",
+  stormblade: "pyrae",
+  herald: "alorae",
+  starweaver: "medusae",
+};
+
+/**
  * Fill a portrait template for a specific entity. Pure string substitution, no API call.
  */
 export function fillPortraitTemplate(
@@ -150,15 +167,16 @@ export function fillPortraitTemplate(
     return `${PORTRAIT_PROMPT_PREFIX}\n\n${filled}\n\n${STYLE_SUFFIX}`;
   }
 
-  // Class portrait — always uses Archae as the showcase race
-  const archaeDesc = RACE_DEFINITIONS["archae"]?.bodyDescription || "androgynous humanoid";
+  // Class portrait — uses a curated race for each class to showcase diversity
+  const showcaseRace = CLASS_SHOWCASE_RACE[dimensions.key] || "archae";
+  const raceDesc = RACE_DEFINITIONS[showcaseRace]?.bodyDescription || "androgynous humanoid";
   const classOutfit = CLASS_DEFINITIONS[dimensions.key]?.outfitDescription
     || template.classOutfits[dimensions.key]
     || dimensions.key;
 
   const filled = template.classTemplate
-    .replace(/\{race\}/g, "archae")
-    .replace(/\{race_description\}/g, archaeDesc)
+    .replace(/\{race\}/g, showcaseRace)
+    .replace(/\{race_description\}/g, raceDesc)
     .replace(/\{class\}/g, dimensions.key)
     .replace(/\{class_outfit\}/g, classOutfit);
 

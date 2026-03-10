@@ -66,7 +66,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   kitsarae: {
     displayName: "Kitsarae",
-    bodyDescription: "A human person with subtle fox-spirit features — a fully human face and body, human skin, human nose and mouth, with large fuzzy pointed fox ears on top of the head and multiple fluffy fox tails behind them. Golden amber slit-pupil eyes are the only non-human facial feature. Sharp androgynous angular cheekbones, mischievous knowing smirk, wearing a rakish minstrel outfit — a fitted doublet with puffed sleeves, a short cape draped over one shoulder, and a feathered cap, completely flat chest with no gendered features. This is a human who has fox ears and tails, NOT an anthropomorphic fox animal",
+    bodyDescription: "A human person with subtle fox-spirit features — a fully human face and body, human skin, human nose and mouth, with large fuzzy pointed fox ears on top of the head and three fluffy fox tails behind them each a different color (one copper, one silver, one golden). Golden amber slit-pupil eyes are the only non-human facial feature. Sharp androgynous angular cheekbones, mischievous knowing smirk, wearing a rakish minstrel outfit — a high-collared fitted doublet with puffed sleeves, a short cape draped over one shoulder, and a feathered cap, narrow shoulders, boyish figure, completely flat chest with no gendered features. This is a human who has fox ears and tails, NOT an anthropomorphic fox animal",
   },
   sylflorae: {
     displayName: "Sylflorae",
