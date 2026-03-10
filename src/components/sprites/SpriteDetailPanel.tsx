@@ -36,7 +36,7 @@ export function SpriteDetailPanel({
     setViewingVariant,
   } = useProject();
   const { settings } = useSettings();
-  const { startImageGeneration, getJob, getError, clearError } =
+  const { startImageGeneration, startMultiImageGeneration, getJob, getError, clearError } =
     useGeneration();
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -94,6 +94,17 @@ export function SpriteDetailPanel({
     setLocalError(null);
     clearError(zoneKey, entityId);
     startImageGeneration(zoneKey, entityId, asset.currentPrompt, entity);
+  };
+
+  const handleGenerateMultiImage = () => {
+    if (!entity || !asset?.currentPrompt) return;
+    if (!settings.runwareApiKey) {
+      setLocalError("Runware API key not set. Open Settings.");
+      return;
+    }
+    setLocalError(null);
+    clearError(zoneKey, entityId);
+    startMultiImageGeneration(zoneKey, entityId, asset.currentPrompt, entity, 4);
   };
 
   const handleApprove = async () => {
@@ -200,6 +211,7 @@ export function SpriteDetailPanel({
           entityType={entity.type}
           onGeneratePrompt={handleGeneratePrompt}
           onGenerateImage={handleGenerateImage}
+          onGenerateMultiImage={handleGenerateMultiImage}
           onApprove={handleApprove}
           onRemoveBackground={handleRemoveBackground}
           onFlipHorizontal={handleFlipHorizontal}

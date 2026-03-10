@@ -1299,6 +1299,20 @@ body {
   font-size: 0.78rem;
 }
 
+.sprite-batch-success {
+  color: var(--color-moss-green, #8da97b);
+  font-size: 0.78rem;
+}
+
+.sprite-batch-hint {
+  color: var(--color-soft-gold, #bea873);
+  font-size: 0.78rem;
+  padding: var(--space-1) var(--space-2);
+  background: rgba(190, 168, 115, 0.08);
+  border-radius: var(--radius-sm, 4px);
+  border-left: 2px solid var(--color-soft-gold, #bea873);
+}
+
 .sprite-batch-progress {
   display: flex;
   flex-direction: column;

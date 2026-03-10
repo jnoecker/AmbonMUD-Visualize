@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(bun run build)",
+      "WebSearch",
+      "WebFetch(domain:runware.ai)"
+    ]
+  }
+}

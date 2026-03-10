@@ -8,6 +8,14 @@ import { SpriteBatchBar } from "./SpriteBatchBar";
 import type { Entity } from "../../types/entities";
 import type { SpriteConfig, SpritePromptTemplate } from "../../types/sprites";
 import type { ZoneData } from "../../types/project";
+import {
+  TIER_DEFINITIONS,
+  RACE_DEFINITIONS,
+  CLASS_DEFINITIONS,
+  TIER_ORDER,
+  RACE_ORDER,
+  CLASS_ORDER,
+} from "../../types/sprites";
 
 interface SpriteGridProps {
   zoneKey: string;
@@ -16,24 +24,35 @@ interface SpriteGridProps {
   spriteConfig: SpriteConfig;
 }
 
-const TIER_LABELS: Record<number, string> = {
-  1: "Novice",
-  10: "Apprentice",
-  20: "Journeyman",
-  30: "Expert",
-  40: "Master",
-  50: "Legendary",
-  60: "Staff",
-};
-
-const GENDER_LABELS: Record<string, string> = {
-  male: "Male",
-  female: "Female",
-  enby: "Nonbinary",
-};
-
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function raceLabel(race: string): string {
+  return RACE_DEFINITIONS[race]?.displayName || capitalize(race);
+}
+
+function classLabel(cls: string): string {
+  if (cls === "base") return "Base";
+  return CLASS_DEFINITIONS[cls]?.displayName || capitalize(cls);
+}
+
+function tierLabel(tier: string): string {
+  return TIER_DEFINITIONS[tier]?.displayName || tier;
+}
+
+function tierLevelLabel(tier: string): string {
+  const def = TIER_DEFINITIONS[tier];
+  return def?.levels || "";
+}
+
+/** Sort keys by a canonical order array, with unknowns at the end. */
+function sortByOrder(keys: string[], order: string[]): string[] {
+  const idx = (k: string) => {
+    const i = order.indexOf(k);
+    return i === -1 ? 9999 : i;
+  };
+  return [...keys].sort((a, b) => idx(a) - idx(b));
 }
 
 export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGridProps) {
@@ -47,10 +66,11 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
   } = useProject();
   const { getJob } = useGeneration();
 
-  const [activeGender, setActiveGender] = useState(spriteConfig.genders[0]);
-  const [activeClass, setActiveClass] = useState(spriteConfig.classes[0]);
+  const [activeClass, setActiveClass] = useState(
+    sortByOrder(spriteConfig.classes, CLASS_ORDER)[0]
+  );
   const [detailEntityId, setDetailEntityId] = useState<string | null>(null);
-  const [swapping, setSwapping] = useState<string | null>(null); // "entityA|entityB"
+  const [swapping, setSwapping] = useState<string | null>(null);
 
   const handleSwap = useCallback(
     async (entityIdA: string, entityIdB: string) => {
@@ -71,13 +91,33 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
     [entities, spriteConfig]
   );
 
-  // Filter groups for active gender + class
-  const visibleGroups = useMemo(
-    () => groups.filter((g) => g.gender === activeGender && g.playerClass === activeClass),
-    [groups, activeGender, activeClass]
+  // Sort races and tiers by canonical order
+  const sortedRaces = useMemo(
+    () => sortByOrder(spriteConfig.races, RACE_ORDER),
+    [spriteConfig.races]
+  );
+  const sortedTiers = useMemo(
+    () => sortByOrder(spriteConfig.tiers, TIER_ORDER),
+    [spriteConfig.tiers]
+  );
+  const sortedClasses = useMemo(
+    () => sortByOrder(spriteConfig.classes, CLASS_ORDER),
+    [spriteConfig.classes]
   );
 
-  // Entity IDs visible in current gender + class tab
+  // Filter groups for active class
+  const visibleGroups = useMemo(
+    () => {
+      const filtered = groups.filter((g) => g.playerClass === activeClass);
+      // Sort by canonical race order
+      return filtered.sort(
+        (a, b) => sortedRaces.indexOf(a.race) - sortedRaces.indexOf(b.race)
+      );
+    },
+    [groups, activeClass, sortedRaces]
+  );
+
+  // Entity IDs visible in current class tab
   const visibleEntityIds = useMemo(
     () => visibleGroups.flatMap((g) => Object.values(g.entityIds)),
     [visibleGroups]
@@ -131,31 +171,18 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
         />
       ) : (<>
 
-      {/* Gender tabs */}
-      <div className="sprite-gender-tabs">
-        {spriteConfig.genders.map((gender) => (
-          <button
-            key={gender}
-            className={`sprite-gender-tab${gender === activeGender ? " sprite-gender-tab--active" : ""}`}
-            onClick={() => setActiveGender(gender)}
-          >
-            {GENDER_LABELS[gender] || capitalize(gender)}
-          </button>
-        ))}
-      </div>
-
       {/* Class tabs */}
       <div className="sprite-class-tabs">
-        {spriteConfig.classes.map((cls) => (
+        {sortedClasses.map((cls) => (
           <button
             key={cls}
             className={`sprite-class-tab${cls === activeClass ? " sprite-class-tab--active" : ""}`}
             onClick={() => setActiveClass(cls)}
           >
-            {capitalize(cls)}
+            {classLabel(cls)}
             <span className="sprite-class-tab-count">
               {groups
-                .filter((g) => g.gender === activeGender && g.playerClass === cls)
+                .filter((g) => g.playerClass === cls)
                 .reduce((n, g) => n + Object.keys(g.entityIds).length, 0)}
             </span>
           </button>
@@ -167,11 +194,13 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
         {/* Column headers */}
         <div className="sprite-grid-header">
           <div className="sprite-grid-corner" />
-          {spriteConfig.tiers.flatMap((tier, tierIdx) => {
+          {sortedTiers.flatMap((tier, tierIdx) => {
             const header = (
               <div key={tier} className="sprite-grid-col-header">
-                {TIER_LABELS[tier] || `L${tier}`}
-                <span className="sprite-grid-col-level">Lv {tier}</span>
+                {tierLabel(tier)}
+                {tierLevelLabel(tier) && (
+                  <span className="sprite-grid-col-level">{tierLevelLabel(tier)}</span>
+                )}
               </div>
             );
             return tierIdx > 0
@@ -182,13 +211,13 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
 
         {/* Rows */}
         {visibleGroups.map((group) => (
-          <div key={`${group.race}-${group.gender}-${group.playerClass}`} className="sprite-grid-row">
+          <div key={`${group.race}-${group.playerClass}`} className="sprite-grid-row">
             <div className="sprite-grid-row-header">
-              {capitalize(group.race)}
+              {raceLabel(group.race)}
             </div>
-            {spriteConfig.tiers.flatMap((tier, tierIdx) => {
+            {sortedTiers.flatMap((tier, tierIdx) => {
               const entityId = group.entityIds[tier];
-              const prevTier = tierIdx > 0 ? spriteConfig.tiers[tierIdx - 1] : undefined;
+              const prevTier = tierIdx > 0 ? sortedTiers[tierIdx - 1] : undefined;
               const prevEntityId = prevTier ? group.entityIds[prevTier] : undefined;
 
               const cell = !entityId ? (
@@ -213,7 +242,7 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
                 <button
                   key={`swap-${tier}`}
                   className="sprite-swap-btn"
-                  title={`Swap L${prevTier} ↔ L${tier}`}
+                  title={`Swap ${tierLabel(prevTier!)} ↔ ${tierLabel(tier)}`}
                   disabled={swapping !== null}
                   onClick={(e) => {
                     e.stopPropagation();

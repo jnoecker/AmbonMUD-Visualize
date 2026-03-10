@@ -16,6 +16,10 @@ interface GenerateOptions {
   aspectRatio: "16:9" | "1:1";
   entityType: EntityType;
   removeBackground?: boolean;
+  /** Seed image for img2img generation (base64 data URI or URL). */
+  seedImage?: string;
+  /** Strength of seed image influence (0-1). Higher = more like original. Default ~0.65. */
+  seedStrength?: number;
 }
 
 // Generation sizes — generate at higher resolution for quality, then downscale
@@ -67,7 +71,7 @@ export async function generateImage(
 
   let images;
   try {
-    images = await runware.requestImages({
+    const requestParams: Record<string, unknown> = {
       positivePrompt: prompt,
       model,
       width,
@@ -75,7 +79,20 @@ export async function generateImage(
       numberResults: 1,
       outputType: "base64Data",
       outputFormat: "PNG",
-    });
+    };
+
+    // Add img2img parameters if a seed image is provided
+    if (options.seedImage) {
+      // Runware accepts data URI strings for seedImage
+      const seedValue = options.seedImage.startsWith("data:")
+        ? options.seedImage
+        : `data:image/png;base64,${options.seedImage}`;
+      requestParams.seedImage = seedValue;
+      requestParams.strength = options.seedStrength ?? 0.65;
+      console.log(`[image-gen] using seed image (strength=${requestParams.strength}, prefix=${seedValue.slice(0, 30)}...)`);
+    }
+
+    images = await runware.requestImages(requestParams as any);
   } catch (err: any) {
     if (/content.?policy|nsfw|safety/i.test(String(err.message))) {
       throw new ContentPolicyError();
@@ -112,6 +129,15 @@ export async function generateImage(
   bytes = await recompressForEntityType(bytes, options.entityType);
 
   return { bytes, bgRemovalFailed };
+}
+
+/** Convert image bytes to a base64 string (no data URI prefix). */
+export function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
 
 function base64ToBytes(b64: string): Uint8Array {

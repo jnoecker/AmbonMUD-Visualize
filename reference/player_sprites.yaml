@@ -1,4257 +1,1586 @@
 zone: player_sprites
-image:
-  room: player_sprites/default_room.png
-  mob: player_sprites/default_mob.png
 lifespan: 0
 startRoom: entrance
 
 rooms:
   entrance:
-    title: "Entrance"
-    description: "A grand marble atrium with softly glowing crystal displays. Enchanted portraits line the walls, depicting adventurers of every race and calling."
+    title: "Sprite Gallery"
+    description: "A vast ethereal gallery where the forms of every adventurer in Ambon shimmer into view, each figure a crystallized echo of possibility."
     exits:
-      n: novice_hall
-  novice_hall:
-    title: "Novice Hall"
-    description: "A warm corridor lined with training dummies and practice targets. The air smells of fresh leather and chalk."
+      n: base_hall
+  base_hall:
+    title: "Hall of Origins"
+    description: "Twelve alcoves line this corridor, each radiating the essence of a different race. Simple wrapped figures stand within, awaiting their destiny."
     exits:
       s: entrance
-      n: apprentice_hall
-      e: novice_warriors
-      w: novice_mages
-      u: novice_clerics
-      d: novice_rogues
-  apprentice_hall:
-    title: "Apprentice Hall"
-    description: "A wider passage with polished stone floors and mounted weapons behind glass. Faint battle sounds echo from adjacent chambers."
+      n: awakened_hall
+  awakened_hall:
+    title: "Awakened Hall"
+    description: "The figures here have found their calling. Basic weapons gleam and simple armor catches the ambient light."
     exits:
-      s: novice_hall
-      n: journeyman_hall
-      e: apprentice_warriors
-      w: apprentice_mages
-      u: apprentice_clerics
-      d: apprentice_rogues
-  journeyman_hall:
-    title: "Journeyman Hall"
-    description: "An impressive gallery with vaulted ceilings and enchanted tapestries depicting famous battles. Arcane lanterns cast a steady glow."
+      s: base_hall
+      n: ascended_hall
+  ascended_hall:
+    title: "Ascended Hall"
+    description: "Power radiates from these figures. Enchanted gear shimmers with subtle magical effects, class mastery evident in every detail."
     exits:
-      s: apprentice_hall
-      n: expert_hall
-      e: journeyman_warriors
-      w: journeyman_mages
-      u: journeyman_clerics
-      d: journeyman_rogues
-  expert_hall:
-    title: "Expert Hall"
-    description: "A prestigious corridor of dark oak and silver filigree. Trophy cases display legendary artifacts and commendations."
+      s: awakened_hall
+      n: legendary_hall
+  legendary_hall:
+    title: "Legendary Hall"
+    description: "These figures blaze with power. Legendary weapons glow, dramatic auras swirl, and the air hums with barely contained magical force."
     exits:
-      s: journeyman_hall
-      n: master_hall
-      e: expert_warriors
-      w: expert_mages
-      u: expert_clerics
-      d: expert_rogues
-  master_hall:
-    title: "Master Hall"
-    description: "A resplendent hall of gleaming obsidian and gold inlay. The air hums with barely contained power."
-    exits:
-      s: expert_hall
-      n: legend_hall
-      e: master_warriors
-      w: master_mages
-      u: master_clerics
-      d: master_rogues
-  legend_hall:
-    title: "Legend Hall"
-    description: "An ethereal sanctuary where reality shimmers at the edges. Constellations drift across the ceiling, and the floor seems to float above an endless void."
-    exits:
-      s: master_hall
+      s: ascended_hall
       n: staff_hall
-      e: legend_warriors
-      w: legend_mages
-      u: legend_clerics
-      d: legend_rogues
-  novice_warriors:
-    title: "Novice Warriors"
-    description: "A dusty training yard with wooden swords and straw dummies. Young recruits practice basic stances."
-    exits:
-      w: novice_hall
-  novice_mages:
-    title: "Novice Mages"
-    description: "A cramped study filled with primer spellbooks and sputtering candles. Apprentices struggle with basic incantations."
-    exits:
-      e: novice_hall
-  novice_clerics:
-    title: "Novice Clerics"
-    description: "A humble chapel with simple wooden pews and a small altar. Acolytes kneel in quiet prayer."
-    exits:
-      d: novice_hall
-  novice_rogues:
-    title: "Novice Rogues"
-    description: "A shadowy alcove with lockpick sets and rope coils scattered about. Fledgling thieves practice sleight of hand."
-    exits:
-      u: novice_hall
-  apprentice_warriors:
-    title: "Apprentice Warriors"
-    description: "A proper armory with iron weapons and training rings. Soldiers spar with disciplined form."
-    exits:
-      w: apprentice_hall
-  apprentice_mages:
-    title: "Apprentice Mages"
-    description: "A well-stocked library with glowing runes etched into the reading desks. Channelers weave threads of mana."
-    exits:
-      e: apprentice_hall
-  apprentice_clerics:
-    title: "Apprentice Clerics"
-    description: "A serene sanctuary with stained glass windows casting colored light. Healers tend to minor wounds."
-    exits:
-      d: apprentice_hall
-  apprentice_rogues:
-    title: "Apprentice Rogues"
-    description: "A dimly lit den with targets, tripwires, and hidden compartments. Thieves hone their craft in silence."
-    exits:
-      u: apprentice_hall
-  journeyman_warriors:
-    title: "Journeyman Warriors"
-    description: "A battle-scarred arena with enchanted training golems. Knights test their mettle against formidable opponents."
-    exits:
-      w: journeyman_hall
-  journeyman_mages:
-    title: "Journeyman Mages"
-    description: "A conjuration chamber crackling with residual energy. Conjurers summon elemental wisps that dance through the air."
-    exits:
-      e: journeyman_hall
-  journeyman_clerics:
-    title: "Journeyman Clerics"
-    description: "A radiant temple with floating prayer beads and divine sigils. Priests channel healing light with practiced ease."
-    exits:
-      d: journeyman_hall
-  journeyman_rogues:
-    title: "Journeyman Rogues"
-    description: "A labyrinthine vault of shifting walls and concealed traps. Assassins move like whispers through the maze."
-    exits:
-      u: journeyman_hall
-  expert_warriors:
-    title: "Expert Warriors"
-    description: "A war room with enchanted battle maps and masterwork weapons. Champions bear the scars of countless victories."
-    exits:
-      w: expert_hall
-  expert_mages:
-    title: "Expert Mages"
-    description: "An arcane sanctum where spell circles burn permanently into the floor. Sorcerers command devastating magical forces."
-    exits:
-      e: expert_hall
-  expert_clerics:
-    title: "Expert Clerics"
-    description: "A blessed cathedral resonating with divine harmonics. Templars radiate an aura of holy protection."
-    exits:
-      d: expert_hall
-  expert_rogues:
-    title: "Expert Rogues"
-    description: "A vault of absolute darkness pierced only by the glint of poisoned blades. Shadows move with lethal purpose."
-    exits:
-      u: expert_hall
-  master_warriors:
-    title: "Master Warriors"
-    description: "A legendary forge-arena where enchanted weapons clash with thunderous force. Warlords command the very essence of combat."
-    exits:
-      w: master_hall
-  master_mages:
-    title: "Master Mages"
-    description: "A reality-bending sanctum where space folds and time stutters. Wizards reshape the fabric of existence."
-    exits:
-      e: master_hall
-  master_clerics:
-    title: "Master Clerics"
-    description: "A celestial observatory bathed in divine radiance. Bishops commune directly with higher powers."
-    exits:
-      d: master_hall
-  master_rogues:
-    title: "Master Rogues"
-    description: "A chamber that seems to exist between moments. Nightblades phase through solid matter at will."
-    exits:
-      u: master_hall
-  legend_warriors:
-    title: "Legend Warriors"
-    description: "A mythic colosseum suspended among storm clouds. Warlords of godslaying renown stand as monuments to martial perfection."
-    exits:
-      w: legend_hall
-  legend_mages:
-    title: "Legend Mages"
-    description: "A nexus of pure magical energy where archmages exist as living spells. Reality itself bends to their will."
-    exits:
-      e: legend_hall
-  legend_clerics:
-    title: "Legend Clerics"
-    description: "A fragment of the divine plane made manifest. Prophets glow with the light of celestial ascension."
-    exits:
-      d: legend_hall
-  legend_rogues:
-    title: "Legend Rogues"
-    description: "A void between worlds where shadowlords rule the spaces between shadows. Even light fears to enter."
-    exits:
-      u: legend_hall
-
   staff_hall:
     title: "Staff Hall"
-    description: "A transcendent chamber beyond mortal comprehension. The walls are woven from living starlight and the floor pulses with the heartbeat of the world itself. Only those who have surpassed legend dare enter."
+    description: "An ethereal sanctuary bathed in prismatic light. The figures here transcend mortal power — administrators and architects of the world itself."
     exits:
-      s: legend_hall
-      e: staff_warriors
-      w: staff_mages
-      u: staff_clerics
-      d: staff_rogues
-  staff_warriors:
-    title: "Staff Warriors"
-    description: "An infinite battlefield where the greatest warriors across all timelines clash in eternal combat. The very concept of defeat has been banished from this place."
-    exits:
-      w: staff_hall
-  staff_mages:
-    title: "Staff Mages"
-    description: "A dimension of pure arcane energy where reality is merely a suggestion. Spells of world-shaping magnitude orbit like lazy fireflies."
-    exits:
-      e: staff_hall
-  staff_clerics:
-    title: "Staff Clerics"
-    description: "The throne room of divinity itself, where mortal and celestial merge into one. Pillars of crystallized prayer support a ceiling of infinite sky."
-    exits:
-      d: staff_hall
-  staff_rogues:
-    title: "Staff Rogues"
-    description: "A paradox of space that exists everywhere and nowhere simultaneously. Masters of shadow have transcended the boundary between seen and unseen."
-    exits:
-      u: staff_hall
+      s: legendary_hall
 
 mobs:
-  human_enby_cleric_l1:
-    image: player_sprites/human_enby_cleric_l1.png
-    name: "a humble human acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_enby_cleric_l10:
-    image: player_sprites/human_enby_cleric_l10.png
-    name: "a devoted human healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_enby_cleric_l20:
-    image: player_sprites/human_enby_cleric_l20.png
-    name: "a radiant human priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_enby_cleric_l30:
-    image: player_sprites/human_enby_cleric_l30.png
-    name: "a blessed human templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_enby_cleric_l40:
-    image: player_sprites/human_enby_cleric_l40.png
-    name: "a exalted human bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_enby_cleric_l50:
-    image: player_sprites/human_enby_cleric_l50.png
-    name: "a celestial human prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_female_cleric_l1:
-    image: player_sprites/human_female_cleric_l1.png
-    name: "a humble human acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_female_cleric_l10:
-    image: player_sprites/human_female_cleric_l10.png
-    name: "a devoted human healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_female_cleric_l20:
-    image: player_sprites/human_female_cleric_l20.png
-    name: "a radiant human priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_female_cleric_l30:
-    image: player_sprites/human_female_cleric_l30.png
-    name: "a blessed human templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_female_cleric_l40:
-    image: player_sprites/human_female_cleric_l40.png
-    name: "a exalted human bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_female_cleric_l50:
-    image: player_sprites/human_female_cleric_l50.png
-    name: "a celestial human prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_male_cleric_l1:
-    image: player_sprites/human_male_cleric_l1.png
-    name: "a humble human acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_male_cleric_l10:
-    image: player_sprites/human_male_cleric_l10.png
-    name: "a devoted human healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_male_cleric_l20:
-    image: player_sprites/human_male_cleric_l20.png
-    name: "a radiant human priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_male_cleric_l30:
-    image: player_sprites/human_male_cleric_l30.png
-    name: "a blessed human templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_male_cleric_l40:
-    image: player_sprites/human_male_cleric_l40.png
-    name: "a exalted human bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_male_cleric_l50:
-    image: player_sprites/human_male_cleric_l50.png
-    name: "a celestial human prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_enby_cleric_l1:
-    image: player_sprites/elf_enby_cleric_l1.png
-    name: "a humble elf acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_enby_cleric_l10:
-    image: player_sprites/elf_enby_cleric_l10.png
-    name: "a devoted elf healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_enby_cleric_l20:
-    image: player_sprites/elf_enby_cleric_l20.png
-    name: "a radiant elf priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_enby_cleric_l30:
-    image: player_sprites/elf_enby_cleric_l30.png
-    name: "a blessed elf templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_enby_cleric_l40:
-    image: player_sprites/elf_enby_cleric_l40.png
-    name: "a exalted elf bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_enby_cleric_l50:
-    image: player_sprites/elf_enby_cleric_l50.png
-    name: "a celestial elf prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_female_cleric_l1:
-    image: player_sprites/elf_female_cleric_l1.png
-    name: "a humble elf acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_female_cleric_l10:
-    image: player_sprites/elf_female_cleric_l10.png
-    name: "a devoted elf healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_female_cleric_l20:
-    image: player_sprites/elf_female_cleric_l20.png
-    name: "a radiant elf priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_female_cleric_l30:
-    image: player_sprites/elf_female_cleric_l30.png
-    name: "a blessed elf templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_female_cleric_l40:
-    image: player_sprites/elf_female_cleric_l40.png
-    name: "a exalted elf bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_female_cleric_l50:
-    image: player_sprites/elf_female_cleric_l50.png
-    name: "a celestial elf prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_male_cleric_l1:
-    image: player_sprites/elf_male_cleric_l1.png
-    name: "a humble elf acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_male_cleric_l10:
-    image: player_sprites/elf_male_cleric_l10.png
-    name: "a devoted elf healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_male_cleric_l20:
-    image: player_sprites/elf_male_cleric_l20.png
-    name: "a radiant elf priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_male_cleric_l30:
-    image: player_sprites/elf_male_cleric_l30.png
-    name: "a blessed elf templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_male_cleric_l40:
-    image: player_sprites/elf_male_cleric_l40.png
-    name: "a exalted elf bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_male_cleric_l50:
-    image: player_sprites/elf_male_cleric_l50.png
-    name: "a celestial elf prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_enby_cleric_l1:
-    image: player_sprites/dwarf_enby_cleric_l1.png
-    name: "a humble dwarf acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_enby_cleric_l10:
-    image: player_sprites/dwarf_enby_cleric_l10.png
-    name: "a devoted dwarf healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_enby_cleric_l20:
-    image: player_sprites/dwarf_enby_cleric_l20.png
-    name: "a radiant dwarf priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_enby_cleric_l30:
-    image: player_sprites/dwarf_enby_cleric_l30.png
-    name: "a blessed dwarf templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_enby_cleric_l40:
-    image: player_sprites/dwarf_enby_cleric_l40.png
-    name: "a exalted dwarf bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_enby_cleric_l50:
-    image: player_sprites/dwarf_enby_cleric_l50.png
-    name: "a celestial dwarf prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_female_cleric_l1:
-    image: player_sprites/dwarf_female_cleric_l1.png
-    name: "a humble dwarf acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_female_cleric_l10:
-    image: player_sprites/dwarf_female_cleric_l10.png
-    name: "a devoted dwarf healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_female_cleric_l20:
-    image: player_sprites/dwarf_female_cleric_l20.png
-    name: "a radiant dwarf priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_female_cleric_l30:
-    image: player_sprites/dwarf_female_cleric_l30.png
-    name: "a blessed dwarf templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_female_cleric_l40:
-    image: player_sprites/dwarf_female_cleric_l40.png
-    name: "a exalted dwarf bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_female_cleric_l50:
-    image: player_sprites/dwarf_female_cleric_l50.png
-    name: "a celestial dwarf prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_male_cleric_l1:
-    image: player_sprites/dwarf_male_cleric_l1.png
-    name: "a humble dwarf acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_male_cleric_l10:
-    image: player_sprites/dwarf_male_cleric_l10.png
-    name: "a devoted dwarf healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_male_cleric_l20:
-    image: player_sprites/dwarf_male_cleric_l20.png
-    name: "a radiant dwarf priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_male_cleric_l30:
-    image: player_sprites/dwarf_male_cleric_l30.png
-    name: "a blessed dwarf templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_male_cleric_l40:
-    image: player_sprites/dwarf_male_cleric_l40.png
-    name: "a exalted dwarf bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_male_cleric_l50:
-    image: player_sprites/dwarf_male_cleric_l50.png
-    name: "a celestial dwarf prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_enby_cleric_l1:
-    image: player_sprites/halfling_enby_cleric_l1.png
-    name: "a humble halfling acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_enby_cleric_l10:
-    image: player_sprites/halfling_enby_cleric_l10.png
-    name: "a devoted halfling healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_enby_cleric_l20:
-    image: player_sprites/halfling_enby_cleric_l20.png
-    name: "a radiant halfling priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_enby_cleric_l30:
-    image: player_sprites/halfling_enby_cleric_l30.png
-    name: "a blessed halfling templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_enby_cleric_l40:
-    image: player_sprites/halfling_enby_cleric_l40.png
-    name: "a exalted halfling bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_enby_cleric_l50:
-    image: player_sprites/halfling_enby_cleric_l50.png
-    name: "a celestial halfling prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_female_cleric_l1:
-    image: player_sprites/halfling_female_cleric_l1.png
-    name: "a humble halfling acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_female_cleric_l10:
-    image: player_sprites/halfling_female_cleric_l10.png
-    name: "a devoted halfling healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_female_cleric_l20:
-    image: player_sprites/halfling_female_cleric_l20.png
-    name: "a radiant halfling priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_female_cleric_l30:
-    image: player_sprites/halfling_female_cleric_l30.png
-    name: "a blessed halfling templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_female_cleric_l40:
-    image: player_sprites/halfling_female_cleric_l40.png
-    name: "a exalted halfling bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_female_cleric_l50:
-    image: player_sprites/halfling_female_cleric_l50.png
-    name: "a celestial halfling prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_male_cleric_l1:
-    image: player_sprites/halfling_male_cleric_l1.png
-    name: "a humble halfling acolyte"
-    room: novice_clerics
-    level: 1
-    hp: 14
-    minDamage: 1
-    maxDamage: 3
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_male_cleric_l10:
-    image: player_sprites/halfling_male_cleric_l10.png
-    name: "a devoted halfling healer"
-    room: apprentice_clerics
-    level: 10
-    hp: 78
-    minDamage: 6
-    maxDamage: 13
-    armor: 9
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_male_cleric_l20:
-    image: player_sprites/halfling_male_cleric_l20.png
-    name: "a radiant halfling priest"
-    room: journeyman_clerics
-    level: 20
-    hp: 156
-    minDamage: 13
-    maxDamage: 23
-    armor: 16
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_male_cleric_l30:
-    image: player_sprites/halfling_male_cleric_l30.png
-    name: "a blessed halfling templar"
-    room: expert_clerics
-    level: 30
-    hp: 273
-    minDamage: 20
-    maxDamage: 36
-    armor: 28
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_male_cleric_l40:
-    image: player_sprites/halfling_male_cleric_l40.png
-    name: "a exalted halfling bishop"
-    room: master_clerics
-    level: 40
-    hp: 429
-    minDamage: 29
-    maxDamage: 52
-    armor: 38
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_male_cleric_l50:
-    image: player_sprites/halfling_male_cleric_l50.png
-    name: "a celestial halfling prophet"
-    room: legend_clerics
-    level: 50
-    hp: 624
-    minDamage: 39
-    maxDamage: 65
-    armor: 50
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_enby_mage_l1:
-    image: player_sprites/human_enby_mage_l1.png
-    name: "a novice human apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_enby_mage_l10:
-    image: player_sprites/human_enby_mage_l10.png
-    name: "a practiced human channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_enby_mage_l20:
-    image: player_sprites/human_enby_mage_l20.png
-    name: "a skilled human conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_enby_mage_l30:
-    image: player_sprites/human_enby_mage_l30.png
-    name: "a powerful human sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_enby_mage_l40:
-    image: player_sprites/human_enby_mage_l40.png
-    name: "a arcane human wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_enby_mage_l50:
-    image: player_sprites/human_enby_mage_l50.png
-    name: "a transcendent human archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_female_mage_l1:
-    image: player_sprites/human_female_mage_l1.png
-    name: "a novice human apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_female_mage_l10:
-    image: player_sprites/human_female_mage_l10.png
-    name: "a practiced human channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_female_mage_l20:
-    image: player_sprites/human_female_mage_l20.png
-    name: "a skilled human conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_female_mage_l30:
-    image: player_sprites/human_female_mage_l30.png
-    name: "a powerful human sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_female_mage_l40:
-    image: player_sprites/human_female_mage_l40.png
-    name: "a arcane human wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_female_mage_l50:
-    image: player_sprites/human_female_mage_l50.png
-    name: "a transcendent human archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_male_mage_l1:
-    image: player_sprites/human_male_mage_l1.png
-    name: "a novice human apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_male_mage_l10:
-    image: player_sprites/human_male_mage_l10.png
-    name: "a practiced human channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_male_mage_l20:
-    image: player_sprites/human_male_mage_l20.png
-    name: "a skilled human conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_male_mage_l30:
-    image: player_sprites/human_male_mage_l30.png
-    name: "a powerful human sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_male_mage_l40:
-    image: player_sprites/human_male_mage_l40.png
-    name: "a arcane human wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_male_mage_l50:
-    image: player_sprites/human_male_mage_l50.png
-    name: "a transcendent human archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_enby_mage_l1:
-    image: player_sprites/elf_enby_mage_l1.png
-    name: "a novice elf apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_enby_mage_l10:
-    image: player_sprites/elf_enby_mage_l10.png
-    name: "a practiced elf channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_enby_mage_l20:
-    image: player_sprites/elf_enby_mage_l20.png
-    name: "a skilled elf conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_enby_mage_l30:
-    image: player_sprites/elf_enby_mage_l30.png
-    name: "a powerful elf sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_enby_mage_l40:
-    image: player_sprites/elf_enby_mage_l40.png
-    name: "a arcane elf wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_enby_mage_l50:
-    image: player_sprites/elf_enby_mage_l50.png
-    name: "a transcendent elf archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_female_mage_l1:
-    image: player_sprites/elf_female_mage_l1.png
-    name: "a novice elf apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_female_mage_l10:
-    image: player_sprites/elf_female_mage_l10.png
-    name: "a practiced elf channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_female_mage_l20:
-    image: player_sprites/elf_female_mage_l20.png
-    name: "a skilled elf conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_female_mage_l30:
-    image: player_sprites/elf_female_mage_l30.png
-    name: "a powerful elf sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_female_mage_l40:
-    image: player_sprites/elf_female_mage_l40.png
-    name: "a arcane elf wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_female_mage_l50:
-    image: player_sprites/elf_female_mage_l50.png
-    name: "a transcendent elf archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_male_mage_l1:
-    image: player_sprites/elf_male_mage_l1.png
-    name: "a novice elf apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_male_mage_l10:
-    image: player_sprites/elf_male_mage_l10.png
-    name: "a practiced elf channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_male_mage_l20:
-    image: player_sprites/elf_male_mage_l20.png
-    name: "a skilled elf conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_male_mage_l30:
-    image: player_sprites/elf_male_mage_l30.png
-    name: "a powerful elf sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_male_mage_l40:
-    image: player_sprites/elf_male_mage_l40.png
-    name: "a arcane elf wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_male_mage_l50:
-    image: player_sprites/elf_male_mage_l50.png
-    name: "a transcendent elf archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_enby_mage_l1:
-    image: player_sprites/dwarf_enby_mage_l1.png
-    name: "a novice dwarf apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_enby_mage_l10:
-    image: player_sprites/dwarf_enby_mage_l10.png
-    name: "a practiced dwarf channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_enby_mage_l20:
-    image: player_sprites/dwarf_enby_mage_l20.png
-    name: "a skilled dwarf conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_enby_mage_l30:
-    image: player_sprites/dwarf_enby_mage_l30.png
-    name: "a powerful dwarf sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_enby_mage_l40:
-    image: player_sprites/dwarf_enby_mage_l40.png
-    name: "a arcane dwarf wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_enby_mage_l50:
-    image: player_sprites/dwarf_enby_mage_l50.png
-    name: "a transcendent dwarf archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_female_mage_l1:
-    image: player_sprites/dwarf_female_mage_l1.png
-    name: "a novice dwarf apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_female_mage_l10:
-    image: player_sprites/dwarf_female_mage_l10.png
-    name: "a practiced dwarf channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_female_mage_l20:
-    image: player_sprites/dwarf_female_mage_l20.png
-    name: "a skilled dwarf conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_female_mage_l30:
-    image: player_sprites/dwarf_female_mage_l30.png
-    name: "a powerful dwarf sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_female_mage_l40:
-    image: player_sprites/dwarf_female_mage_l40.png
-    name: "a arcane dwarf wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_female_mage_l50:
-    image: player_sprites/dwarf_female_mage_l50.png
-    name: "a transcendent dwarf archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_male_mage_l1:
-    image: player_sprites/dwarf_male_mage_l1.png
-    name: "a novice dwarf apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_male_mage_l10:
-    image: player_sprites/dwarf_male_mage_l10.png
-    name: "a practiced dwarf channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_male_mage_l20:
-    image: player_sprites/dwarf_male_mage_l20.png
-    name: "a skilled dwarf conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_male_mage_l30:
-    image: player_sprites/dwarf_male_mage_l30.png
-    name: "a powerful dwarf sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_male_mage_l40:
-    image: player_sprites/dwarf_male_mage_l40.png
-    name: "a arcane dwarf wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_male_mage_l50:
-    image: player_sprites/dwarf_male_mage_l50.png
-    name: "a transcendent dwarf archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_enby_mage_l1:
-    image: player_sprites/halfling_enby_mage_l1.png
-    name: "a novice halfling apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_enby_mage_l10:
-    image: player_sprites/halfling_enby_mage_l10.png
-    name: "a practiced halfling channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_enby_mage_l20:
-    image: player_sprites/halfling_enby_mage_l20.png
-    name: "a skilled halfling conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_enby_mage_l30:
-    image: player_sprites/halfling_enby_mage_l30.png
-    name: "a powerful halfling sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_enby_mage_l40:
-    image: player_sprites/halfling_enby_mage_l40.png
-    name: "a arcane halfling wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_enby_mage_l50:
-    image: player_sprites/halfling_enby_mage_l50.png
-    name: "a transcendent halfling archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_female_mage_l1:
-    image: player_sprites/halfling_female_mage_l1.png
-    name: "a novice halfling apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_female_mage_l10:
-    image: player_sprites/halfling_female_mage_l10.png
-    name: "a practiced halfling channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_female_mage_l20:
-    image: player_sprites/halfling_female_mage_l20.png
-    name: "a skilled halfling conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_female_mage_l30:
-    image: player_sprites/halfling_female_mage_l30.png
-    name: "a powerful halfling sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_female_mage_l40:
-    image: player_sprites/halfling_female_mage_l40.png
-    name: "a arcane halfling wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_female_mage_l50:
-    image: player_sprites/halfling_female_mage_l50.png
-    name: "a transcendent halfling archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_male_mage_l1:
-    image: player_sprites/halfling_male_mage_l1.png
-    name: "a novice halfling apprentice"
-    room: novice_mages
-    level: 1
-    hp: 10
-    minDamage: 3
-    maxDamage: 6
-    armor: 0
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_male_mage_l10:
-    image: player_sprites/halfling_male_mage_l10.png
-    name: "a practiced halfling channeler"
-    room: apprentice_mages
-    level: 10
-    hp: 55
-    minDamage: 15
-    maxDamage: 30
-    armor: 4
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_male_mage_l20:
-    image: player_sprites/halfling_male_mage_l20.png
-    name: "a skilled halfling conjurer"
-    room: journeyman_mages
-    level: 20
-    hp: 110
-    minDamage: 30
-    maxDamage: 52
-    armor: 7
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_male_mage_l30:
-    image: player_sprites/halfling_male_mage_l30.png
-    name: "a powerful halfling sorcerer"
-    room: expert_mages
-    level: 30
-    hp: 193
-    minDamage: 45
-    maxDamage: 82
-    armor: 11
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_male_mage_l40:
-    image: player_sprites/halfling_male_mage_l40.png
-    name: "a arcane halfling wizard"
-    room: master_mages
-    level: 40
-    hp: 302
-    minDamage: 68
-    maxDamage: 120
-    armor: 16
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_male_mage_l50:
-    image: player_sprites/halfling_male_mage_l50.png
-    name: "a transcendent halfling archmage"
-    room: legend_mages
-    level: 50
-    hp: 440
-    minDamage: 90
-    maxDamage: 150
-    armor: 20
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_enby_rogue_l1:
-    image: player_sprites/human_enby_rogue_l1.png
-    name: "a green human pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_enby_rogue_l10:
-    image: player_sprites/human_enby_rogue_l10.png
-    name: "a cunning human thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_enby_rogue_l20:
-    image: player_sprites/human_enby_rogue_l20.png
-    name: "a stealthy human assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_enby_rogue_l30:
-    image: player_sprites/human_enby_rogue_l30.png
-    name: "a deadly human shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_enby_rogue_l40:
-    image: player_sprites/human_enby_rogue_l40.png
-    name: "a phantom human nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_enby_rogue_l50:
-    image: player_sprites/human_enby_rogue_l50.png
-    name: "a mythic human shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_female_rogue_l1:
-    image: player_sprites/human_female_rogue_l1.png
-    name: "a green human pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_female_rogue_l10:
-    image: player_sprites/human_female_rogue_l10.png
-    name: "a cunning human thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_female_rogue_l20:
-    image: player_sprites/human_female_rogue_l20.png
-    name: "a stealthy human assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_female_rogue_l30:
-    image: player_sprites/human_female_rogue_l30.png
-    name: "a deadly human shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_female_rogue_l40:
-    image: player_sprites/human_female_rogue_l40.png
-    name: "a phantom human nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_female_rogue_l50:
-    image: player_sprites/human_female_rogue_l50.png
-    name: "a mythic human shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_male_rogue_l1:
-    image: player_sprites/human_male_rogue_l1.png
-    name: "a green human pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_male_rogue_l10:
-    image: player_sprites/human_male_rogue_l10.png
-    name: "a cunning human thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_male_rogue_l20:
-    image: player_sprites/human_male_rogue_l20.png
-    name: "a stealthy human assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_male_rogue_l30:
-    image: player_sprites/human_male_rogue_l30.png
-    name: "a deadly human shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_male_rogue_l40:
-    image: player_sprites/human_male_rogue_l40.png
-    name: "a phantom human nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_male_rogue_l50:
-    image: player_sprites/human_male_rogue_l50.png
-    name: "a mythic human shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_enby_rogue_l1:
-    image: player_sprites/elf_enby_rogue_l1.png
-    name: "a green elf pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_enby_rogue_l10:
-    image: player_sprites/elf_enby_rogue_l10.png
-    name: "a cunning elf thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_enby_rogue_l20:
-    image: player_sprites/elf_enby_rogue_l20.png
-    name: "a stealthy elf assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_enby_rogue_l30:
-    image: player_sprites/elf_enby_rogue_l30.png
-    name: "a deadly elf shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_enby_rogue_l40:
-    image: player_sprites/elf_enby_rogue_l40.png
-    name: "a phantom elf nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_enby_rogue_l50:
-    image: player_sprites/elf_enby_rogue_l50.png
-    name: "a mythic elf shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_female_rogue_l1:
-    image: player_sprites/elf_female_rogue_l1.png
-    name: "a green elf pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_female_rogue_l10:
-    image: player_sprites/elf_female_rogue_l10.png
-    name: "a cunning elf thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_female_rogue_l20:
-    image: player_sprites/elf_female_rogue_l20.png
-    name: "a stealthy elf assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_female_rogue_l30:
-    image: player_sprites/elf_female_rogue_l30.png
-    name: "a deadly elf shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_female_rogue_l40:
-    image: player_sprites/elf_female_rogue_l40.png
-    name: "a phantom elf nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_female_rogue_l50:
-    image: player_sprites/elf_female_rogue_l50.png
-    name: "a mythic elf shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_male_rogue_l1:
-    image: player_sprites/elf_male_rogue_l1.png
-    name: "a green elf pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_male_rogue_l10:
-    image: player_sprites/elf_male_rogue_l10.png
-    name: "a cunning elf thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_male_rogue_l20:
-    image: player_sprites/elf_male_rogue_l20.png
-    name: "a stealthy elf assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_male_rogue_l30:
-    image: player_sprites/elf_male_rogue_l30.png
-    name: "a deadly elf shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_male_rogue_l40:
-    image: player_sprites/elf_male_rogue_l40.png
-    name: "a phantom elf nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_male_rogue_l50:
-    image: player_sprites/elf_male_rogue_l50.png
-    name: "a mythic elf shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_enby_rogue_l1:
-    image: player_sprites/dwarf_enby_rogue_l1.png
-    name: "a green dwarf pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_enby_rogue_l10:
-    image: player_sprites/dwarf_enby_rogue_l10.png
-    name: "a cunning dwarf thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_enby_rogue_l20:
-    image: player_sprites/dwarf_enby_rogue_l20.png
-    name: "a stealthy dwarf assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_enby_rogue_l30:
-    image: player_sprites/dwarf_enby_rogue_l30.png
-    name: "a deadly dwarf shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_enby_rogue_l40:
-    image: player_sprites/dwarf_enby_rogue_l40.png
-    name: "a phantom dwarf nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_enby_rogue_l50:
-    image: player_sprites/dwarf_enby_rogue_l50.png
-    name: "a mythic dwarf shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_female_rogue_l1:
-    image: player_sprites/dwarf_female_rogue_l1.png
-    name: "a green dwarf pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_female_rogue_l10:
-    image: player_sprites/dwarf_female_rogue_l10.png
-    name: "a cunning dwarf thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_female_rogue_l20:
-    image: player_sprites/dwarf_female_rogue_l20.png
-    name: "a stealthy dwarf assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_female_rogue_l30:
-    image: player_sprites/dwarf_female_rogue_l30.png
-    name: "a deadly dwarf shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_female_rogue_l40:
-    image: player_sprites/dwarf_female_rogue_l40.png
-    name: "a phantom dwarf nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_female_rogue_l50:
-    image: player_sprites/dwarf_female_rogue_l50.png
-    name: "a mythic dwarf shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_male_rogue_l1:
-    image: player_sprites/dwarf_male_rogue_l1.png
-    name: "a green dwarf pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_male_rogue_l10:
-    image: player_sprites/dwarf_male_rogue_l10.png
-    name: "a cunning dwarf thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_male_rogue_l20:
-    image: player_sprites/dwarf_male_rogue_l20.png
-    name: "a stealthy dwarf assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_male_rogue_l30:
-    image: player_sprites/dwarf_male_rogue_l30.png
-    name: "a deadly dwarf shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_male_rogue_l40:
-    image: player_sprites/dwarf_male_rogue_l40.png
-    name: "a phantom dwarf nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_male_rogue_l50:
-    image: player_sprites/dwarf_male_rogue_l50.png
-    name: "a mythic dwarf shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_enby_rogue_l1:
-    image: player_sprites/halfling_enby_rogue_l1.png
-    name: "a green halfling pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_enby_rogue_l10:
-    image: player_sprites/halfling_enby_rogue_l10.png
-    name: "a cunning halfling thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_enby_rogue_l20:
-    image: player_sprites/halfling_enby_rogue_l20.png
-    name: "a stealthy halfling assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_enby_rogue_l30:
-    image: player_sprites/halfling_enby_rogue_l30.png
-    name: "a deadly halfling shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_enby_rogue_l40:
-    image: player_sprites/halfling_enby_rogue_l40.png
-    name: "a phantom halfling nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_enby_rogue_l50:
-    image: player_sprites/halfling_enby_rogue_l50.png
-    name: "a mythic halfling shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_female_rogue_l1:
-    image: player_sprites/halfling_female_rogue_l1.png
-    name: "a green halfling pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_female_rogue_l10:
-    image: player_sprites/halfling_female_rogue_l10.png
-    name: "a cunning halfling thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_female_rogue_l20:
-    image: player_sprites/halfling_female_rogue_l20.png
-    name: "a stealthy halfling assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_female_rogue_l30:
-    image: player_sprites/halfling_female_rogue_l30.png
-    name: "a deadly halfling shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_female_rogue_l40:
-    image: player_sprites/halfling_female_rogue_l40.png
-    name: "a phantom halfling nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_female_rogue_l50:
-    image: player_sprites/halfling_female_rogue_l50.png
-    name: "a mythic halfling shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_male_rogue_l1:
-    image: player_sprites/halfling_male_rogue_l1.png
-    name: "a green halfling pickpocket"
-    room: novice_rogues
-    level: 1
-    hp: 12
-    minDamage: 3
-    maxDamage: 5
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_male_rogue_l10:
-    image: player_sprites/halfling_male_rogue_l10.png
-    name: "a cunning halfling thief"
-    room: apprentice_rogues
-    level: 10
-    hp: 67
-    minDamage: 13
-    maxDamage: 26
-    armor: 5
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_male_rogue_l20:
-    image: player_sprites/halfling_male_rogue_l20.png
-    name: "a stealthy halfling assassin"
-    room: journeyman_rogues
-    level: 20
-    hp: 134
-    minDamage: 26
-    maxDamage: 46
-    armor: 9
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_male_rogue_l30:
-    image: player_sprites/halfling_male_rogue_l30.png
-    name: "a deadly halfling shadow"
-    room: expert_rogues
-    level: 30
-    hp: 234
-    minDamage: 39
-    maxDamage: 72
-    armor: 15
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_male_rogue_l40:
-    image: player_sprites/halfling_male_rogue_l40.png
-    name: "a phantom halfling nightblade"
-    room: master_rogues
-    level: 40
-    hp: 368
-    minDamage: 58
-    maxDamage: 104
-    armor: 21
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_male_rogue_l50:
-    image: player_sprites/halfling_male_rogue_l50.png
-    name: "a mythic halfling shadowlord"
-    room: legend_rogues
-    level: 50
-    hp: 536
-    minDamage: 78
-    maxDamage: 130
-    armor: 27
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_enby_warrior_l1:
-    image: player_sprites/human_enby_warrior_l1.png
-    name: "a fledgling human recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_enby_warrior_l10:
-    image: player_sprites/human_enby_warrior_l10.png
-    name: "a trained human soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_enby_warrior_l20:
-    image: player_sprites/human_enby_warrior_l20.png
-    name: "a seasoned human knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_enby_warrior_l30:
-    image: player_sprites/human_enby_warrior_l30.png
-    name: "a battle-hardened human champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_enby_warrior_l40:
-    image: player_sprites/human_enby_warrior_l40.png
-    name: "a fearsome human warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_enby_warrior_l50:
-    image: player_sprites/human_enby_warrior_l50.png
-    name: "a godslaying human warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_female_warrior_l1:
-    image: player_sprites/human_female_warrior_l1.png
-    name: "a fledgling human recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_female_warrior_l10:
-    image: player_sprites/human_female_warrior_l10.png
-    name: "a trained human soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_female_warrior_l20:
-    image: player_sprites/human_female_warrior_l20.png
-    name: "a seasoned human knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_female_warrior_l30:
-    image: player_sprites/human_female_warrior_l30.png
-    name: "a battle-hardened human champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_female_warrior_l40:
-    image: player_sprites/human_female_warrior_l40.png
-    name: "a fearsome human warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_female_warrior_l50:
-    image: player_sprites/human_female_warrior_l50.png
-    name: "a godslaying human warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_male_warrior_l1:
-    image: player_sprites/human_male_warrior_l1.png
-    name: "a fledgling human recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  human_male_warrior_l10:
-    image: player_sprites/human_male_warrior_l10.png
-    name: "a trained human soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  human_male_warrior_l20:
-    image: player_sprites/human_male_warrior_l20.png
-    name: "a seasoned human knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  human_male_warrior_l30:
-    image: player_sprites/human_male_warrior_l30.png
-    name: "a battle-hardened human champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  human_male_warrior_l40:
-    image: player_sprites/human_male_warrior_l40.png
-    name: "a fearsome human warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  human_male_warrior_l50:
-    image: player_sprites/human_male_warrior_l50.png
-    name: "a godslaying human warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_enby_warrior_l1:
-    image: player_sprites/elf_enby_warrior_l1.png
-    name: "a fledgling elf recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_enby_warrior_l10:
-    image: player_sprites/elf_enby_warrior_l10.png
-    name: "a trained elf soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_enby_warrior_l20:
-    image: player_sprites/elf_enby_warrior_l20.png
-    name: "a seasoned elf knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_enby_warrior_l30:
-    image: player_sprites/elf_enby_warrior_l30.png
-    name: "a battle-hardened elf champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_enby_warrior_l40:
-    image: player_sprites/elf_enby_warrior_l40.png
-    name: "a fearsome elf warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_enby_warrior_l50:
-    image: player_sprites/elf_enby_warrior_l50.png
-    name: "a godslaying elf warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_female_warrior_l1:
-    image: player_sprites/elf_female_warrior_l1.png
-    name: "a fledgling elf recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_female_warrior_l10:
-    image: player_sprites/elf_female_warrior_l10.png
-    name: "a trained elf soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_female_warrior_l20:
-    image: player_sprites/elf_female_warrior_l20.png
-    name: "a seasoned elf knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_female_warrior_l30:
-    image: player_sprites/elf_female_warrior_l30.png
-    name: "a battle-hardened elf champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_female_warrior_l40:
-    image: player_sprites/elf_female_warrior_l40.png
-    name: "a fearsome elf warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_female_warrior_l50:
-    image: player_sprites/elf_female_warrior_l50.png
-    name: "a godslaying elf warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  elf_male_warrior_l1:
-    image: player_sprites/elf_male_warrior_l1.png
-    name: "a fledgling elf recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  elf_male_warrior_l10:
-    image: player_sprites/elf_male_warrior_l10.png
-    name: "a trained elf soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  elf_male_warrior_l20:
-    image: player_sprites/elf_male_warrior_l20.png
-    name: "a seasoned elf knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  elf_male_warrior_l30:
-    image: player_sprites/elf_male_warrior_l30.png
-    name: "a battle-hardened elf champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  elf_male_warrior_l40:
-    image: player_sprites/elf_male_warrior_l40.png
-    name: "a fearsome elf warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  elf_male_warrior_l50:
-    image: player_sprites/elf_male_warrior_l50.png
-    name: "a godslaying elf warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_enby_warrior_l1:
-    image: player_sprites/dwarf_enby_warrior_l1.png
-    name: "a fledgling dwarf recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_enby_warrior_l10:
-    image: player_sprites/dwarf_enby_warrior_l10.png
-    name: "a trained dwarf soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_enby_warrior_l20:
-    image: player_sprites/dwarf_enby_warrior_l20.png
-    name: "a seasoned dwarf knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_enby_warrior_l30:
-    image: player_sprites/dwarf_enby_warrior_l30.png
-    name: "a battle-hardened dwarf champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_enby_warrior_l40:
-    image: player_sprites/dwarf_enby_warrior_l40.png
-    name: "a fearsome dwarf warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_enby_warrior_l50:
-    image: player_sprites/dwarf_enby_warrior_l50.png
-    name: "a godslaying dwarf warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_female_warrior_l1:
-    image: player_sprites/dwarf_female_warrior_l1.png
-    name: "a fledgling dwarf recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_female_warrior_l10:
-    image: player_sprites/dwarf_female_warrior_l10.png
-    name: "a trained dwarf soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_female_warrior_l20:
-    image: player_sprites/dwarf_female_warrior_l20.png
-    name: "a seasoned dwarf knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_female_warrior_l30:
-    image: player_sprites/dwarf_female_warrior_l30.png
-    name: "a battle-hardened dwarf champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_female_warrior_l40:
-    image: player_sprites/dwarf_female_warrior_l40.png
-    name: "a fearsome dwarf warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_female_warrior_l50:
-    image: player_sprites/dwarf_female_warrior_l50.png
-    name: "a godslaying dwarf warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  dwarf_male_warrior_l1:
-    image: player_sprites/dwarf_male_warrior_l1.png
-    name: "a fledgling dwarf recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  dwarf_male_warrior_l10:
-    image: player_sprites/dwarf_male_warrior_l10.png
-    name: "a trained dwarf soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  dwarf_male_warrior_l20:
-    image: player_sprites/dwarf_male_warrior_l20.png
-    name: "a seasoned dwarf knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  dwarf_male_warrior_l30:
-    image: player_sprites/dwarf_male_warrior_l30.png
-    name: "a battle-hardened dwarf champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  dwarf_male_warrior_l40:
-    image: player_sprites/dwarf_male_warrior_l40.png
-    name: "a fearsome dwarf warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  dwarf_male_warrior_l50:
-    image: player_sprites/dwarf_male_warrior_l50.png
-    name: "a godslaying dwarf warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_enby_warrior_l1:
-    image: player_sprites/halfling_enby_warrior_l1.png
-    name: "a fledgling halfling recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_enby_warrior_l10:
-    image: player_sprites/halfling_enby_warrior_l10.png
-    name: "a trained halfling soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_enby_warrior_l20:
-    image: player_sprites/halfling_enby_warrior_l20.png
-    name: "a seasoned halfling knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_enby_warrior_l30:
-    image: player_sprites/halfling_enby_warrior_l30.png
-    name: "a battle-hardened halfling champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_enby_warrior_l40:
-    image: player_sprites/halfling_enby_warrior_l40.png
-    name: "a fearsome halfling warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_enby_warrior_l50:
-    image: player_sprites/halfling_enby_warrior_l50.png
-    name: "a godslaying halfling warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_female_warrior_l1:
-    image: player_sprites/halfling_female_warrior_l1.png
-    name: "a fledgling halfling recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_female_warrior_l10:
-    image: player_sprites/halfling_female_warrior_l10.png
-    name: "a trained halfling soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_female_warrior_l20:
-    image: player_sprites/halfling_female_warrior_l20.png
-    name: "a seasoned halfling knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_female_warrior_l30:
-    image: player_sprites/halfling_female_warrior_l30.png
-    name: "a battle-hardened halfling champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_female_warrior_l40:
-    image: player_sprites/halfling_female_warrior_l40.png
-    name: "a fearsome halfling warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_female_warrior_l50:
-    image: player_sprites/halfling_female_warrior_l50.png
-    name: "a godslaying halfling warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  halfling_male_warrior_l1:
-    image: player_sprites/halfling_male_warrior_l1.png
-    name: "a fledgling halfling recruit"
-    room: novice_warriors
-    level: 1
-    hp: 18
-    minDamage: 2
-    maxDamage: 4
-    armor: 1
-    xpReward: 20
-    goldMin: 1
-    goldMax: 5
-  halfling_male_warrior_l10:
-    image: player_sprites/halfling_male_warrior_l10.png
-    name: "a trained halfling soldier"
-    room: apprentice_warriors
-    level: 10
-    hp: 100
-    minDamage: 10
-    maxDamage: 20
-    armor: 8
-    xpReward: 150
-    goldMin: 15
-    goldMax: 45
-  halfling_male_warrior_l20:
-    image: player_sprites/halfling_male_warrior_l20.png
-    name: "a seasoned halfling knight"
-    room: journeyman_warriors
-    level: 20
-    hp: 200
-    minDamage: 20
-    maxDamage: 35
-    armor: 15
-    xpReward: 350
-    goldMin: 35
-    goldMax: 100
-  halfling_male_warrior_l30:
-    image: player_sprites/halfling_male_warrior_l30.png
-    name: "a battle-hardened halfling champion"
-    room: expert_warriors
-    level: 30
-    hp: 350
-    minDamage: 30
-    maxDamage: 55
-    armor: 25
-    xpReward: 650
-    goldMin: 70
-    goldMax: 200
-  halfling_male_warrior_l40:
-    image: player_sprites/halfling_male_warrior_l40.png
-    name: "a fearsome halfling warlord"
-    room: master_warriors
-    level: 40
-    hp: 550
-    minDamage: 45
-    maxDamage: 80
-    armor: 35
-    xpReward: 1200
-    goldMin: 120
-    goldMax: 350
-  halfling_male_warrior_l50:
-    image: player_sprites/halfling_male_warrior_l50.png
-    name: "a godslaying halfling warlord"
-    room: legend_warriors
-    level: 50
-    hp: 800
-    minDamage: 60
-    maxDamage: 100
-    armor: 45
-    xpReward: 2000
-    goldMin: 200
-    goldMax: 500
-  human_enby_cleric_l60:
-    image: player_sprites/human_enby_cleric_l60.png
-    name: "a transcendent human high oracle"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_enby_mage_l60:
-    image: player_sprites/human_enby_mage_l60.png
-    name: "a transcendent human archmage"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_enby_rogue_l60:
-    image: player_sprites/human_enby_rogue_l60.png
-    name: "a transcendent human phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_enby_warrior_l60:
-    image: player_sprites/human_enby_warrior_l60.png
-    name: "a transcendent human god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_female_cleric_l60:
-    image: player_sprites/human_female_cleric_l60.png
-    name: "a transcendent human high priestess"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_female_mage_l60:
-    image: player_sprites/human_female_mage_l60.png
-    name: "a transcendent human archsorceress"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_female_rogue_l60:
-    image: player_sprites/human_female_rogue_l60.png
-    name: "a transcendent human phantom mistress"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_female_warrior_l60:
-    image: player_sprites/human_female_warrior_l60.png
-    name: "a transcendent human goddess of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_male_cleric_l60:
-    image: player_sprites/human_male_cleric_l60.png
-    name: "a transcendent human high priest"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_male_mage_l60:
-    image: player_sprites/human_male_mage_l60.png
-    name: "a transcendent human archsorcerer"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_male_rogue_l60:
-    image: player_sprites/human_male_rogue_l60.png
-    name: "a transcendent human phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  human_male_warrior_l60:
-    image: player_sprites/human_male_warrior_l60.png
-    name: "a transcendent human god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_enby_cleric_l60:
-    image: player_sprites/elf_enby_cleric_l60.png
-    name: "a transcendent elven high oracle"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_enby_mage_l60:
-    image: player_sprites/elf_enby_mage_l60.png
-    name: "a transcendent elven archmage"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_enby_rogue_l60:
-    image: player_sprites/elf_enby_rogue_l60.png
-    name: "a transcendent elven phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_enby_warrior_l60:
-    image: player_sprites/elf_enby_warrior_l60.png
-    name: "a transcendent elven god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_female_cleric_l60:
-    image: player_sprites/elf_female_cleric_l60.png
-    name: "a transcendent elven high priestess"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_female_mage_l60:
-    image: player_sprites/elf_female_mage_l60.png
-    name: "a transcendent elven archsorceress"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_female_rogue_l60:
-    image: player_sprites/elf_female_rogue_l60.png
-    name: "a transcendent elven phantom mistress"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_female_warrior_l60:
-    image: player_sprites/elf_female_warrior_l60.png
-    name: "a transcendent elven goddess of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_male_cleric_l60:
-    image: player_sprites/elf_male_cleric_l60.png
-    name: "a transcendent elven high priest"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_male_mage_l60:
-    image: player_sprites/elf_male_mage_l60.png
-    name: "a transcendent elven archsorcerer"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_male_rogue_l60:
-    image: player_sprites/elf_male_rogue_l60.png
-    name: "a transcendent elven phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  elf_male_warrior_l60:
-    image: player_sprites/elf_male_warrior_l60.png
-    name: "a transcendent elven god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_enby_cleric_l60:
-    image: player_sprites/dwarf_enby_cleric_l60.png
-    name: "a transcendent dwarven high oracle"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_enby_mage_l60:
-    image: player_sprites/dwarf_enby_mage_l60.png
-    name: "a transcendent dwarven archmage"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_enby_rogue_l60:
-    image: player_sprites/dwarf_enby_rogue_l60.png
-    name: "a transcendent dwarven phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_enby_warrior_l60:
-    image: player_sprites/dwarf_enby_warrior_l60.png
-    name: "a transcendent dwarven god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_female_cleric_l60:
-    image: player_sprites/dwarf_female_cleric_l60.png
-    name: "a transcendent dwarven high priestess"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_female_mage_l60:
-    image: player_sprites/dwarf_female_mage_l60.png
-    name: "a transcendent dwarven archsorceress"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_female_rogue_l60:
-    image: player_sprites/dwarf_female_rogue_l60.png
-    name: "a transcendent dwarven phantom mistress"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_female_warrior_l60:
-    image: player_sprites/dwarf_female_warrior_l60.png
-    name: "a transcendent dwarven goddess of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_male_cleric_l60:
-    image: player_sprites/dwarf_male_cleric_l60.png
-    name: "a transcendent dwarven high priest"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_male_mage_l60:
-    image: player_sprites/dwarf_male_mage_l60.png
-    name: "a transcendent dwarven archsorcerer"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_male_rogue_l60:
-    image: player_sprites/dwarf_male_rogue_l60.png
-    name: "a transcendent dwarven phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  dwarf_male_warrior_l60:
-    image: player_sprites/dwarf_male_warrior_l60.png
-    name: "a transcendent dwarven god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_enby_cleric_l60:
-    image: player_sprites/halfling_enby_cleric_l60.png
-    name: "a transcendent halfling high oracle"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_enby_mage_l60:
-    image: player_sprites/halfling_enby_mage_l60.png
-    name: "a transcendent halfling archmage"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_enby_rogue_l60:
-    image: player_sprites/halfling_enby_rogue_l60.png
-    name: "a transcendent halfling phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_enby_warrior_l60:
-    image: player_sprites/halfling_enby_warrior_l60.png
-    name: "a transcendent halfling god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_female_cleric_l60:
-    image: player_sprites/halfling_female_cleric_l60.png
-    name: "a transcendent halfling high priestess"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_female_mage_l60:
-    image: player_sprites/halfling_female_mage_l60.png
-    name: "a transcendent halfling archsorceress"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_female_rogue_l60:
-    image: player_sprites/halfling_female_rogue_l60.png
-    name: "a transcendent halfling phantom mistress"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_female_warrior_l60:
-    image: player_sprites/halfling_female_warrior_l60.png
-    name: "a transcendent halfling goddess of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_male_cleric_l60:
-    image: player_sprites/halfling_male_cleric_l60.png
-    name: "a transcendent halfling high priest"
-    room: staff_clerics
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_male_mage_l60:
-    image: player_sprites/halfling_male_mage_l60.png
-    name: "a transcendent halfling archsorcerer"
-    room: staff_mages
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_male_rogue_l60:
-    image: player_sprites/halfling_male_rogue_l60.png
-    name: "a transcendent halfling phantom lord"
-    room: staff_rogues
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
-  halfling_male_warrior_l60:
-    image: player_sprites/halfling_male_warrior_l60.png
-    name: "a transcendent halfling god of war"
-    room: staff_warriors
-    level: 60
-    hp: 1100
-    minDamage: 80
-    maxDamage: 130
-    armor: 55
-    xpReward: 3000
-    goldMin: 300
-    goldMax: 750
+  # === Base (t0) ===
+  archae_base_t0:
+    title: "Archae (Base)"
+    description: "Androgynous Archae in simple wrapped linen clothing"
+    tier: weak
+  mycorae_base_t0:
+    title: "Mycorae (Base)"
+    description: "Androgynous Mycorae in simple wrapped linen clothing"
+    tier: weak
+  aetherae_base_t0:
+    title: "Aetherae (Base)"
+    description: "Androgynous Aetherae in simple wrapped linen clothing"
+    tier: weak
+  alorae_base_t0:
+    title: "Alorae (Base)"
+    description: "Androgynous Alorae in simple wrapped linen clothing"
+    tier: weak
+  lustriae_base_t0:
+    title: "Lustriae (Base)"
+    description: "Androgynous Lustriae in simple wrapped linen clothing"
+    tier: weak
+  lithae_base_t0:
+    title: "Lithae (Base)"
+    description: "Androgynous Lithae in simple wrapped linen clothing"
+    tier: weak
+  pyrae_base_t0:
+    title: "Pyrae (Base)"
+    description: "Androgynous Pyrae in simple wrapped linen clothing"
+    tier: weak
+  animae_base_t0:
+    title: "Animae (Base)"
+    description: "Androgynous Animae in simple wrapped linen clothing"
+    tier: weak
+  medusae_base_t0:
+    title: "Medusae (Base)"
+    description: "Androgynous Medusae in simple wrapped linen clothing"
+    tier: weak
+  kitsarae_base_t0:
+    title: "Kitsarae (Base)"
+    description: "Androgynous Kitsarae in simple wrapped linen clothing"
+    tier: weak
+  sylflorae_base_t0:
+    title: "Sylflorae (Base)"
+    description: "Androgynous Sylflorae in simple wrapped linen clothing"
+    tier: weak
+  orphirae_base_t0:
+    title: "Orphirae (Base)"
+    description: "Androgynous Orphirae in simple wrapped linen clothing"
+    tier: weak
+
+  # === Awakened (t10) ===
+  archae_bulwark_t10:
+    title: "Archae Bulwark (Awakened)"
+    description: "Archae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  archae_warden_t10:
+    title: "Archae Warden (Awakened)"
+    description: "Archae Warden in simple ranger garb with a longbow"
+    tier: weak
+  archae_arcanist_t10:
+    title: "Archae Arcanist (Awakened)"
+    description: "Archae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  archae_faeweaver_t10:
+    title: "Archae Faeweaver (Awakened)"
+    description: "Archae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  archae_necromancer_t10:
+    title: "Archae Necromancer (Awakened)"
+    description: "Archae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  archae_veil_t10:
+    title: "Archae Veil (Awakened)"
+    description: "Archae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  archae_binder_t10:
+    title: "Archae Binder (Awakened)"
+    description: "Archae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  archae_stormblade_t10:
+    title: "Archae Stormblade (Awakened)"
+    description: "Archae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  archae_herald_t10:
+    title: "Archae Herald (Awakened)"
+    description: "Archae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  archae_starweaver_t10:
+    title: "Archae Starweaver (Awakened)"
+    description: "Archae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  mycorae_bulwark_t10:
+    title: "Mycorae Bulwark (Awakened)"
+    description: "Mycorae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  mycorae_warden_t10:
+    title: "Mycorae Warden (Awakened)"
+    description: "Mycorae Warden in simple ranger garb with a longbow"
+    tier: weak
+  mycorae_arcanist_t10:
+    title: "Mycorae Arcanist (Awakened)"
+    description: "Mycorae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  mycorae_faeweaver_t10:
+    title: "Mycorae Faeweaver (Awakened)"
+    description: "Mycorae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  mycorae_necromancer_t10:
+    title: "Mycorae Necromancer (Awakened)"
+    description: "Mycorae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  mycorae_veil_t10:
+    title: "Mycorae Veil (Awakened)"
+    description: "Mycorae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  mycorae_binder_t10:
+    title: "Mycorae Binder (Awakened)"
+    description: "Mycorae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  mycorae_stormblade_t10:
+    title: "Mycorae Stormblade (Awakened)"
+    description: "Mycorae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  mycorae_herald_t10:
+    title: "Mycorae Herald (Awakened)"
+    description: "Mycorae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  mycorae_starweaver_t10:
+    title: "Mycorae Starweaver (Awakened)"
+    description: "Mycorae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  aetherae_bulwark_t10:
+    title: "Aetherae Bulwark (Awakened)"
+    description: "Aetherae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  aetherae_warden_t10:
+    title: "Aetherae Warden (Awakened)"
+    description: "Aetherae Warden in simple ranger garb with a longbow"
+    tier: weak
+  aetherae_arcanist_t10:
+    title: "Aetherae Arcanist (Awakened)"
+    description: "Aetherae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  aetherae_faeweaver_t10:
+    title: "Aetherae Faeweaver (Awakened)"
+    description: "Aetherae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  aetherae_necromancer_t10:
+    title: "Aetherae Necromancer (Awakened)"
+    description: "Aetherae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  aetherae_veil_t10:
+    title: "Aetherae Veil (Awakened)"
+    description: "Aetherae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  aetherae_binder_t10:
+    title: "Aetherae Binder (Awakened)"
+    description: "Aetherae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  aetherae_stormblade_t10:
+    title: "Aetherae Stormblade (Awakened)"
+    description: "Aetherae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  aetherae_herald_t10:
+    title: "Aetherae Herald (Awakened)"
+    description: "Aetherae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  aetherae_starweaver_t10:
+    title: "Aetherae Starweaver (Awakened)"
+    description: "Aetherae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  alorae_bulwark_t10:
+    title: "Alorae Bulwark (Awakened)"
+    description: "Alorae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  alorae_warden_t10:
+    title: "Alorae Warden (Awakened)"
+    description: "Alorae Warden in simple ranger garb with a longbow"
+    tier: weak
+  alorae_arcanist_t10:
+    title: "Alorae Arcanist (Awakened)"
+    description: "Alorae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  alorae_faeweaver_t10:
+    title: "Alorae Faeweaver (Awakened)"
+    description: "Alorae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  alorae_necromancer_t10:
+    title: "Alorae Necromancer (Awakened)"
+    description: "Alorae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  alorae_veil_t10:
+    title: "Alorae Veil (Awakened)"
+    description: "Alorae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  alorae_binder_t10:
+    title: "Alorae Binder (Awakened)"
+    description: "Alorae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  alorae_stormblade_t10:
+    title: "Alorae Stormblade (Awakened)"
+    description: "Alorae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  alorae_herald_t10:
+    title: "Alorae Herald (Awakened)"
+    description: "Alorae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  alorae_starweaver_t10:
+    title: "Alorae Starweaver (Awakened)"
+    description: "Alorae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  lustriae_bulwark_t10:
+    title: "Lustriae Bulwark (Awakened)"
+    description: "Lustriae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  lustriae_warden_t10:
+    title: "Lustriae Warden (Awakened)"
+    description: "Lustriae Warden in simple ranger garb with a longbow"
+    tier: weak
+  lustriae_arcanist_t10:
+    title: "Lustriae Arcanist (Awakened)"
+    description: "Lustriae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  lustriae_faeweaver_t10:
+    title: "Lustriae Faeweaver (Awakened)"
+    description: "Lustriae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  lustriae_necromancer_t10:
+    title: "Lustriae Necromancer (Awakened)"
+    description: "Lustriae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  lustriae_veil_t10:
+    title: "Lustriae Veil (Awakened)"
+    description: "Lustriae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  lustriae_binder_t10:
+    title: "Lustriae Binder (Awakened)"
+    description: "Lustriae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  lustriae_stormblade_t10:
+    title: "Lustriae Stormblade (Awakened)"
+    description: "Lustriae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  lustriae_herald_t10:
+    title: "Lustriae Herald (Awakened)"
+    description: "Lustriae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  lustriae_starweaver_t10:
+    title: "Lustriae Starweaver (Awakened)"
+    description: "Lustriae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  lithae_bulwark_t10:
+    title: "Lithae Bulwark (Awakened)"
+    description: "Lithae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  lithae_warden_t10:
+    title: "Lithae Warden (Awakened)"
+    description: "Lithae Warden in simple ranger garb with a longbow"
+    tier: weak
+  lithae_arcanist_t10:
+    title: "Lithae Arcanist (Awakened)"
+    description: "Lithae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  lithae_faeweaver_t10:
+    title: "Lithae Faeweaver (Awakened)"
+    description: "Lithae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  lithae_necromancer_t10:
+    title: "Lithae Necromancer (Awakened)"
+    description: "Lithae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  lithae_veil_t10:
+    title: "Lithae Veil (Awakened)"
+    description: "Lithae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  lithae_binder_t10:
+    title: "Lithae Binder (Awakened)"
+    description: "Lithae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  lithae_stormblade_t10:
+    title: "Lithae Stormblade (Awakened)"
+    description: "Lithae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  lithae_herald_t10:
+    title: "Lithae Herald (Awakened)"
+    description: "Lithae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  lithae_starweaver_t10:
+    title: "Lithae Starweaver (Awakened)"
+    description: "Lithae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  pyrae_bulwark_t10:
+    title: "Pyrae Bulwark (Awakened)"
+    description: "Pyrae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  pyrae_warden_t10:
+    title: "Pyrae Warden (Awakened)"
+    description: "Pyrae Warden in simple ranger garb with a longbow"
+    tier: weak
+  pyrae_arcanist_t10:
+    title: "Pyrae Arcanist (Awakened)"
+    description: "Pyrae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  pyrae_faeweaver_t10:
+    title: "Pyrae Faeweaver (Awakened)"
+    description: "Pyrae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  pyrae_necromancer_t10:
+    title: "Pyrae Necromancer (Awakened)"
+    description: "Pyrae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  pyrae_veil_t10:
+    title: "Pyrae Veil (Awakened)"
+    description: "Pyrae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  pyrae_binder_t10:
+    title: "Pyrae Binder (Awakened)"
+    description: "Pyrae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  pyrae_stormblade_t10:
+    title: "Pyrae Stormblade (Awakened)"
+    description: "Pyrae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  pyrae_herald_t10:
+    title: "Pyrae Herald (Awakened)"
+    description: "Pyrae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  pyrae_starweaver_t10:
+    title: "Pyrae Starweaver (Awakened)"
+    description: "Pyrae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  animae_bulwark_t10:
+    title: "Animae Bulwark (Awakened)"
+    description: "Animae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  animae_warden_t10:
+    title: "Animae Warden (Awakened)"
+    description: "Animae Warden in simple ranger garb with a longbow"
+    tier: weak
+  animae_arcanist_t10:
+    title: "Animae Arcanist (Awakened)"
+    description: "Animae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  animae_faeweaver_t10:
+    title: "Animae Faeweaver (Awakened)"
+    description: "Animae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  animae_necromancer_t10:
+    title: "Animae Necromancer (Awakened)"
+    description: "Animae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  animae_veil_t10:
+    title: "Animae Veil (Awakened)"
+    description: "Animae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  animae_binder_t10:
+    title: "Animae Binder (Awakened)"
+    description: "Animae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  animae_stormblade_t10:
+    title: "Animae Stormblade (Awakened)"
+    description: "Animae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  animae_herald_t10:
+    title: "Animae Herald (Awakened)"
+    description: "Animae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  animae_starweaver_t10:
+    title: "Animae Starweaver (Awakened)"
+    description: "Animae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  medusae_bulwark_t10:
+    title: "Medusae Bulwark (Awakened)"
+    description: "Medusae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  medusae_warden_t10:
+    title: "Medusae Warden (Awakened)"
+    description: "Medusae Warden in simple ranger garb with a longbow"
+    tier: weak
+  medusae_arcanist_t10:
+    title: "Medusae Arcanist (Awakened)"
+    description: "Medusae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  medusae_faeweaver_t10:
+    title: "Medusae Faeweaver (Awakened)"
+    description: "Medusae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  medusae_necromancer_t10:
+    title: "Medusae Necromancer (Awakened)"
+    description: "Medusae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  medusae_veil_t10:
+    title: "Medusae Veil (Awakened)"
+    description: "Medusae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  medusae_binder_t10:
+    title: "Medusae Binder (Awakened)"
+    description: "Medusae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  medusae_stormblade_t10:
+    title: "Medusae Stormblade (Awakened)"
+    description: "Medusae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  medusae_herald_t10:
+    title: "Medusae Herald (Awakened)"
+    description: "Medusae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  medusae_starweaver_t10:
+    title: "Medusae Starweaver (Awakened)"
+    description: "Medusae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  kitsarae_bulwark_t10:
+    title: "Kitsarae Bulwark (Awakened)"
+    description: "Kitsarae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  kitsarae_warden_t10:
+    title: "Kitsarae Warden (Awakened)"
+    description: "Kitsarae Warden in simple ranger garb with a longbow"
+    tier: weak
+  kitsarae_arcanist_t10:
+    title: "Kitsarae Arcanist (Awakened)"
+    description: "Kitsarae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  kitsarae_faeweaver_t10:
+    title: "Kitsarae Faeweaver (Awakened)"
+    description: "Kitsarae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  kitsarae_necromancer_t10:
+    title: "Kitsarae Necromancer (Awakened)"
+    description: "Kitsarae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  kitsarae_veil_t10:
+    title: "Kitsarae Veil (Awakened)"
+    description: "Kitsarae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  kitsarae_binder_t10:
+    title: "Kitsarae Binder (Awakened)"
+    description: "Kitsarae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  kitsarae_stormblade_t10:
+    title: "Kitsarae Stormblade (Awakened)"
+    description: "Kitsarae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  kitsarae_herald_t10:
+    title: "Kitsarae Herald (Awakened)"
+    description: "Kitsarae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  kitsarae_starweaver_t10:
+    title: "Kitsarae Starweaver (Awakened)"
+    description: "Kitsarae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  sylflorae_bulwark_t10:
+    title: "Sylflorae Bulwark (Awakened)"
+    description: "Sylflorae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  sylflorae_warden_t10:
+    title: "Sylflorae Warden (Awakened)"
+    description: "Sylflorae Warden in simple ranger garb with a longbow"
+    tier: weak
+  sylflorae_arcanist_t10:
+    title: "Sylflorae Arcanist (Awakened)"
+    description: "Sylflorae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  sylflorae_faeweaver_t10:
+    title: "Sylflorae Faeweaver (Awakened)"
+    description: "Sylflorae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  sylflorae_necromancer_t10:
+    title: "Sylflorae Necromancer (Awakened)"
+    description: "Sylflorae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  sylflorae_veil_t10:
+    title: "Sylflorae Veil (Awakened)"
+    description: "Sylflorae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  sylflorae_binder_t10:
+    title: "Sylflorae Binder (Awakened)"
+    description: "Sylflorae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  sylflorae_stormblade_t10:
+    title: "Sylflorae Stormblade (Awakened)"
+    description: "Sylflorae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  sylflorae_herald_t10:
+    title: "Sylflorae Herald (Awakened)"
+    description: "Sylflorae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  sylflorae_starweaver_t10:
+    title: "Sylflorae Starweaver (Awakened)"
+    description: "Sylflorae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+  orphirae_bulwark_t10:
+    title: "Orphirae Bulwark (Awakened)"
+    description: "Orphirae Bulwark in basic heavy armor with a sturdy shield"
+    tier: weak
+  orphirae_warden_t10:
+    title: "Orphirae Warden (Awakened)"
+    description: "Orphirae Warden in simple ranger garb with a longbow"
+    tier: weak
+  orphirae_arcanist_t10:
+    title: "Orphirae Arcanist (Awakened)"
+    description: "Orphirae Arcanist in modest robes carrying a glowing staff"
+    tier: weak
+  orphirae_faeweaver_t10:
+    title: "Orphirae Faeweaver (Awakened)"
+    description: "Orphirae Faeweaver in woven fae-silk attire with floral motifs"
+    tier: weak
+  orphirae_necromancer_t10:
+    title: "Orphirae Necromancer (Awakened)"
+    description: "Orphirae Necromancer in dark cloth wrappings with faint shadow wisps"
+    tier: weak
+  orphirae_veil_t10:
+    title: "Orphirae Veil (Awakened)"
+    description: "Orphirae Veil in light hooded garments with subtle stealth enchantments"
+    tier: weak
+  orphirae_binder_t10:
+    title: "Orphirae Binder (Awakened)"
+    description: "Orphirae Binder in chain-linked vestments with binding sigils"
+    tier: weak
+  orphirae_stormblade_t10:
+    title: "Orphirae Stormblade (Awakened)"
+    description: "Orphirae Stormblade in light battle armor crackling with faint static"
+    tier: weak
+  orphirae_herald_t10:
+    title: "Orphirae Herald (Awakened)"
+    description: "Orphirae Herald in ceremonial vestments carrying a war banner"
+    tier: weak
+  orphirae_starweaver_t10:
+    title: "Orphirae Starweaver (Awakened)"
+    description: "Orphirae Starweaver in starlit robes with faintly glowing constellations"
+    tier: weak
+
+  # === Ascended (t25) ===
+  archae_bulwark_t25:
+    title: "Archae Bulwark (Ascended)"
+    description: "Archae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  archae_warden_t25:
+    title: "Archae Warden (Ascended)"
+    description: "Archae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  archae_arcanist_t25:
+    title: "Archae Arcanist (Ascended)"
+    description: "Archae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  archae_faeweaver_t25:
+    title: "Archae Faeweaver (Ascended)"
+    description: "Archae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  archae_necromancer_t25:
+    title: "Archae Necromancer (Ascended)"
+    description: "Archae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  archae_veil_t25:
+    title: "Archae Veil (Ascended)"
+    description: "Archae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  archae_binder_t25:
+    title: "Archae Binder (Ascended)"
+    description: "Archae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  archae_stormblade_t25:
+    title: "Archae Stormblade (Ascended)"
+    description: "Archae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  archae_herald_t25:
+    title: "Archae Herald (Ascended)"
+    description: "Archae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  archae_starweaver_t25:
+    title: "Archae Starweaver (Ascended)"
+    description: "Archae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  mycorae_bulwark_t25:
+    title: "Mycorae Bulwark (Ascended)"
+    description: "Mycorae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  mycorae_warden_t25:
+    title: "Mycorae Warden (Ascended)"
+    description: "Mycorae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  mycorae_arcanist_t25:
+    title: "Mycorae Arcanist (Ascended)"
+    description: "Mycorae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  mycorae_faeweaver_t25:
+    title: "Mycorae Faeweaver (Ascended)"
+    description: "Mycorae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  mycorae_necromancer_t25:
+    title: "Mycorae Necromancer (Ascended)"
+    description: "Mycorae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  mycorae_veil_t25:
+    title: "Mycorae Veil (Ascended)"
+    description: "Mycorae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  mycorae_binder_t25:
+    title: "Mycorae Binder (Ascended)"
+    description: "Mycorae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  mycorae_stormblade_t25:
+    title: "Mycorae Stormblade (Ascended)"
+    description: "Mycorae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  mycorae_herald_t25:
+    title: "Mycorae Herald (Ascended)"
+    description: "Mycorae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  mycorae_starweaver_t25:
+    title: "Mycorae Starweaver (Ascended)"
+    description: "Mycorae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  aetherae_bulwark_t25:
+    title: "Aetherae Bulwark (Ascended)"
+    description: "Aetherae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  aetherae_warden_t25:
+    title: "Aetherae Warden (Ascended)"
+    description: "Aetherae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  aetherae_arcanist_t25:
+    title: "Aetherae Arcanist (Ascended)"
+    description: "Aetherae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  aetherae_faeweaver_t25:
+    title: "Aetherae Faeweaver (Ascended)"
+    description: "Aetherae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  aetherae_necromancer_t25:
+    title: "Aetherae Necromancer (Ascended)"
+    description: "Aetherae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  aetherae_veil_t25:
+    title: "Aetherae Veil (Ascended)"
+    description: "Aetherae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  aetherae_binder_t25:
+    title: "Aetherae Binder (Ascended)"
+    description: "Aetherae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  aetherae_stormblade_t25:
+    title: "Aetherae Stormblade (Ascended)"
+    description: "Aetherae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  aetherae_herald_t25:
+    title: "Aetherae Herald (Ascended)"
+    description: "Aetherae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  aetherae_starweaver_t25:
+    title: "Aetherae Starweaver (Ascended)"
+    description: "Aetherae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  alorae_bulwark_t25:
+    title: "Alorae Bulwark (Ascended)"
+    description: "Alorae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  alorae_warden_t25:
+    title: "Alorae Warden (Ascended)"
+    description: "Alorae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  alorae_arcanist_t25:
+    title: "Alorae Arcanist (Ascended)"
+    description: "Alorae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  alorae_faeweaver_t25:
+    title: "Alorae Faeweaver (Ascended)"
+    description: "Alorae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  alorae_necromancer_t25:
+    title: "Alorae Necromancer (Ascended)"
+    description: "Alorae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  alorae_veil_t25:
+    title: "Alorae Veil (Ascended)"
+    description: "Alorae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  alorae_binder_t25:
+    title: "Alorae Binder (Ascended)"
+    description: "Alorae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  alorae_stormblade_t25:
+    title: "Alorae Stormblade (Ascended)"
+    description: "Alorae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  alorae_herald_t25:
+    title: "Alorae Herald (Ascended)"
+    description: "Alorae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  alorae_starweaver_t25:
+    title: "Alorae Starweaver (Ascended)"
+    description: "Alorae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  lustriae_bulwark_t25:
+    title: "Lustriae Bulwark (Ascended)"
+    description: "Lustriae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  lustriae_warden_t25:
+    title: "Lustriae Warden (Ascended)"
+    description: "Lustriae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  lustriae_arcanist_t25:
+    title: "Lustriae Arcanist (Ascended)"
+    description: "Lustriae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  lustriae_faeweaver_t25:
+    title: "Lustriae Faeweaver (Ascended)"
+    description: "Lustriae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  lustriae_necromancer_t25:
+    title: "Lustriae Necromancer (Ascended)"
+    description: "Lustriae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  lustriae_veil_t25:
+    title: "Lustriae Veil (Ascended)"
+    description: "Lustriae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  lustriae_binder_t25:
+    title: "Lustriae Binder (Ascended)"
+    description: "Lustriae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  lustriae_stormblade_t25:
+    title: "Lustriae Stormblade (Ascended)"
+    description: "Lustriae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  lustriae_herald_t25:
+    title: "Lustriae Herald (Ascended)"
+    description: "Lustriae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  lustriae_starweaver_t25:
+    title: "Lustriae Starweaver (Ascended)"
+    description: "Lustriae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  lithae_bulwark_t25:
+    title: "Lithae Bulwark (Ascended)"
+    description: "Lithae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  lithae_warden_t25:
+    title: "Lithae Warden (Ascended)"
+    description: "Lithae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  lithae_arcanist_t25:
+    title: "Lithae Arcanist (Ascended)"
+    description: "Lithae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  lithae_faeweaver_t25:
+    title: "Lithae Faeweaver (Ascended)"
+    description: "Lithae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  lithae_necromancer_t25:
+    title: "Lithae Necromancer (Ascended)"
+    description: "Lithae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  lithae_veil_t25:
+    title: "Lithae Veil (Ascended)"
+    description: "Lithae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  lithae_binder_t25:
+    title: "Lithae Binder (Ascended)"
+    description: "Lithae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  lithae_stormblade_t25:
+    title: "Lithae Stormblade (Ascended)"
+    description: "Lithae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  lithae_herald_t25:
+    title: "Lithae Herald (Ascended)"
+    description: "Lithae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  lithae_starweaver_t25:
+    title: "Lithae Starweaver (Ascended)"
+    description: "Lithae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  pyrae_bulwark_t25:
+    title: "Pyrae Bulwark (Ascended)"
+    description: "Pyrae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  pyrae_warden_t25:
+    title: "Pyrae Warden (Ascended)"
+    description: "Pyrae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  pyrae_arcanist_t25:
+    title: "Pyrae Arcanist (Ascended)"
+    description: "Pyrae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  pyrae_faeweaver_t25:
+    title: "Pyrae Faeweaver (Ascended)"
+    description: "Pyrae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  pyrae_necromancer_t25:
+    title: "Pyrae Necromancer (Ascended)"
+    description: "Pyrae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  pyrae_veil_t25:
+    title: "Pyrae Veil (Ascended)"
+    description: "Pyrae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  pyrae_binder_t25:
+    title: "Pyrae Binder (Ascended)"
+    description: "Pyrae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  pyrae_stormblade_t25:
+    title: "Pyrae Stormblade (Ascended)"
+    description: "Pyrae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  pyrae_herald_t25:
+    title: "Pyrae Herald (Ascended)"
+    description: "Pyrae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  pyrae_starweaver_t25:
+    title: "Pyrae Starweaver (Ascended)"
+    description: "Pyrae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  animae_bulwark_t25:
+    title: "Animae Bulwark (Ascended)"
+    description: "Animae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  animae_warden_t25:
+    title: "Animae Warden (Ascended)"
+    description: "Animae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  animae_arcanist_t25:
+    title: "Animae Arcanist (Ascended)"
+    description: "Animae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  animae_faeweaver_t25:
+    title: "Animae Faeweaver (Ascended)"
+    description: "Animae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  animae_necromancer_t25:
+    title: "Animae Necromancer (Ascended)"
+    description: "Animae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  animae_veil_t25:
+    title: "Animae Veil (Ascended)"
+    description: "Animae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  animae_binder_t25:
+    title: "Animae Binder (Ascended)"
+    description: "Animae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  animae_stormblade_t25:
+    title: "Animae Stormblade (Ascended)"
+    description: "Animae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  animae_herald_t25:
+    title: "Animae Herald (Ascended)"
+    description: "Animae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  animae_starweaver_t25:
+    title: "Animae Starweaver (Ascended)"
+    description: "Animae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  medusae_bulwark_t25:
+    title: "Medusae Bulwark (Ascended)"
+    description: "Medusae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  medusae_warden_t25:
+    title: "Medusae Warden (Ascended)"
+    description: "Medusae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  medusae_arcanist_t25:
+    title: "Medusae Arcanist (Ascended)"
+    description: "Medusae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  medusae_faeweaver_t25:
+    title: "Medusae Faeweaver (Ascended)"
+    description: "Medusae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  medusae_necromancer_t25:
+    title: "Medusae Necromancer (Ascended)"
+    description: "Medusae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  medusae_veil_t25:
+    title: "Medusae Veil (Ascended)"
+    description: "Medusae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  medusae_binder_t25:
+    title: "Medusae Binder (Ascended)"
+    description: "Medusae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  medusae_stormblade_t25:
+    title: "Medusae Stormblade (Ascended)"
+    description: "Medusae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  medusae_herald_t25:
+    title: "Medusae Herald (Ascended)"
+    description: "Medusae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  medusae_starweaver_t25:
+    title: "Medusae Starweaver (Ascended)"
+    description: "Medusae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  kitsarae_bulwark_t25:
+    title: "Kitsarae Bulwark (Ascended)"
+    description: "Kitsarae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  kitsarae_warden_t25:
+    title: "Kitsarae Warden (Ascended)"
+    description: "Kitsarae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  kitsarae_arcanist_t25:
+    title: "Kitsarae Arcanist (Ascended)"
+    description: "Kitsarae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  kitsarae_faeweaver_t25:
+    title: "Kitsarae Faeweaver (Ascended)"
+    description: "Kitsarae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  kitsarae_necromancer_t25:
+    title: "Kitsarae Necromancer (Ascended)"
+    description: "Kitsarae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  kitsarae_veil_t25:
+    title: "Kitsarae Veil (Ascended)"
+    description: "Kitsarae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  kitsarae_binder_t25:
+    title: "Kitsarae Binder (Ascended)"
+    description: "Kitsarae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  kitsarae_stormblade_t25:
+    title: "Kitsarae Stormblade (Ascended)"
+    description: "Kitsarae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  kitsarae_herald_t25:
+    title: "Kitsarae Herald (Ascended)"
+    description: "Kitsarae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  kitsarae_starweaver_t25:
+    title: "Kitsarae Starweaver (Ascended)"
+    description: "Kitsarae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  sylflorae_bulwark_t25:
+    title: "Sylflorae Bulwark (Ascended)"
+    description: "Sylflorae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  sylflorae_warden_t25:
+    title: "Sylflorae Warden (Ascended)"
+    description: "Sylflorae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  sylflorae_arcanist_t25:
+    title: "Sylflorae Arcanist (Ascended)"
+    description: "Sylflorae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  sylflorae_faeweaver_t25:
+    title: "Sylflorae Faeweaver (Ascended)"
+    description: "Sylflorae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  sylflorae_necromancer_t25:
+    title: "Sylflorae Necromancer (Ascended)"
+    description: "Sylflorae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  sylflorae_veil_t25:
+    title: "Sylflorae Veil (Ascended)"
+    description: "Sylflorae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  sylflorae_binder_t25:
+    title: "Sylflorae Binder (Ascended)"
+    description: "Sylflorae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  sylflorae_stormblade_t25:
+    title: "Sylflorae Stormblade (Ascended)"
+    description: "Sylflorae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  sylflorae_herald_t25:
+    title: "Sylflorae Herald (Ascended)"
+    description: "Sylflorae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  sylflorae_starweaver_t25:
+    title: "Sylflorae Starweaver (Ascended)"
+    description: "Sylflorae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+  orphirae_bulwark_t25:
+    title: "Orphirae Bulwark (Ascended)"
+    description: "Orphirae Bulwark in masterwork plate armor with enchanted shield and runic glow"
+    tier: standard
+  orphirae_warden_t25:
+    title: "Orphirae Warden (Ascended)"
+    description: "Orphirae Warden in enchanted leathers with a spirit-bonded bow and animal companion"
+    tier: standard
+  orphirae_arcanist_t25:
+    title: "Orphirae Arcanist (Ascended)"
+    description: "Orphirae Arcanist in arcane-warded robes with a crystalline staff pulsing with energy"
+    tier: standard
+  orphirae_faeweaver_t25:
+    title: "Orphirae Faeweaver (Ascended)"
+    description: "Orphirae Faeweaver in shimmering fae armor with living vines and blooming flowers"
+    tier: standard
+  orphirae_necromancer_t25:
+    title: "Orphirae Necromancer (Ascended)"
+    description: "Orphirae Necromancer in shadow-woven robes with spectral chains and ghostly aura"
+    tier: standard
+  orphirae_veil_t25:
+    title: "Orphirae Veil (Ascended)"
+    description: "Orphirae Veil in void-touched leathers with shifting shadow cloak"
+    tier: standard
+  orphirae_binder_t25:
+    title: "Orphirae Binder (Ascended)"
+    description: "Orphirae Binder in runic chainmail with glowing binding circles orbiting nearby"
+    tier: standard
+  orphirae_stormblade_t25:
+    title: "Orphirae Stormblade (Ascended)"
+    description: "Orphirae Stormblade in storm-forged armor with lightning-wreathed blade"
+    tier: standard
+  orphirae_herald_t25:
+    title: "Orphirae Herald (Ascended)"
+    description: "Orphirae Herald in gilded ceremonial armor with a radiant war standard"
+    tier: standard
+  orphirae_starweaver_t25:
+    title: "Orphirae Starweaver (Ascended)"
+    description: "Orphirae Starweaver in celestial robes with orbiting star fragments and astral glow"
+    tier: standard
+
+  # === Legendary (t50) ===
+  archae_bulwark_t50:
+    title: "Archae Bulwark (Legendary)"
+    description: "Archae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  archae_warden_t50:
+    title: "Archae Warden (Legendary)"
+    description: "Archae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  archae_arcanist_t50:
+    title: "Archae Arcanist (Legendary)"
+    description: "Archae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  archae_faeweaver_t50:
+    title: "Archae Faeweaver (Legendary)"
+    description: "Archae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  archae_necromancer_t50:
+    title: "Archae Necromancer (Legendary)"
+    description: "Archae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  archae_veil_t50:
+    title: "Archae Veil (Legendary)"
+    description: "Archae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  archae_binder_t50:
+    title: "Archae Binder (Legendary)"
+    description: "Archae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  archae_stormblade_t50:
+    title: "Archae Stormblade (Legendary)"
+    description: "Archae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  archae_herald_t50:
+    title: "Archae Herald (Legendary)"
+    description: "Archae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  archae_starweaver_t50:
+    title: "Archae Starweaver (Legendary)"
+    description: "Archae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  mycorae_bulwark_t50:
+    title: "Mycorae Bulwark (Legendary)"
+    description: "Mycorae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  mycorae_warden_t50:
+    title: "Mycorae Warden (Legendary)"
+    description: "Mycorae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  mycorae_arcanist_t50:
+    title: "Mycorae Arcanist (Legendary)"
+    description: "Mycorae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  mycorae_faeweaver_t50:
+    title: "Mycorae Faeweaver (Legendary)"
+    description: "Mycorae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  mycorae_necromancer_t50:
+    title: "Mycorae Necromancer (Legendary)"
+    description: "Mycorae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  mycorae_veil_t50:
+    title: "Mycorae Veil (Legendary)"
+    description: "Mycorae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  mycorae_binder_t50:
+    title: "Mycorae Binder (Legendary)"
+    description: "Mycorae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  mycorae_stormblade_t50:
+    title: "Mycorae Stormblade (Legendary)"
+    description: "Mycorae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  mycorae_herald_t50:
+    title: "Mycorae Herald (Legendary)"
+    description: "Mycorae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  mycorae_starweaver_t50:
+    title: "Mycorae Starweaver (Legendary)"
+    description: "Mycorae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  aetherae_bulwark_t50:
+    title: "Aetherae Bulwark (Legendary)"
+    description: "Aetherae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  aetherae_warden_t50:
+    title: "Aetherae Warden (Legendary)"
+    description: "Aetherae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  aetherae_arcanist_t50:
+    title: "Aetherae Arcanist (Legendary)"
+    description: "Aetherae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  aetherae_faeweaver_t50:
+    title: "Aetherae Faeweaver (Legendary)"
+    description: "Aetherae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  aetherae_necromancer_t50:
+    title: "Aetherae Necromancer (Legendary)"
+    description: "Aetherae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  aetherae_veil_t50:
+    title: "Aetherae Veil (Legendary)"
+    description: "Aetherae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  aetherae_binder_t50:
+    title: "Aetherae Binder (Legendary)"
+    description: "Aetherae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  aetherae_stormblade_t50:
+    title: "Aetherae Stormblade (Legendary)"
+    description: "Aetherae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  aetherae_herald_t50:
+    title: "Aetherae Herald (Legendary)"
+    description: "Aetherae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  aetherae_starweaver_t50:
+    title: "Aetherae Starweaver (Legendary)"
+    description: "Aetherae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  alorae_bulwark_t50:
+    title: "Alorae Bulwark (Legendary)"
+    description: "Alorae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  alorae_warden_t50:
+    title: "Alorae Warden (Legendary)"
+    description: "Alorae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  alorae_arcanist_t50:
+    title: "Alorae Arcanist (Legendary)"
+    description: "Alorae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  alorae_faeweaver_t50:
+    title: "Alorae Faeweaver (Legendary)"
+    description: "Alorae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  alorae_necromancer_t50:
+    title: "Alorae Necromancer (Legendary)"
+    description: "Alorae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  alorae_veil_t50:
+    title: "Alorae Veil (Legendary)"
+    description: "Alorae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  alorae_binder_t50:
+    title: "Alorae Binder (Legendary)"
+    description: "Alorae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  alorae_stormblade_t50:
+    title: "Alorae Stormblade (Legendary)"
+    description: "Alorae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  alorae_herald_t50:
+    title: "Alorae Herald (Legendary)"
+    description: "Alorae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  alorae_starweaver_t50:
+    title: "Alorae Starweaver (Legendary)"
+    description: "Alorae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  lustriae_bulwark_t50:
+    title: "Lustriae Bulwark (Legendary)"
+    description: "Lustriae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  lustriae_warden_t50:
+    title: "Lustriae Warden (Legendary)"
+    description: "Lustriae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  lustriae_arcanist_t50:
+    title: "Lustriae Arcanist (Legendary)"
+    description: "Lustriae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  lustriae_faeweaver_t50:
+    title: "Lustriae Faeweaver (Legendary)"
+    description: "Lustriae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  lustriae_necromancer_t50:
+    title: "Lustriae Necromancer (Legendary)"
+    description: "Lustriae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  lustriae_veil_t50:
+    title: "Lustriae Veil (Legendary)"
+    description: "Lustriae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  lustriae_binder_t50:
+    title: "Lustriae Binder (Legendary)"
+    description: "Lustriae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  lustriae_stormblade_t50:
+    title: "Lustriae Stormblade (Legendary)"
+    description: "Lustriae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  lustriae_herald_t50:
+    title: "Lustriae Herald (Legendary)"
+    description: "Lustriae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  lustriae_starweaver_t50:
+    title: "Lustriae Starweaver (Legendary)"
+    description: "Lustriae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  lithae_bulwark_t50:
+    title: "Lithae Bulwark (Legendary)"
+    description: "Lithae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  lithae_warden_t50:
+    title: "Lithae Warden (Legendary)"
+    description: "Lithae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  lithae_arcanist_t50:
+    title: "Lithae Arcanist (Legendary)"
+    description: "Lithae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  lithae_faeweaver_t50:
+    title: "Lithae Faeweaver (Legendary)"
+    description: "Lithae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  lithae_necromancer_t50:
+    title: "Lithae Necromancer (Legendary)"
+    description: "Lithae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  lithae_veil_t50:
+    title: "Lithae Veil (Legendary)"
+    description: "Lithae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  lithae_binder_t50:
+    title: "Lithae Binder (Legendary)"
+    description: "Lithae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  lithae_stormblade_t50:
+    title: "Lithae Stormblade (Legendary)"
+    description: "Lithae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  lithae_herald_t50:
+    title: "Lithae Herald (Legendary)"
+    description: "Lithae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  lithae_starweaver_t50:
+    title: "Lithae Starweaver (Legendary)"
+    description: "Lithae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  pyrae_bulwark_t50:
+    title: "Pyrae Bulwark (Legendary)"
+    description: "Pyrae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  pyrae_warden_t50:
+    title: "Pyrae Warden (Legendary)"
+    description: "Pyrae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  pyrae_arcanist_t50:
+    title: "Pyrae Arcanist (Legendary)"
+    description: "Pyrae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  pyrae_faeweaver_t50:
+    title: "Pyrae Faeweaver (Legendary)"
+    description: "Pyrae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  pyrae_necromancer_t50:
+    title: "Pyrae Necromancer (Legendary)"
+    description: "Pyrae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  pyrae_veil_t50:
+    title: "Pyrae Veil (Legendary)"
+    description: "Pyrae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  pyrae_binder_t50:
+    title: "Pyrae Binder (Legendary)"
+    description: "Pyrae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  pyrae_stormblade_t50:
+    title: "Pyrae Stormblade (Legendary)"
+    description: "Pyrae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  pyrae_herald_t50:
+    title: "Pyrae Herald (Legendary)"
+    description: "Pyrae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  pyrae_starweaver_t50:
+    title: "Pyrae Starweaver (Legendary)"
+    description: "Pyrae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  animae_bulwark_t50:
+    title: "Animae Bulwark (Legendary)"
+    description: "Animae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  animae_warden_t50:
+    title: "Animae Warden (Legendary)"
+    description: "Animae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  animae_arcanist_t50:
+    title: "Animae Arcanist (Legendary)"
+    description: "Animae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  animae_faeweaver_t50:
+    title: "Animae Faeweaver (Legendary)"
+    description: "Animae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  animae_necromancer_t50:
+    title: "Animae Necromancer (Legendary)"
+    description: "Animae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  animae_veil_t50:
+    title: "Animae Veil (Legendary)"
+    description: "Animae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  animae_binder_t50:
+    title: "Animae Binder (Legendary)"
+    description: "Animae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  animae_stormblade_t50:
+    title: "Animae Stormblade (Legendary)"
+    description: "Animae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  animae_herald_t50:
+    title: "Animae Herald (Legendary)"
+    description: "Animae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  animae_starweaver_t50:
+    title: "Animae Starweaver (Legendary)"
+    description: "Animae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  medusae_bulwark_t50:
+    title: "Medusae Bulwark (Legendary)"
+    description: "Medusae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  medusae_warden_t50:
+    title: "Medusae Warden (Legendary)"
+    description: "Medusae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  medusae_arcanist_t50:
+    title: "Medusae Arcanist (Legendary)"
+    description: "Medusae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  medusae_faeweaver_t50:
+    title: "Medusae Faeweaver (Legendary)"
+    description: "Medusae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  medusae_necromancer_t50:
+    title: "Medusae Necromancer (Legendary)"
+    description: "Medusae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  medusae_veil_t50:
+    title: "Medusae Veil (Legendary)"
+    description: "Medusae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  medusae_binder_t50:
+    title: "Medusae Binder (Legendary)"
+    description: "Medusae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  medusae_stormblade_t50:
+    title: "Medusae Stormblade (Legendary)"
+    description: "Medusae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  medusae_herald_t50:
+    title: "Medusae Herald (Legendary)"
+    description: "Medusae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  medusae_starweaver_t50:
+    title: "Medusae Starweaver (Legendary)"
+    description: "Medusae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  kitsarae_bulwark_t50:
+    title: "Kitsarae Bulwark (Legendary)"
+    description: "Kitsarae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  kitsarae_warden_t50:
+    title: "Kitsarae Warden (Legendary)"
+    description: "Kitsarae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  kitsarae_arcanist_t50:
+    title: "Kitsarae Arcanist (Legendary)"
+    description: "Kitsarae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  kitsarae_faeweaver_t50:
+    title: "Kitsarae Faeweaver (Legendary)"
+    description: "Kitsarae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  kitsarae_necromancer_t50:
+    title: "Kitsarae Necromancer (Legendary)"
+    description: "Kitsarae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  kitsarae_veil_t50:
+    title: "Kitsarae Veil (Legendary)"
+    description: "Kitsarae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  kitsarae_binder_t50:
+    title: "Kitsarae Binder (Legendary)"
+    description: "Kitsarae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  kitsarae_stormblade_t50:
+    title: "Kitsarae Stormblade (Legendary)"
+    description: "Kitsarae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  kitsarae_herald_t50:
+    title: "Kitsarae Herald (Legendary)"
+    description: "Kitsarae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  kitsarae_starweaver_t50:
+    title: "Kitsarae Starweaver (Legendary)"
+    description: "Kitsarae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  sylflorae_bulwark_t50:
+    title: "Sylflorae Bulwark (Legendary)"
+    description: "Sylflorae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  sylflorae_warden_t50:
+    title: "Sylflorae Warden (Legendary)"
+    description: "Sylflorae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  sylflorae_arcanist_t50:
+    title: "Sylflorae Arcanist (Legendary)"
+    description: "Sylflorae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  sylflorae_faeweaver_t50:
+    title: "Sylflorae Faeweaver (Legendary)"
+    description: "Sylflorae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  sylflorae_necromancer_t50:
+    title: "Sylflorae Necromancer (Legendary)"
+    description: "Sylflorae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  sylflorae_veil_t50:
+    title: "Sylflorae Veil (Legendary)"
+    description: "Sylflorae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  sylflorae_binder_t50:
+    title: "Sylflorae Binder (Legendary)"
+    description: "Sylflorae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  sylflorae_stormblade_t50:
+    title: "Sylflorae Stormblade (Legendary)"
+    description: "Sylflorae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  sylflorae_herald_t50:
+    title: "Sylflorae Herald (Legendary)"
+    description: "Sylflorae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  sylflorae_starweaver_t50:
+    title: "Sylflorae Starweaver (Legendary)"
+    description: "Sylflorae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+  orphirae_bulwark_t50:
+    title: "Orphirae Bulwark (Legendary)"
+    description: "Orphirae Bulwark in legendary plate with dramatic magical aura and impenetrable shield"
+    tier: elite
+  orphirae_warden_t50:
+    title: "Orphirae Warden (Legendary)"
+    description: "Orphirae Warden in legendary wild armor with a spirit beast and nature's fury bow"
+    tier: elite
+  orphirae_arcanist_t50:
+    title: "Orphirae Arcanist (Legendary)"
+    description: "Orphirae Arcanist in legendary arcane regalia with reality-warping staff and spell matrix"
+    tier: elite
+  orphirae_faeweaver_t50:
+    title: "Orphirae Faeweaver (Legendary)"
+    description: "Orphirae Faeweaver in legendary living armor of fae crystal with a garden of power blooming around them"
+    tier: elite
+  orphirae_necromancer_t50:
+    title: "Orphirae Necromancer (Legendary)"
+    description: "Orphirae Necromancer in legendary death shroud with an army of spectral servants swirling around them"
+    tier: elite
+  orphirae_veil_t50:
+    title: "Orphirae Veil (Legendary)"
+    description: "Orphirae Veil in legendary void armor phasing between dimensions with shadow daggers"
+    tier: elite
+  orphirae_binder_t50:
+    title: "Orphirae Binder (Legendary)"
+    description: "Orphirae Binder in legendary binding vestments with imprisoned elemental forces orbiting them"
+    tier: elite
+  orphirae_stormblade_t50:
+    title: "Orphirae Stormblade (Legendary)"
+    description: "Orphirae Stormblade in legendary storm titan armor with twin lightning blades and thundercloud mantle"
+    tier: elite
+  orphirae_herald_t50:
+    title: "Orphirae Herald (Legendary)"
+    description: "Orphirae Herald in legendary divine armor with an aura of inspiration and blazing war standard"
+    tier: elite
+  orphirae_starweaver_t50:
+    title: "Orphirae Starweaver (Legendary)"
+    description: "Orphirae Starweaver in legendary astral vestments with a constellation crown and cosmic energy wings"
+    tier: elite
+
+  # === Staff (tstaff) ===
+  archae_base_tstaff:
+    title: "Archae (Staff)"
+    description: "Archae administrator with cosmic prismatic aura"
+    tier: boss
+  mycorae_base_tstaff:
+    title: "Mycorae (Staff)"
+    description: "Mycorae administrator with cosmic prismatic aura"
+    tier: boss
+  aetherae_base_tstaff:
+    title: "Aetherae (Staff)"
+    description: "Aetherae administrator with cosmic prismatic aura"
+    tier: boss
+  alorae_base_tstaff:
+    title: "Alorae (Staff)"
+    description: "Alorae administrator with cosmic prismatic aura"
+    tier: boss
+  lustriae_base_tstaff:
+    title: "Lustriae (Staff)"
+    description: "Lustriae administrator with cosmic prismatic aura"
+    tier: boss
+  lithae_base_tstaff:
+    title: "Lithae (Staff)"
+    description: "Lithae administrator with cosmic prismatic aura"
+    tier: boss
+  pyrae_base_tstaff:
+    title: "Pyrae (Staff)"
+    description: "Pyrae administrator with cosmic prismatic aura"
+    tier: boss
+  animae_base_tstaff:
+    title: "Animae (Staff)"
+    description: "Animae administrator with cosmic prismatic aura"
+    tier: boss
+  medusae_base_tstaff:
+    title: "Medusae (Staff)"
+    description: "Medusae administrator with cosmic prismatic aura"
+    tier: boss
+  kitsarae_base_tstaff:
+    title: "Kitsarae (Staff)"
+    description: "Kitsarae administrator with cosmic prismatic aura"
+    tier: boss
+  sylflorae_base_tstaff:
+    title: "Sylflorae (Staff)"
+    description: "Sylflorae administrator with cosmic prismatic aura"
+    tier: boss
+  orphirae_base_tstaff:
+    title: "Orphirae (Staff)"
+    description: "Orphirae administrator with cosmic prismatic aura"
+    tier: boss

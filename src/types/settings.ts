@@ -43,6 +43,7 @@ export const OPENROUTER_MODEL_PRESETS = [
 
 export const RUNWARE_MODEL_PRESETS = [
   { id: "runware:101@1", label: "FLUX Dev", cost: "$0.0038/img" },
+  { id: "runware:400@2", label: "FLUX 2", cost: "$0.0006/img" },
   { id: "runware:100@1", label: "FLUX Schnell", cost: "$0.0006/img" },
 ] as const;
 
