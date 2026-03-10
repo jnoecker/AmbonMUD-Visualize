@@ -3,11 +3,14 @@ import { STYLE_SUFFIX } from "./prompt-gen";
 import type { PortraitConfig, PortraitPromptTemplate, PortraitDimensions } from "../types/portraits";
 import { RACE_DEFINITIONS, CLASS_DEFINITIONS } from "../types/sprites";
 
+const PORTRAIT_STYLE_PREAMBLE =
+  "Digital fantasy painting in the Surreal Gentle Magic style — dreamy storybook illustration with visible painterly brushwork and soft textured rendering throughout. Soft lavender and pale blue undertones, ambient diffused lighting with NO clear source point, gentle atmospheric haze with floating motes of light. Gentle curves over hard angles, slightly elongated organic forms. FORBIDDEN: photorealism, 3D render look, neon colors, high contrast, harsh edges, sharp shadows, spotlight effects.";
+
 const RACE_FORMAT_SPEC =
-  "2:3 portrait orientation, cinematic character portrait, dramatic close-up to mid-shot framing, richly detailed environment background, painterly fantasy illustration lighting";
+  `2:3 portrait orientation character portrait. ${PORTRAIT_STYLE_PREAMBLE} Close-up to mid-shot framing, richly detailed painterly environment background with soft atmospheric depth`;
 
 const CLASS_FORMAT_SPEC =
-  "2:3 portrait orientation, cinematic action portrait of an Archae (androgynous humanoid with angular features, warm skin tones, ageless face), dramatic mid-shot framing, richly detailed environment background, dynamic or atmospheric pose, painterly fantasy illustration lighting";
+  `2:3 portrait orientation action portrait of an Archae (androgynous humanoid with angular features, warm skin tones, ageless face). ${PORTRAIT_STYLE_PREAMBLE} Mid-shot framing, dynamic or atmospheric pose, richly detailed painterly environment background`;
 
 /**
  * Generate a portrait prompt template with a single Claude call.
@@ -41,19 +44,33 @@ export async function generatePortraitTemplate(
   const response = await client.messages.create({
     model: "claude-sonnet-4-5-20250929",
     max_tokens: 3000,
-    system: `You are an expert image prompt engineer for AI image generators. You create prompts for cinematic character creation portraits in the Surreal Gentle Magic aesthetic.
+    system: `You are an expert image prompt engineer for AI image generators. You work EXCLUSIVELY within the Surreal Gentle Magic (surreal_softmagic_v1) design system.
 
-These portraits appear on a character creation screen. They should be visually stunning, cinematic, and evocative — selling the fantasy of each race and class to the player. They are 2:3 portrait orientation, NOT square sprites.
+## CRITICAL STYLE RULES — every portrait MUST follow these:
+- DIGITAL FANTASY PAINTING — visible painterly brushwork, soft textured rendering. Think dreamy storybook illustration.
+- NEVER photorealistic, NEVER 3D-rendered, NEVER concept art, NEVER anime/manga
+- Soft lavender and pale blue undertones suffusing every surface — cool undertones dominate
+- Ambient diffused lighting with NO clear source point — light feels magical and source-ambiguous
+- Gentle atmospheric haze with floating motes of light and faint magical particles
+- Gentle curves over hard angles, slightly elongated organic forms, micro-warping on edges
+- NO neon colors, NO saturated primaries, NO pure black, NO high contrast
+- NO harsh shadows, NO spotlight effects, NO rim lighting, NO chiaroscuro
+- Every scene must feel: gentle, breathable, enchanted, emotionally safe, welcoming
+- Color palette: lavender #a897d2, pale blue #8caec9, dusty rose #b88faa, moss green #8da97b, soft gold #bea873
+
+These portraits appear on a character creation screen. They should be visually stunning and evocative — selling the fantasy of each race and class. They are 2:3 portrait orientation. The overall feeling must be DREAMY and PAINTERLY, like an illustrated fantasy book cover, NOT like a video game screenshot or CGI render.
 
 Your task: produce a JSON object with these fields:
 
-1. "raceTemplate" — a prompt template for RACE portraits using the placeholder {race_description}. The race portrait shows the race in a fitting atmospheric environment that evokes their nature. Close-up to mid-shot framing. Cinematic, dramatic, beautiful. The scene should feel like a movie poster for that race. No class outfit — just the race's natural form in an environment that suits them.
+1. "raceTemplate" — a prompt template for RACE portraits using the placeholder {race_description}. The template MUST begin with "Digital fantasy painting in the Surreal Gentle Magic style, dreamy storybook illustration with visible painterly brushwork," followed by the portrait description. The race portrait shows the race in a fitting atmospheric environment. Close-up to mid-shot framing. No class outfit — just the race's natural form.
 
-2. "classTemplate" — a prompt template for CLASS portraits using placeholders {race_description} and {class_outfit}. Class portraits always depict an Archae (the vanilla humanoid race) wearing the class outfit. Show them in an atmospheric scene that evokes the class fantasy — a battlefield, a mystical library, a shadowy alley, etc. Mid-shot framing, dynamic or atmospheric pose. The scene should sell the class fantasy.
+2. "classTemplate" — a prompt template for CLASS portraits using placeholders {race_description} and {class_outfit}. The template MUST begin with "Digital fantasy painting in the Surreal Gentle Magic style, dreamy storybook illustration with visible painterly brushwork," followed by the portrait description. Class portraits depict an Archae in the class outfit in an atmospheric scene. Mid-shot framing.
 
-3. "raceDescriptions" — an object mapping each race key to an optimized, vivid prompt-fragment for that race's appearance. Lean into the alien/fantastical. All descriptions must be androgynous. For humanoid races, explicitly note angular androgynous features.
+3. "raceDescriptions" — an object mapping each race key to an optimized prompt-fragment for that race's appearance. Lean into alien/fantastical. All androgynous. For humanoid races, explicitly note angular androgynous features, no gendered body features.
 
-4. "classOutfits" — an object mapping each class key to a vivid prompt-fragment for the class outfit, weapons, and magical effects at their most impressive (think Legendary tier). These should look stunning and powerful.
+4. "classOutfits" — an object mapping each class key to a vivid prompt-fragment for the class outfit, weapons, and magical effects at their most impressive (Legendary tier).
+
+IMPORTANT: The templates must explicitly include phrases like "soft ambient diffused lighting", "gentle atmospheric haze", "painterly brushwork", "dreamy softly luminous" to steer the image generator toward the right aesthetic. Do NOT leave style enforcement to the suffix alone.
 
 Both templates, when filled, should produce complete image generation prompts (without the style suffix — it will be appended automatically).
 
@@ -96,6 +113,13 @@ Zone atmosphere: ${zoneVibe}`,
 }
 
 /**
+ * Style preamble prepended to every filled portrait prompt to ensure
+ * the image generator receives strong style steering at the very start.
+ */
+const PORTRAIT_PROMPT_PREFIX =
+  "Digital fantasy painting in the Surreal Gentle Magic style (surreal_softmagic_v1), dreamy storybook illustration with visible soft painterly brushwork and textured rendering throughout, soft lavender and pale blue undertones, ambient diffused magical lighting with no clear source, gentle atmospheric haze with floating motes of light. NOT a photograph, NOT a 3D render, NOT concept art. 2:3 portrait orientation.";
+
+/**
  * Fill a portrait template for a specific entity. Pure string substitution, no API call.
  */
 export function fillPortraitTemplate(
@@ -107,11 +131,11 @@ export function fillPortraitTemplate(
       || template.raceDescriptions[dimensions.key]
       || dimensions.key;
 
-    const prompt = template.raceTemplate
+    const filled = template.raceTemplate
       .replace(/\{race\}/g, dimensions.key)
       .replace(/\{race_description\}/g, raceDesc);
 
-    return `${prompt}\n\n${STYLE_SUFFIX}`;
+    return `${PORTRAIT_PROMPT_PREFIX}\n\n${filled}\n\n${STYLE_SUFFIX}`;
   }
 
   // Class portrait — always uses Archae as the showcase race
@@ -120,11 +144,11 @@ export function fillPortraitTemplate(
     || template.classOutfits[dimensions.key]
     || dimensions.key;
 
-  const prompt = template.classTemplate
+  const filled = template.classTemplate
     .replace(/\{race\}/g, "archae")
     .replace(/\{race_description\}/g, archaeDesc)
     .replace(/\{class\}/g, dimensions.key)
     .replace(/\{class_outfit\}/g, classOutfit);
 
-  return `${prompt}\n\n${STYLE_SUFFIX}`;
+  return `${PORTRAIT_PROMPT_PREFIX}\n\n${filled}\n\n${STYLE_SUFFIX}`;
 }
