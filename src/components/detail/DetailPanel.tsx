@@ -9,6 +9,7 @@ import { ActionBar } from "./ActionBar";
 import { VariantStrip } from "./VariantStrip";
 import { SpriteGrid } from "../sprites/SpriteGrid";
 import { AbilityGrid } from "../abilities/AbilityGrid";
+import { PortraitGrid } from "../portraits/PortraitGrid";
 import { EntityFieldEditor } from "./EntityFieldEditor";
 
 export function DetailPanel() {
@@ -215,6 +216,19 @@ export function DetailPanel() {
         zone={zone}
         entities={parsedZones[selectedZone].entities}
         spriteConfig={zone.spriteConfig!}
+      />
+    );
+  }
+
+  // If selected zone is a portrait zone, show PortraitGrid
+  if (selectedZone && project?.zones[selectedZone]?.portraitConfig && parsedZones[selectedZone]) {
+    const zone = project.zones[selectedZone];
+    return (
+      <PortraitGrid
+        zoneKey={selectedZone}
+        zone={zone}
+        entities={parsedZones[selectedZone].entities}
+        portraitConfig={zone.portraitConfig!}
       />
     );
   }

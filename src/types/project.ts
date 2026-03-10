@@ -1,6 +1,7 @@
 import type { EntityType, RawYaml } from "./entities";
 import type { SpriteConfig, SpritePromptTemplate } from "./sprites";
 import type { AbilityConfig } from "./abilities";
+import type { PortraitConfig, PortraitPromptTemplate } from "./portraits";
 import type { MusicAssetEntry } from "./music";
 import type { VideoAssetEntry } from "./video";
 
@@ -52,6 +53,8 @@ export interface ZoneData {
   spriteConfig?: SpriteConfig | null;
   spriteTemplate?: SpritePromptTemplate | null;
   abilityConfig?: AbilityConfig | null;
+  portraitConfig?: PortraitConfig | null;
+  portraitTemplate?: PortraitPromptTemplate | null;
   musicAssets?: MusicAssetEntry[];
   videoAssets?: VideoAssetEntry[];
 }

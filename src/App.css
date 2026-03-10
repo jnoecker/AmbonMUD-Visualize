@@ -1931,3 +1931,93 @@ body {
   gap: var(--space-2);
   flex-wrap: wrap;
 }
+
+/* ─── Portrait Grid ───────────────────────── */
+
+.portrait-grid-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+}
+
+.portrait-section-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.portrait-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.portrait-cell {
+  width: 120px;
+  position: relative;
+  background: var(--bg-deepest);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s var(--ease-out-soft);
+}
+
+.portrait-cell:hover {
+  border-color: var(--border-default);
+  transform: scale(1.02);
+}
+
+.portrait-cell--selected {
+  border-color: var(--color-primary-lavender);
+}
+
+.portrait-cell--approved {
+  border-color: var(--color-primary-moss-green);
+}
+
+.portrait-cell--generating {
+  border-color: var(--color-primary-soft-gold);
+}
+
+.portrait-cell-image {
+  aspect-ratio: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.portrait-cell-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portrait-cell-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.portrait-cell-generating-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 41, 60, 0.7);
+  backdrop-filter: blur(2px);
+}
+
+.portrait-cell-label {
+  text-align: center;
+  padding: 4px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--text-disabled);
+}

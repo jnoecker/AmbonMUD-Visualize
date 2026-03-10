@@ -1,0 +1,108 @@
+zone: character_portraits
+lifespan: 0
+startRoom: gallery
+
+rooms:
+  gallery:
+    title: "Portrait Gallery"
+    description: "A circular chamber of polished obsidian where twelve tall mirrors hang in alcoves, each reflecting not your face but the essence of a different race — their truest form shimmering in soft ambient light."
+    exits:
+      n: class_hall
+  class_hall:
+    title: "Hall of Callings"
+    description: "A long corridor lined with illuminated portraits, each depicting a different path of power. The figures within seem to breathe, weapons gleaming, magic crackling softly at their fingertips."
+    exits:
+      s: gallery
+
+mobs:
+  # === Race Portraits ===
+  portrait_race_archae:
+    title: "Archae"
+    description: "An androgynous Archae humanoid with angular refined features and an adaptable athletic build, warm sun-kissed skin tones glowing in soft amber light. They stand in a misty crossroads between forest and city, embodying quiet potential and boundless adaptability. Their calm gaze holds the weight of every possible future."
+    tier: weak
+  portrait_race_mycorae:
+    title: "Mycorae"
+    description: "A fungal humanoid with rich bark-like textured skin threaded with softly pulsing bioluminescent veins of teal and violet. A crown of delicate mushroom caps fans from their head like a living halo, releasing faint drifting spores into a damp twilight grotto. The air around them hums with the quiet intelligence of ancient mycelial networks."
+    tier: weak
+  portrait_race_aetherae:
+    title: "Aetherae"
+    description: "A haunted empty cloak of churning black smoke and dark fog, its hood framing nothing but two piercing glowing blue eyes that burn with spectral intensity. Wisps of shadow trail from the ragged hem as the figure hovers above cracked stone in a desolate moonlit ruin. There is no body within — only will, memory, and cold ethereal fire."
+    tier: weak
+  portrait_race_alorae:
+    title: "Alorae"
+    description: "A prismatic being of pure refracting light in a vaguely humanoid silhouette, shimmering with iridescent rainbow hues that shift with every subtle movement. They stand in a crystalline cavern where their radiance casts kaleidoscopic patterns across every surface. Their form is breathtaking and barely contained, as though reality itself bends to accommodate their brilliance."
+    tier: weak
+  portrait_race_lustriae:
+    title: "Lustriae"
+    description: "A petite fae figure with large vivid butterfly wings that shimmer in gradients of lavender, rose, and gold, catching the light of a sun-dappled enchanted meadow. Tiny motes of luminous pollen drift around their delicate frame as wildflowers lean toward them instinctively. Their expression is playful and ancient in equal measure, eyes glittering like captured starlight."
+    tier: weak
+  portrait_race_lithae:
+    title: "Lithae"
+    description: "A living gemstone humanoid sculpted from translucent amethyst and pale quartz, faceted planes catching and scattering soft light across a silent underground crystal cathedral. Deep within their chest, a warm violet glow pulses like a slow heartbeat. They are monumental and still, a being of geological patience and quiet, immense power."
+    tier: weak
+  portrait_race_pyrae:
+    title: "Pyrae"
+    description: "A humanoid of living fire whose flickering flame body shifts between deep ember orange and white-hot gold, heat distortion rippling the air around them. They stand on a volcanic ridge at dusk, molten cracks glowing beneath their feet, sparks drifting upward like inverse rain. Their eyes are twin furnaces of focused, crackling intensity."
+    tier: weak
+  portrait_race_animae:
+    title: "Animae"
+    description: "An undead wight with pallid skin stretched over sharp bones, augmented with intricate clockwork mechanisms — brass gears turning in an exposed ribcage, a copper-fitted jaw, lenses over hollow eye sockets emitting faint green light. They stand in a fog-choked workshop cluttered with tools and half-assembled contraptions. Death and invention have merged into something eerily purposeful."
+    tier: weak
+  portrait_race_medusae:
+    title: "Medusae"
+    description: "A bioluminescent jellyfish humanoid with a translucent bell-shaped head trailing long luminous tendrils of soft blue and magenta, drifting in a deep oceanic twilight zone. Their body pulses with rhythmic light, illuminating the dark water around them in gentle waves. They are serene and alien, a living lantern of the abyssal depths."
+    tier: weak
+  portrait_race_kitsarae:
+    title: "Kitsarae"
+    description: "A fox-spirit humanoid with sharp vulpine features, golden slit-pupil eyes, and multiple fluffy tails fanning behind them in shades of copper and cream. They perch on a moss-covered torii gate in a misty bamboo forest, foxfire flickering in pale blue wisps around their clawed fingertips. Their knowing smile suggests centuries of cunning and carefully kept secrets."
+    tier: weak
+  portrait_race_sylflorae:
+    title: "Sylflorae"
+    description: "A living plant being woven from intertwined vines, soft petals, and unfurling fern fronds, their body a living garden in perpetual gentle bloom. They stand in a sunlit forest clearing where their roots blend seamlessly into the mossy earth, flowers opening across their shoulders and crown. Pollen and tiny insects orbit them in a lazy, reverent spiral."
+    tier: weak
+  portrait_race_orphirae:
+    title: "Orphirae"
+    description: "A draconic serpentine humanoid with iridescent scales of deep sea-green and midnight blue, elegant aquatic fins fanning from their forearms, spine, and temples. They rise from a coral-encrusted tidal pool at twilight, brine dripping from their powerful coiled lower body. Their gaze is ancient and predatory, tempered by a regal, oceanic calm."
+    tier: weak
+
+  # === Class Portraits ===
+  portrait_class_bulwark:
+    title: "Bulwark"
+    description: "An androgynous Archae clad in heavy ornate plate armor of burnished steel and deep blue enamel, bracing behind an immense tower shield as a wave of magical force crashes against it. Sparks and arcane debris scatter harmlessly around them as they hold the line on a shattered bridge. They are an immovable fortress, calm and unyielding in the heart of the storm."
+    tier: weak
+  portrait_class_warden:
+    title: "Warden"
+    description: "An androgynous Archae in rugged medium armor of layered leather and thick fur pelts, hand axe raised and feet planted on a wind-blasted mountain ridge. Behind them, a vast untamed wilderness stretches to the horizon under a brooding sky. Their expression is fierce and watchful, a guardian of the wild places who answers to no authority but nature itself."
+    tier: weak
+  portrait_class_arcanist:
+    title: "Arcanist"
+    description: "An androgynous Archae draped in flowing scholarly robes of deep indigo and silver thread, one hand gripping an arcane staff crackling with contained energy, the other steadying a glowing open tome that hovers at their side. They stand in a vast candlelit library where equations and sigils drift through the air like luminous dust. Knowledge radiates from them like heat from a forge."
+    tier: weak
+  portrait_class_faeweaver:
+    title: "Faeweaver"
+    description: "An androgynous Archae wearing living garments of woven vines, blooming flowers, and trailing moss, holding a gnarled nature staff crowned with a softly glowing seed pod. They stand in an ancient enchanted grove where the trees bow inward and fireflies swirl in deliberate patterns. The boundary between the Faeweaver and the forest has dissolved — they are one breathing organism."
+    tier: weak
+  portrait_class_necromancer:
+    title: "Necromancer"
+    description: "An androgynous Archae shrouded in dark layered robes adorned with intricate clockwork bone motifs — tiny gears meshed with skeletal filigree — gripping a skull-topped staff that leaks tendrils of cold green mist. They stand in a candlelit crypt surrounded by half-assembled constructs of bone and brass. Their hollow gaze speaks of someone who has peered beyond death and brought something back."
+    tier: weak
+  portrait_class_veil:
+    title: "Veil"
+    description: "An androgynous Archae wrapped in shadow-infused light armor of dark leather and black silk, twin daggers gleaming in their hands as they emerge from a pool of living darkness in a moonlit alleyway. Only their eyes catch the light — sharp, calculating, already three moves ahead. The shadows cling to them not as concealment but as a second skin."
+    tier: weak
+  portrait_class_binder:
+    title: "Binder"
+    description: "An androgynous Archae in imposing anti-magic regalia — heavy gauntlets wound with spell-suppressing chains that glow with dull amber runes, layered robes of grey and bronze. They stand at the center of a shattered summoning circle, one fist clenched around a dissolving spell, arcane energy draining into their chain-wrapped arms. They are the silence that answers magic."
+    tier: weak
+  portrait_class_stormblade:
+    title: "Stormblade"
+    description: "An androgynous Archae in sleek martial armor of polished dark metal with electric blue accents, mid-strike with a lightning-bolt sword that arcs with crackling energy. Rain falls around them on a wind-torn battlefield, but the drops vaporize before touching their blade. They are speed and fury given elegant, lethal form."
+    tier: weak
+  portrait_class_herald:
+    title: "Herald"
+    description: "An androgynous Archae in luminous sacred vestments of white and gold, raising a holy mace that blazes with warm divine light as golden trim along their robes catches the radiance. They stand atop a hill at dawn, the first light breaking behind them like a benediction, healing energy rippling outward in gentle waves. They are faith made manifest, a living beacon of hope."
+    tier: weak
+  portrait_class_starweaver:
+    title: "Starweaver"
+    description: "An androgynous Archae in flowing cosmic robes patterned with slowly rotating constellations and deep nebula hues of violet and midnight blue, a celestial aura of orbiting star-motes encircling their outstretched hands. They float above an ancient observatory platform under a vast star-filled sky, reality gently warping at the edges of their influence. They weave the fabric of the cosmos itself."
+    tier: weak

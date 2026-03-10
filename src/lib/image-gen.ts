@@ -13,7 +13,7 @@ export class ContentPolicyError extends Error {
 }
 
 interface GenerateOptions {
-  aspectRatio: "16:9" | "1:1";
+  aspectRatio: "16:9" | "1:1" | "2:3";
   entityType: EntityType;
   removeBackground?: boolean;
   /** Seed image for img2img generation (base64 data URI or URL). */
@@ -26,6 +26,7 @@ interface GenerateOptions {
 const GEN_SIZE_MAP: Record<string, { width: number; height: number }> = {
   "16:9": { width: 1024, height: 576 },
   "1:1": { width: 1024, height: 1024 },
+  "2:3": { width: 768, height: 1152 },
 };
 
 // Final output sizes per entity type
@@ -35,6 +36,9 @@ const OUTPUT_SIZE_MAP: Record<EntityType, { width: number; height: number }> = {
   item: { width: 256, height: 256 },
   ability: { width: 256, height: 256 },
 };
+
+// Portrait output: 2:3 portrait orientation, saved as JPEG like rooms
+const PORTRAIT_OUTPUT_SIZE = { width: 768, height: 1152 };
 
 // Rooms use JPEG (no transparency needed, ~20x smaller than PNG)
 const ROOM_JPEG_QUALITY = 0.85;
@@ -125,8 +129,17 @@ export async function generateImage(
     }
   }
 
-  // Downscale to target output size and compress (JPEG for rooms, PNG for others)
-  bytes = await recompressForEntityType(bytes, options.entityType);
+  // Downscale to target output size and compress (JPEG for rooms/portraits, PNG for others)
+  if (options.aspectRatio === "2:3") {
+    bytes = await recompressImage(bytes, {
+      targetWidth: PORTRAIT_OUTPUT_SIZE.width,
+      targetHeight: PORTRAIT_OUTPUT_SIZE.height,
+      format: "image/jpeg",
+      quality: ROOM_JPEG_QUALITY,
+    });
+  } else {
+    bytes = await recompressForEntityType(bytes, options.entityType);
+  }
 
   return { bytes, bgRemovalFailed };
 }

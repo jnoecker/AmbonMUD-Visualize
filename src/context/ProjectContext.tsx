@@ -13,6 +13,7 @@ import type { Entity, EntityType, ParsedZone } from "../types/entities";
 import { applyEditsToEntity } from "../lib/entity-edits";
 import type { SpritePromptTemplate } from "../types/sprites";
 import { detectSpriteZone } from "../lib/sprite-parser";
+import { detectPortraitZone } from "../lib/portrait-parser";
 import { detectAbilityYaml, parseAbilities } from "../lib/ability-parser";
 import {
   createProject,
@@ -81,6 +82,7 @@ interface ProjectContextValue {
   batchApprove: () => Promise<number>;
 
   updateSpriteTemplate: (zoneKey: string, template: SpritePromptTemplate) => Promise<void>;
+  updatePortraitTemplate: (zoneKey: string, template: import("../types/portraits").PortraitPromptTemplate) => Promise<void>;
 
   addCustomAsset: (
     zoneKey: string,
@@ -209,6 +211,18 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
             updatedProj.zones[zone.zoneName] = {
               ...updatedProj.zones[zone.zoneName],
               spriteConfig: config,
+            };
+            projUpdated = true;
+          }
+        }
+
+        // Auto-detect portrait zones
+        if (!zone.portraitConfig) {
+          const config = detectPortraitZone(parsedZone.entities);
+          if (config) {
+            updatedProj.zones[zone.zoneName] = {
+              ...updatedProj.zones[zone.zoneName],
+              portraitConfig: config,
             };
             projUpdated = true;
           }
@@ -486,6 +500,24 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         zones: {
           ...p.zones,
           [zoneKey]: { ...zone, spriteTemplate: template },
+        },
+      };
+      await commitProject(next);
+    },
+    [commitProject]
+  );
+
+  const updatePortraitTemplate = useCallback(
+    async (zoneKey: string, template: import("../types/portraits").PortraitPromptTemplate) => {
+      const p = projectRef.current;
+      if (!p) return;
+      const zone = p.zones[zoneKey];
+      if (!zone) return;
+      const next = {
+        ...p,
+        zones: {
+          ...p.zones,
+          [zoneKey]: { ...zone, portraitTemplate: template },
         },
       };
       await commitProject(next);
@@ -1137,6 +1169,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
         batchApprove,
         addCustomAsset,
         updateSpriteTemplate,
+        updatePortraitTemplate,
         updateDefaultImage,
         getDefaultImageDataUrl,
         setViewingVariant: setViewingVariantIndex,
