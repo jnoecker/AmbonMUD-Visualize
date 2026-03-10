@@ -102,11 +102,11 @@ export const CLASS_DEFINITIONS: Record<string, { displayName: string; outfitDesc
   },
   veil: {
     displayName: "Veil",
-    outfitDescription: "shadow-wrapped light armor, deep hood obscuring face, dual curved daggers, half-visible in shadow",
+    outfitDescription: "shadow-wrapped dark leather armor, deep hood pulled low casting the face in darkness, two long curved daggers held prominently in both hands with blades gleaming, wisps of living shadow curling off the shoulders and arms like black smoke, crouched mid-strike assassin pose",
   },
   binder: {
     displayName: "Binder",
-    outfitDescription: "anti-magic regalia with rune-etched plates, heavy spell-chain gauntlets with glowing chains extending outward binding and capturing a dissolving spell in midair, floating broken rune links orbiting both arms, arcane suppression sigils burning on the ground beneath their feet, hands crackling with nullification energy",
+    outfitDescription: "anti-magic regalia with heavy rune-etched plate armor, both arms raised with thick glowing chains launching outward from the gauntlets and wrapping around a large visible spell being crushed and shattered into dissolving fragments, bright amber runes blazing along every chain link, a ring of suppression sigils burning on the ground, dramatic anti-magic energy radiating outward",
   },
   stormblade: {
     displayName: "Stormblade",
@@ -118,7 +118,7 @@ export const CLASS_DEFINITIONS: Record<string, { displayName: string; outfitDesc
   },
   starweaver: {
     displayName: "Starweaver",
-    outfitDescription: "cosmic robes with shifting star patterns and constellation embroidery, actively weaving threads of cosmic energy between outstretched hands — visible strands of starlight and nebula color connecting their fingertips in an intricate cat's-cradle of celestial power, tiny orbiting stars and miniature galaxies swirling around the woven threads, the air warping with cosmic distortion",
+    outfitDescription: "cosmic robes with shifting star patterns and constellation embroidery billowing with energy, both hands raised and actively weaving a large brilliant web of cosmic energy — thick visible strands of blazing starlight and vivid nebula color stretching between all ten fingertips, a dense swirl of orbiting stars and bright miniature galaxies spinning rapidly around the figure, strong celestial light radiating outward from the weaving, the entire scene crackling with dramatic cosmic power",
   },
 };
 
