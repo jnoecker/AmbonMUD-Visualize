@@ -42,7 +42,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   alorae: {
     displayName: "Alorae",
-    bodyDescription: "a glowing humanoid figure made entirely of prismatic refracting light — the body itself shimmers with vivid rainbow color bands (pink, cyan, gold, violet) like light through a crystal prism. Skin is replaced by shifting iridescent luminescence, see-through in places revealing a bright white core glow inside. The face is a smooth featureless oval of bright pearlescent light with no eyes nose or mouth. Hands and feet glow white-hot and fade into sparkling motes at the fingertips and toes. Hair is streaming rays of refracted light. The entire figure radiates a strong bright prismatic aura halo",
+    bodyDescription: "a glowing humanoid figure made entirely of prismatic refracting light, wearing a flowing robe of crystallized light that covers the chest and torso — the body itself shimmers with vivid rainbow color bands (pink, cyan, gold, violet) like light through a crystal prism. Skin is replaced by shifting iridescent luminescence, see-through in places revealing a bright white core glow inside. The face is a smooth featureless oval of bright pearlescent light with no eyes nose or mouth. Hands and feet glow white-hot and fade into sparkling motes at the fingertips and toes. Hair is streaming rays of refracted light. The entire figure radiates a strong bright prismatic aura halo, completely flat chest with no gendered features",
   },
   lustriae: {
     displayName: "Lustriae",
