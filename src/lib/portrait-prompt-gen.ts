@@ -43,7 +43,7 @@ export async function generatePortraitTemplate(
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-5-20250929",
-    max_tokens: 3000,
+    max_tokens: 5000,
     system: `You are an expert image prompt engineer for AI image generators. You work EXCLUSIVELY within the Surreal Gentle Magic (surreal_softmagic_v1) design system.
 
 ## CRITICAL STYLE RULES — every portrait MUST follow these:
@@ -97,8 +97,20 @@ Zone atmosphere: ${zoneVibe}`,
     throw new Error("Unexpected response format from Claude");
   }
 
-  const jsonText = block.text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
-  const parsed = JSON.parse(jsonText);
+  let jsonText = block.text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
+
+  // Fix unescaped newlines inside JSON string values — Claude sometimes
+  // outputs multi-line strings without escaping the newlines.
+  jsonText = jsonText.replace(/(?<=:\s*"(?:[^"\\]|\\.)*)(\r?\n)(?=[^"]*")/g, "\\n");
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(jsonText);
+  } catch (e) {
+    // Log the raw text for debugging, then rethrow with context
+    console.error("[portrait-prompt-gen] Failed to parse JSON response. Raw text:", jsonText.slice(0, 500));
+    throw new Error(`Failed to parse template JSON: ${(e as Error).message}. The LLM response may have been truncated or malformed. Try regenerating.`);
+  }
   if (!parsed.raceTemplate || !parsed.classTemplate || !parsed.raceDescriptions || !parsed.classOutfits) {
     throw new Error("Invalid template response: missing required fields");
   }
