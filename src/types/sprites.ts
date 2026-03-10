@@ -62,7 +62,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   medusae: {
     displayName: "Medusae",
-    bodyDescription: "Bioluminescent jellyfish humanoid with a humanoid torso and limbs, translucent flowing tendrils for hair, pulsing color glow beneath translucent skin, graceful aquatic form, wearing a flowing draped robe of luminous fabric that covers the chest and torso, androgynous with no gendered features",
+    bodyDescription: "Bioluminescent jellyfish humanoid with a humanoid torso and limbs, translucent flowing tendrils for hair, pulsing color glow beneath translucent skin, graceful aquatic form, wearing a high-collared loose flowing robe of luminous fabric that completely covers from neck to feet with no exposed chest or cleavage, narrow shoulders, completely flat chest, boyish androgynous figure with no feminine curves whatsoever",
   },
   kitsarae: {
     displayName: "Kitsarae",
