@@ -46,7 +46,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   lustriae: {
     displayName: "Lustriae",
-    bodyDescription: "Petite fae figure, eternally youthful androgynous face, large vivid brightly-colored butterfly wings with bold jewel-tone stained-glass patterns and a soft glowing luminous aura outline around each wing edge, short and slight build, wings fully opaque with saturated color not translucent",
+    bodyDescription: "Petite fae figure wearing a leafy tunic that covers the chest and torso, eternally youthful androgynous face with sharp angular features and short-cropped hair, large vivid brightly-colored butterfly wings with bold jewel-tone stained-glass patterns and a soft glowing luminous aura outline around each wing edge, short and slight build with narrow shoulders and completely flat chest, wings fully opaque with saturated color not translucent, no gendered features, androgynous not feminine",
   },
   lithae: {
     displayName: "Lithae",
@@ -54,7 +54,7 @@ export const RACE_DEFINITIONS: Record<string, { displayName: string; bodyDescrip
   },
   pyrae: {
     displayName: "Pyrae",
-    bodyDescription: "Humanoid figure made of living fire, body is flickering flame not flesh, no skin visible — torso and limbs are shaped fire with a molten core glowing through, head wreathed in flame instead of hair, heat shimmer distorting the air around them, embers trailing from extremities",
+    bodyDescription: "Humanoid figure made of living fire wearing a chest plate of dark iron that covers the torso, body is flickering flame not flesh, no skin visible — torso and limbs are shaped fire with a molten core glowing through, head wreathed in flame instead of hair, heat shimmer distorting the air around them, embers trailing from extremities, completely flat chest with no gendered features",
   },
   animae: {
     displayName: "Animae",
