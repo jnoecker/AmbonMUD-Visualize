@@ -106,7 +106,7 @@ export const CLASS_DEFINITIONS: Record<string, { displayName: string; outfitDesc
   },
   binder: {
     displayName: "Binder",
-    outfitDescription: "anti-magic regalia with rune-etched plates, spell-chain gauntlets with floating broken rune links, suppression aura",
+    outfitDescription: "anti-magic regalia with rune-etched plates, heavy spell-chain gauntlets with glowing chains extending outward binding and capturing a dissolving spell in midair, floating broken rune links orbiting both arms, arcane suppression sigils burning on the ground beneath their feet, hands crackling with nullification energy",
   },
   stormblade: {
     displayName: "Stormblade",
@@ -118,7 +118,7 @@ export const CLASS_DEFINITIONS: Record<string, { displayName: string; outfitDesc
   },
   starweaver: {
     displayName: "Starweaver",
-    outfitDescription: "cosmic robes with shifting star patterns and constellation embroidery, hands glowing with celestial aura, no weapon",
+    outfitDescription: "cosmic robes with shifting star patterns and constellation embroidery, actively weaving threads of cosmic energy between outstretched hands — visible strands of starlight and nebula color connecting their fingertips in an intricate cat's-cradle of celestial power, tiny orbiting stars and miniature galaxies swirling around the woven threads, the air warping with cosmic distortion",
   },
 };
 
