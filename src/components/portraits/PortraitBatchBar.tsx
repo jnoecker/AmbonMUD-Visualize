@@ -24,8 +24,8 @@ interface BatchProgress {
   lastError?: string;
 }
 
-/** FLUX Dev for best quality on cinematic portraits. */
-const PORTRAIT_MODEL = "runware:101@1";
+/** FLUX 2 for portraits — same price as Schnell, good quality. */
+const PORTRAIT_MODEL = "runware:400@2";
 
 /** Concurrent generation limit. */
 const CONCURRENCY = 4;
@@ -109,17 +109,15 @@ export function PortraitBatchBar({
         progress.currentEntity = entity.title;
         setBatchProgress({ ...progress });
 
-        let prompt = getAsset(zoneKey, entityId)?.currentPrompt || "";
         let succeeded = false;
 
         for (let attempt = 0; attempt < 2 && !succeeded; attempt++) {
           try {
-            if (!prompt) {
-              const dims = parsePortraitId(entityId);
-              if (!dims) return;
-              prompt = fillPortraitTemplate(template, dims);
-              await updatePrompt(zoneKey, entityId, prompt);
-            }
+            // Always refill from template to pick up template changes
+            const dims = parsePortraitId(entityId);
+            if (!dims) return;
+            const prompt = fillPortraitTemplate(template, dims);
+            await updatePrompt(zoneKey, entityId, prompt);
 
             if (controller.signal.aborted) return;
 
@@ -174,6 +172,21 @@ export function PortraitBatchBar({
   const handleAbort = useCallback(() => {
     abortController?.abort();
   }, [abortController]);
+
+  const handleRefillPrompts = useCallback(async () => {
+    if (!portraitTemplate) return;
+    const template: PortraitPromptTemplate = portraitTemplate;
+    let count = 0;
+    for (const entity of entities) {
+      if (entity.type !== "mob") continue;
+      const dims = parsePortraitId(entity.id);
+      if (!dims) continue;
+      const prompt = fillPortraitTemplate(template, dims);
+      await updatePrompt(zoneKey, entity.id, prompt);
+      count++;
+    }
+    setTemplateSuccess(`Refilled ${count} prompts from template.`);
+  }, [portraitTemplate, entities, zoneKey, updatePrompt]);
 
   const handleBatchApprove = useCallback(async () => {
     const count = await batchApprove();
@@ -235,6 +248,13 @@ export function PortraitBatchBar({
             disabled={running}
           >
             Regenerate All
+          </button>
+          <button
+            className="soft-button soft-button--small"
+            onClick={handleRefillPrompts}
+            disabled={running}
+          >
+            Refill Prompts
           </button>
           <button
             className="soft-button soft-button--small"

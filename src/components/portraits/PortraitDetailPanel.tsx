@@ -18,8 +18,8 @@ interface PortraitDetailPanelProps {
   onBack: () => void;
 }
 
-/** FLUX Dev for best quality on cinematic portraits. */
-const PORTRAIT_MODEL = "runware:101@1";
+/** FLUX 2 for portraits — same price as Schnell, good quality. */
+const PORTRAIT_MODEL = "runware:400@2";
 
 export function PortraitDetailPanel({
   zoneKey,
