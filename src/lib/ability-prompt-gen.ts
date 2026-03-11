@@ -11,20 +11,31 @@ const SYSTEM_PROMPT = `You are an expert image prompt engineer for AI image gene
 Your task: given a game ability or status effect definition, create an image generation prompt for a symbolic icon. The icon should:
 - Be a single centered symbolic/iconic illustration (NOT a scene, NOT a character portrait)
 - Visually represent the ability's effect and flavor through symbolic imagery
-- Use color cues matching the ability's school/type:
-  - Warrior/physical: warm golds, amber, burnished bronze tones
-  - Mage/arcane: deep purples, electric blues, crystalline whites
-  - Mage/fire: warm oranges, deep reds, ember glows (but soft, not harsh)
-  - Mage/ice: pale blues, silver-whites, frost tones
-  - Cleric/holy: warm whites, soft golds, gentle radiance
-  - Rogue/shadow: deep indigos, smoky grays, midnight purples
-  - Rogue/poison: sickly greens, violet undertones
+- Use color cues matching the ability's class and effect:
+
+  CLASS COLOR PALETTES:
+  - Bulwark (defensive tank): warm golds, burnished steel, shield shapes, fortress silhouettes, heavy metallic tones
+  - Warden (aggressive fighter): warm amber, rust reds, earthy brown, sharp weapon motifs, fur and leather textures
+  - Arcanist (scholarly mage): deep purples, electric blues, crystalline whites, arcane sigils, glowing tomes
+  - Faeweaver (nature mage): living greens, floral pinks, vine tendrils, petal formations, budding flowers
+  - Necromancer (death + clockwork): sickly greens, clockwork brass, bone whites, ghostly teal, gear motifs
+  - Veil (shadow assassin): deep indigos, midnight purples, smoky grays, dagger silhouettes, living shadow wisps
+  - Binder (anti-magic enforcer): blazing amber, golden chains, rune circles, suppression barriers, dissolving spell fragments
+  - Stormblade (lightning warrior): electric blues, white lightning, storm grays, zig-zag energy streaks, crackling arcs
+  - Herald (divine cleric): warm whites, soft golds, holy radiance, sacred symbols, gentle divine glow
+  - Starweaver (cosmic mage): cosmic purples, nebula pinks, stellar whites, constellation patterns, swirling galaxies
+
+  EFFECT COLOR MODIFIERS:
   - Healing/regeneration: warm golden-white light, green life energy
   - Shields/protection: translucent barriers, dome shapes, soft glowing edges
   - Damage-over-time: smoldering embers, dripping venom, crackling energy
   - Stun/crowd-control: stars, shattered glass, frozen shards
   - Buffs: ascending arrows, radiant auras, empowering glows
   - Debuffs: descending spirals, dark mists, weakening auras
+  - Area effects: radiating rings, expanding waves, ground sigils
+  - Taunt/threat: blazing eye motifs, roaring silhouettes, magnetic pull
+
+- Combine the class palette with the effect modifier — e.g., a Faeweaver heal uses living greens with golden-white life energy; a Veil damage-over-time uses deep indigos with smoldering shadow embers
 - AVOID depicting full characters, hands, or faces — keep it iconic and symbolic
 - The icon should read clearly at small sizes (256x256)
 

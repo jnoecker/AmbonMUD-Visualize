@@ -5,6 +5,7 @@ import { useGeneration } from "../../context/GenerationContext";
 import { AbilityCell } from "./AbilityCell";
 import { AbilityDetailPanel } from "./AbilityDetailPanel";
 import { getAbilityFromEntity } from "../../lib/ability-parser";
+import { getClassColor } from "./class-colors";
 import type { Entity } from "../../types/entities";
 import type { AbilityConfig } from "../../types/abilities";
 import type { ZoneData } from "../../types/project";
@@ -17,17 +18,15 @@ interface AbilityGridProps {
 }
 
 const STATUS_EFFECTS_TAB = "__STATUS_EFFECTS__";
-
-const CLASS_COLORS: Record<string, string> = {
-  WARRIOR: "var(--color-gold)",
-  MAGE: "var(--color-lavender)",
-  CLERIC: "var(--color-pale-blue)",
-  ROGUE: "var(--color-dusty-rose)",
-  [STATUS_EFFECTS_TAB]: "var(--color-moss-green)",
-};
+const STATUS_EFFECTS_COLOR = "#8da97b";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}
+
+function getTabColor(tab: string): string {
+  if (tab === STATUS_EFFECTS_TAB) return STATUS_EFFECTS_COLOR;
+  return getClassColor(tab);
 }
 
 export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridProps) {
@@ -226,7 +225,7 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
                   key={tab}
                   className={`ability-class-tab${tab === activeTab ? " ability-class-tab--active" : ""}`}
                   onClick={() => setActiveTab(tab)}
-                  style={tab === activeTab ? { borderBottomColor: CLASS_COLORS[tab] || "var(--color-lavender)" } : undefined}
+                  style={tab === activeTab ? { borderBottomColor: getTabColor(tab) } : undefined}
                 >
                   {label}
                   <span className="ability-class-tab-count">{count}</span>

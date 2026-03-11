@@ -8,6 +8,7 @@ import { PromptEditor } from "../detail/PromptEditor";
 import { ActionBar } from "../detail/ActionBar";
 import { VariantStrip } from "../detail/VariantStrip";
 import type { AbilityDefinition } from "../../types/abilities";
+import { getClassColor } from "./class-colors";
 
 interface AbilityDetailPanelProps {
   zoneKey: string;
@@ -173,8 +174,8 @@ export function AbilityDetailPanel({
         </button>
         <h3 className="sprite-detail-title">{entity.title}</h3>
         {ability && (
-          <span className="ability-detail-meta">
-            {ability.requiredClass} &middot; Lv {ability.levelRequired} &middot; {ability.effect.type.replace(/_/g, " ")}
+          <span className="ability-detail-meta" style={{ color: getClassColor(ability.requiredClass) }}>
+            {ability.requiredClass.charAt(0).toUpperCase() + ability.requiredClass.slice(1).toLowerCase()} &middot; Lv {ability.levelRequired} &middot; {ability.effect.type.replace(/_/g, " ")}
           </span>
         )}
       </div>
