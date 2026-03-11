@@ -7,7 +7,7 @@ import { ImagePreview } from "../detail/ImagePreview";
 import { PromptEditor } from "../detail/PromptEditor";
 import { ActionBar } from "../detail/ActionBar";
 import { VariantStrip } from "../detail/VariantStrip";
-import type { AbilityDefinition } from "../../types/abilities";
+import type { AbilityDefinition, StatusEffectDefinition } from "../../types/abilities";
 import { getClassColor } from "./class-colors";
 
 interface AbilityDetailPanelProps {
@@ -56,7 +56,10 @@ export function AbilityDetailPanel({
   const generatingImage = job?.type === "image";
   const error = localError || genError || null;
 
-  const ability = entity?.rawYaml as unknown as AbilityDefinition | undefined;
+  const raw = entity?.rawYaml as Record<string, unknown> | undefined;
+  const isAbility = raw && "requiredClass" in raw && "effect" in raw;
+  const ability = isAbility ? (raw as unknown as AbilityDefinition) : undefined;
+  const statusEffect = !isAbility && raw ? (raw as unknown as StatusEffectDefinition) : undefined;
 
   useEffect(() => {
     if (currentVariant) {
@@ -176,6 +179,12 @@ export function AbilityDetailPanel({
         {ability && (
           <span className="ability-detail-meta" style={{ color: getClassColor(ability.requiredClass) }}>
             {ability.requiredClass.charAt(0).toUpperCase() + ability.requiredClass.slice(1).toLowerCase()} &middot; Lv {ability.levelRequired} &middot; {ability.effect.type.replace(/_/g, " ")}
+          </span>
+        )}
+        {statusEffect && (
+          <span className="ability-detail-meta" style={{ color: "#8da97b" }}>
+            Status Effect &middot; {statusEffect.effectType}
+            {statusEffect.durationMs ? ` \u00b7 ${(statusEffect.durationMs / 1000).toFixed(0)}s` : ""}
           </span>
         )}
       </div>
