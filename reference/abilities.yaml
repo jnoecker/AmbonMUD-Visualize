@@ -1,0 +1,1749 @@
+classStartRooms:
+  BULWARK: training_grounds
+  WARDEN: wild_den
+  ARCANIST: arcane_tower
+  FAEWEAVER: grove_heart
+  NECROMANCER: clockwork_crypt
+  VEIL: shadow_alcove
+  BINDER: seal_chamber
+  STORMBLADE: storm_spire
+  HERALD: radiant_chapel
+  STARWEAVER: observatory
+
+abilities:
+  definitions:
+    # ═══════════════════════════════════════════
+    #  BULWARK — Defensive Tank
+    # ═══════════════════════════════════════════
+    shield_bash:
+      displayName: Shield Bash
+      manaCost: 5
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: BULWARK
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 4
+        maxDamage: 10
+        flatThreat: 40.0
+        margin: 8.0
+      description: A brutal slam with a tower shield that staggers the target and draws its fury.
+      image: ""
+
+    iron_wall:
+      displayName: Iron Wall
+      manaCost: 15
+      cooldownMs: 8000
+      levelRequired: 5
+      targetType: SELF
+      requiredClass: BULWARK
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: iron_wall_shield
+      description: Brace behind an impenetrable wall of burnished steel, absorbing incoming blows.
+      image: ""
+
+    fortress_stance:
+      displayName: Fortress Stance
+      manaCost: 20
+      cooldownMs: 15000
+      levelRequired: 10
+      targetType: SELF
+      requiredClass: BULWARK
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: fortress_stance_buff
+      description: Plant your feet and become an immovable fortress, greatly increasing armor.
+      image: ""
+
+    guardians_challenge:
+      displayName: Guardian's Challenge
+      manaCost: 25
+      cooldownMs: 12000
+      levelRequired: 15
+      targetType: ENEMY
+      requiredClass: BULWARK
+      effect:
+        type: TAUNT
+        flatThreat: 200.0
+        margin: 0.0
+      description: A thunderous battle cry that compels the target to face you, ignoring all others.
+      image: ""
+
+    bulwarks_advance:
+      displayName: Bulwark's Advance
+      manaCost: 20
+      cooldownMs: 6000
+      levelRequired: 20
+      targetType: ENEMY
+      requiredClass: BULWARK
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 20
+        maxDamage: 35
+        flatThreat: 80.0
+        margin: 12.0
+      description: Charge forward behind your shield, crashing into the enemy with the weight of a fortress gate.
+      image: ""
+
+    aegis_of_steel:
+      displayName: Aegis of Steel
+      manaCost: 35
+      cooldownMs: 20000
+      levelRequired: 25
+      targetType: ALLY
+      requiredClass: BULWARK
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: aegis_shield
+      description: Extend a shimmering barrier of golden steel around an ally, absorbing damage on their behalf.
+      image: ""
+
+    earthquake_slam:
+      displayName: Earthquake Slam
+      manaCost: 40
+      cooldownMs: 18000
+      levelRequired: 30
+      targetType: ALL_ENEMIES
+      requiredClass: BULWARK
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 25
+        maxDamage: 45
+        flatThreat: 60.0
+        margin: 15.0
+      description: Slam your shield into the ground, sending shockwaves through the earth that stagger all foes.
+      image: ""
+
+    unbreakable_will:
+      displayName: Unbreakable Will
+      manaCost: 50
+      cooldownMs: 30000
+      levelRequired: 35
+      targetType: SELF
+      requiredClass: BULWARK
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: unbreakable_will_buff
+      description: Summon an inner resolve that makes you immune to crowd control and reduces all damage taken.
+      image: ""
+
+    titans_grasp:
+      displayName: Titan's Grasp
+      manaCost: 55
+      cooldownMs: 15000
+      levelRequired: 40
+      targetType: ENEMY
+      requiredClass: BULWARK
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 50
+        maxDamage: 75
+        flatThreat: 150.0
+        margin: 20.0
+      description: Seize the enemy in an unbreakable grip and crush them against your shield like a vice.
+      image: ""
+
+    bastion_eternal:
+      displayName: Bastion Eternal
+      manaCost: 80
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: SELF
+      requiredClass: BULWARK
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: bastion_eternal_shield
+      description: Become an avatar of protection — golden light encases your body in living fortress walls that absorb tremendous punishment.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  WARDEN — Aggressive Fighter
+    # ═══════════════════════════════════════════
+    rending_strike:
+      displayName: Rending Strike
+      manaCost: 5
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: WARDEN
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 6
+        maxDamage: 14
+        margin: 10.0
+      description: A savage slash that tears through armor, leaving a ragged wound.
+      image: ""
+
+    feral_lunge:
+      displayName: Feral Lunge
+      manaCost: 12
+      cooldownMs: 5000
+      levelRequired: 5
+      targetType: ENEMY
+      requiredClass: WARDEN
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 10
+        maxDamage: 22
+        margin: 12.0
+      description: Leap at your prey with predatory speed, closing the distance in a blur of fur and steel.
+      image: ""
+
+    battle_fury:
+      displayName: Battle Fury
+      manaCost: 18
+      cooldownMs: 15000
+      levelRequired: 10
+      targetType: SELF
+      requiredClass: WARDEN
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: battle_fury_buff
+      description: Unleash your primal rage, greatly increasing attack speed and damage.
+      image: ""
+
+    cleave:
+      displayName: Cleave
+      manaCost: 25
+      cooldownMs: 8000
+      levelRequired: 15
+      targetType: ALL_ENEMIES
+      requiredClass: WARDEN
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 15
+        maxDamage: 28
+        margin: 10.0
+      description: A wide, sweeping arc of your blade that cuts through everything in its path.
+      image: ""
+
+    savage_roar:
+      displayName: Savage Roar
+      manaCost: 20
+      cooldownMs: 12000
+      levelRequired: 20
+      targetType: SELF
+      requiredClass: WARDEN
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: savage_roar_buff
+      description: Let loose a terrifying roar that empowers your strikes and unnerves nearby enemies.
+      image: ""
+
+    bloodletting:
+      displayName: Bloodletting
+      manaCost: 30
+      cooldownMs: 10000
+      levelRequired: 25
+      targetType: ENEMY
+      requiredClass: WARDEN
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: bleed_dot
+      description: Open a deep arterial wound that bleeds profusely, sapping the target's strength over time.
+      image: ""
+
+    whirlwind:
+      displayName: Whirlwind
+      manaCost: 40
+      cooldownMs: 15000
+      levelRequired: 30
+      targetType: ALL_ENEMIES
+      requiredClass: WARDEN
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 30
+        maxDamage: 50
+        margin: 15.0
+      description: Spin in a devastating cyclone of blades, shredding all foes caught in the tempest.
+      image: ""
+
+    primal_rage:
+      displayName: Primal Rage
+      manaCost: 50
+      cooldownMs: 30000
+      levelRequired: 35
+      targetType: SELF
+      requiredClass: WARDEN
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: primal_rage_buff
+      description: Surrender to pure animal instinct — your attacks become a frenzy of claw and steel.
+      image: ""
+
+    execution_strike:
+      displayName: Execution Strike
+      manaCost: 55
+      cooldownMs: 18000
+      levelRequired: 40
+      targetType: ENEMY
+      requiredClass: WARDEN
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 60
+        maxDamage: 95
+        margin: 20.0
+      description: A single, perfectly placed killing blow aimed at a vital point. Devastating against wounded prey.
+      image: ""
+
+    wardens_fury:
+      displayName: Warden's Fury
+      manaCost: 85
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: WARDEN
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 70
+        maxDamage: 110
+        margin: 25.0
+      description: An unstoppable rampage — blade and fury become one as you carve through every enemy standing.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  ARCANIST — Scholarly Mage
+    # ═══════════════════════════════════════════
+    arcane_bolt:
+      displayName: Arcane Bolt
+      manaCost: 8
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: ARCANIST
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 7
+        maxDamage: 15
+        margin: 8.0
+      description: A focused lance of crystalline arcane energy that streaks toward the target.
+      image: ""
+
+    mana_shield:
+      displayName: Mana Shield
+      manaCost: 15
+      cooldownMs: 12000
+      levelRequired: 5
+      targetType: SELF
+      requiredClass: ARCANIST
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: mana_shield_effect
+      description: Weave ambient mana into a shimmering barrier that absorbs incoming damage.
+      image: ""
+
+    crystalline_barrage:
+      displayName: Crystalline Barrage
+      manaCost: 25
+      cooldownMs: 10000
+      levelRequired: 10
+      targetType: ALL_ENEMIES
+      requiredClass: ARCANIST
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 12
+        maxDamage: 22
+        margin: 10.0
+      description: Shatter the air into razor-sharp crystal shards that rain down upon all enemies.
+      image: ""
+
+    ether_drain:
+      displayName: Ether Drain
+      manaCost: 20
+      cooldownMs: 8000
+      levelRequired: 15
+      targetType: ENEMY
+      requiredClass: ARCANIST
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 18
+        maxDamage: 30
+        margin: 10.0
+      description: Siphon raw magical essence from the target, weakening their spells and restoring your reserves.
+      image: ""
+
+    sigil_of_binding:
+      displayName: Sigil of Binding
+      manaCost: 30
+      cooldownMs: 18000
+      levelRequired: 20
+      targetType: ENEMY
+      requiredClass: ARCANIST
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: arcane_stun
+      description: Inscribe a glowing sigil beneath the target that freezes them in place, trapped between moments.
+      image: ""
+
+    tome_of_storms:
+      displayName: Tome of Storms
+      manaCost: 40
+      cooldownMs: 15000
+      levelRequired: 25
+      targetType: ALL_ENEMIES
+      requiredClass: ARCANIST
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 28
+        maxDamage: 48
+        margin: 15.0
+      description: Open the forbidden tome and unleash a tempest of arcane lightning from its pages.
+      image: ""
+
+    arcane_surge:
+      displayName: Arcane Surge
+      manaCost: 45
+      cooldownMs: 25000
+      levelRequired: 30
+      targetType: SELF
+      requiredClass: ARCANIST
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: arcane_surge_buff
+      description: Channel pure arcane energy through your body, amplifying all spells for a brief but devastating surge.
+      image: ""
+
+    void_fracture:
+      displayName: Void Fracture
+      manaCost: 50
+      cooldownMs: 15000
+      levelRequired: 35
+      targetType: ENEMY
+      requiredClass: ARCANIST
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 55
+        maxDamage: 80
+        margin: 18.0
+      description: Tear a fracture in reality itself, blasting the target with raw energy from the spaces between worlds.
+      image: ""
+
+    spellweave:
+      displayName: Spellweave
+      manaCost: 55
+      cooldownMs: 20000
+      levelRequired: 40
+      targetType: ENEMY
+      requiredClass: ARCANIST
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: spellweave_debuff
+      description: Unravel the target's magical defenses, leaving them vulnerable to all forms of arcane assault.
+      image: ""
+
+    astral_annihilation:
+      displayName: Astral Annihilation
+      manaCost: 90
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: ARCANIST
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 75
+        maxDamage: 120
+        margin: 25.0
+      description: Open a rift to the astral plane — blinding crystalline light pours through, annihilating all in its path.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  FAEWEAVER — Nature Mage
+    # ═══════════════════════════════════════════
+    thornlash:
+      displayName: Thornlash
+      manaCost: 8
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: FAEWEAVER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 5
+        maxDamage: 12
+        margin: 8.0
+      description: Lash the target with a barbed vine whip that blooms with thorns on impact.
+      image: ""
+
+    bloom:
+      displayName: Bloom
+      manaCost: 12
+      cooldownMs: 5000
+      levelRequired: 5
+      targetType: ALLY
+      requiredClass: FAEWEAVER
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 15
+        maxHeal: 25
+      description: Coax healing blossoms to unfurl around a wounded ally, mending flesh with living light.
+      image: ""
+
+    vine_snare:
+      displayName: Vine Snare
+      manaCost: 18
+      cooldownMs: 12000
+      levelRequired: 10
+      targetType: ENEMY
+      requiredClass: FAEWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: vine_root
+      description: Erupting vines burst from the ground and coil around the target's legs, rooting them in place.
+      image: ""
+
+    petal_storm:
+      displayName: Petal Storm
+      manaCost: 28
+      cooldownMs: 10000
+      levelRequired: 15
+      targetType: ALL_ENEMIES
+      requiredClass: FAEWEAVER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 14
+        maxDamage: 26
+        margin: 10.0
+      description: A whirlwind of razor-edged petals that slices through all enemies with deceptive beauty.
+      image: ""
+
+    natures_embrace:
+      displayName: Nature's Embrace
+      manaCost: 30
+      cooldownMs: 8000
+      levelRequired: 20
+      targetType: ALLY
+      requiredClass: FAEWEAVER
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 35
+        maxHeal: 55
+      description: Wrap an ally in a cocoon of warm moss and golden pollen that rapidly knits their wounds.
+      image: ""
+
+    barkskin:
+      displayName: Barkskin
+      manaCost: 35
+      cooldownMs: 20000
+      levelRequired: 25
+      targetType: ALLY
+      requiredClass: FAEWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: barkskin_shield
+      description: Layer an ally's skin with living bark that hardens into natural armor, absorbing blows.
+      image: ""
+
+    wildgrowth:
+      displayName: Wildgrowth
+      manaCost: 40
+      cooldownMs: 15000
+      levelRequired: 30
+      targetType: ALLY
+      requiredClass: FAEWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: wildgrowth_hot
+      description: Plant a seed of vitality within an ally that blossoms over time, steadily restoring their health.
+      image: ""
+
+    fungal_miasma:
+      displayName: Fungal Miasma
+      manaCost: 45
+      cooldownMs: 18000
+      levelRequired: 35
+      targetType: ALL_ENEMIES
+      requiredClass: FAEWEAVER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 35
+        maxDamage: 55
+        margin: 15.0
+      description: Release a cloud of luminous toxic spores that chokes and poisons all enemies in the area.
+      image: ""
+
+    sylvan_grace:
+      displayName: Sylvan Grace
+      manaCost: 60
+      cooldownMs: 25000
+      levelRequired: 40
+      targetType: ALL_ALLIES
+      requiredClass: FAEWEAVER
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 40
+        maxHeal: 65
+      description: Channel the forest's ancient heartbeat, washing all allies in a wave of verdant healing energy.
+      image: ""
+
+    verdant_apocalypse:
+      displayName: Verdant Apocalypse
+      manaCost: 85
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: FAEWEAVER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 65
+        maxDamage: 105
+        margin: 25.0
+      description: The earth splits open and an explosion of primordial growth erupts — titanic roots, towering fungi, and thorn walls consume everything.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  NECROMANCER — Death + Clockwork
+    # ═══════════════════════════════════════════
+    soul_bolt:
+      displayName: Soul Bolt
+      manaCost: 8
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: NECROMANCER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 6
+        maxDamage: 14
+        margin: 8.0
+      description: Hurl a bolt of ghostly green energy torn from the space between life and death.
+      image: ""
+
+    clockwork_servant:
+      displayName: Clockwork Servant
+      manaCost: 15
+      cooldownMs: 20000
+      levelRequired: 5
+      targetType: SELF
+      requiredClass: NECROMANCER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: clockwork_servant_buff
+      description: Assemble a small clockwork automaton from bone and brass that fights alongside you.
+      image: ""
+
+    life_siphon:
+      displayName: Life Siphon
+      manaCost: 18
+      cooldownMs: 6000
+      levelRequired: 10
+      targetType: ENEMY
+      requiredClass: NECROMANCER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 12
+        maxDamage: 22
+        minHeal: 6
+        maxHeal: 11
+        margin: 10.0
+      description: Drain life force from the target through ghostly clockwork tendrils, restoring your own vitality.
+      image: ""
+
+    gear_grind:
+      displayName: Gear Grind
+      manaCost: 22
+      cooldownMs: 10000
+      levelRequired: 15
+      targetType: ENEMY
+      requiredClass: NECROMANCER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: gear_grind_dot
+      description: Summon spectral gears that lock around the target, grinding and crushing them over time.
+      image: ""
+
+    bone_cage:
+      displayName: Bone Cage
+      manaCost: 28
+      cooldownMs: 15000
+      levelRequired: 20
+      targetType: ENEMY
+      requiredClass: NECROMANCER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: bone_cage_root
+      description: Skeletal ribs erupt from the ground and interlock around the target, trapping them in a cage of bone.
+      image: ""
+
+    necrotic_wave:
+      displayName: Necrotic Wave
+      manaCost: 38
+      cooldownMs: 12000
+      levelRequired: 25
+      targetType: ALL_ENEMIES
+      requiredClass: NECROMANCER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 25
+        maxDamage: 42
+        margin: 12.0
+      description: Release a rolling wave of decay and ticking clockwork that withers all living things it touches.
+      image: ""
+
+    automaton_shield:
+      displayName: Automaton Shield
+      manaCost: 40
+      cooldownMs: 20000
+      levelRequired: 30
+      targetType: SELF
+      requiredClass: NECROMANCER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: automaton_shield_effect
+      description: Surround yourself with orbiting clockwork constructs that intercept incoming attacks.
+      image: ""
+
+    deaths_embrace:
+      displayName: Death's Embrace
+      manaCost: 50
+      cooldownMs: 15000
+      levelRequired: 35
+      targetType: ENEMY
+      requiredClass: NECROMANCER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 50
+        maxDamage: 78
+        margin: 18.0
+      description: Wrap the target in spectral arms of the dead, crushing them with the cold weight of the grave.
+      image: ""
+
+    plague_of_gears:
+      displayName: Plague of Gears
+      manaCost: 60
+      cooldownMs: 25000
+      levelRequired: 40
+      targetType: ALL_ENEMIES
+      requiredClass: NECROMANCER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: plague_gears_dot
+      description: Unleash a swarm of tiny clockwork parasites that burrow into all enemies, dealing damage over time.
+      image: ""
+
+    clockwork_apocalypse:
+      displayName: Clockwork Apocalypse
+      manaCost: 90
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: NECROMANCER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 70
+        maxDamage: 115
+        margin: 25.0
+      description: The ground cracks open and a colossal clockwork abomination of bone and brass rises, laying waste to everything in a cacophony of grinding gears and spectral screams.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  VEIL — Shadow Assassin
+    # ═══════════════════════════════════════════
+    shadow_strike:
+      displayName: Shadow Strike
+      manaCost: 5
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: VEIL
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 5
+        maxDamage: 13
+        margin: 10.0
+      description: A quick, precise strike from the shadows — the blade finds its mark before the target sees you move.
+      image: ""
+
+    vanish:
+      displayName: Vanish
+      manaCost: 15
+      cooldownMs: 18000
+      levelRequired: 5
+      targetType: SELF
+      requiredClass: VEIL
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: vanish_stealth
+      description: Dissolve into the shadows, becoming invisible to all enemies until you strike.
+      image: ""
+
+    poisoned_blade:
+      displayName: Poisoned Blade
+      manaCost: 18
+      cooldownMs: 10000
+      levelRequired: 10
+      targetType: ENEMY
+      requiredClass: VEIL
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: poison_dot
+      description: Coat your dagger in virulent venom and deliver a shallow cut that festers with poison.
+      image: ""
+
+    backstab:
+      displayName: Backstab
+      manaCost: 22
+      cooldownMs: 8000
+      levelRequired: 15
+      targetType: ENEMY
+      requiredClass: VEIL
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 28
+        maxDamage: 48
+        margin: 15.0
+      description: Strike a vital point from behind with lethal precision. Devastating when used from stealth.
+      image: ""
+
+    smoke_bomb:
+      displayName: Smoke Bomb
+      manaCost: 25
+      cooldownMs: 20000
+      levelRequired: 20
+      targetType: ALL_ENEMIES
+      requiredClass: VEIL
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: smoke_blind
+      description: Hurl a smoke bomb that erupts in a cloud of choking darkness, blinding all nearby foes.
+      image: ""
+
+    shadow_step:
+      displayName: Shadow Step
+      manaCost: 30
+      cooldownMs: 10000
+      levelRequired: 25
+      targetType: ENEMY
+      requiredClass: VEIL
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 30
+        maxDamage: 50
+        margin: 12.0
+      description: Melt into shadow and rematerialize behind the target, delivering a devastating strike mid-teleport.
+      image: ""
+
+    eviscerate:
+      displayName: Eviscerate
+      manaCost: 40
+      cooldownMs: 12000
+      levelRequired: 30
+      targetType: ENEMY
+      requiredClass: VEIL
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 45
+        maxDamage: 68
+        margin: 18.0
+      description: A vicious flurry of dagger strikes aimed at every vulnerable point — throat, kidneys, tendons.
+      image: ""
+
+    venom_nova:
+      displayName: Venom Nova
+      manaCost: 50
+      cooldownMs: 20000
+      levelRequired: 35
+      targetType: ALL_ENEMIES
+      requiredClass: VEIL
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: venom_nova_dot
+      description: Shatter vials of concentrated venom in all directions, poisoning every nearby enemy.
+      image: ""
+
+    cloak_of_shadows:
+      displayName: Cloak of Shadows
+      manaCost: 55
+      cooldownMs: 30000
+      levelRequired: 40
+      targetType: SELF
+      requiredClass: VEIL
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: shadow_cloak_buff
+      description: Wrap yourself in living shadow that deflects attacks and muffles your movements to near silence.
+      image: ""
+
+    deaths_whisper:
+      displayName: Death's Whisper
+      manaCost: 80
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ENEMY
+      requiredClass: VEIL
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 90
+        maxDamage: 140
+        margin: 30.0
+      description: The perfect assassination — you become shadow itself, striking from every angle simultaneously in a whirlwind of midnight blades.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  BINDER — Anti-Magic Enforcer
+    # ═══════════════════════════════════════════
+    binding_strike:
+      displayName: Binding Strike
+      manaCost: 5
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: BINDER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 5
+        maxDamage: 12
+        margin: 8.0
+      description: Strike with a chain-wrapped fist, the runes along the links flaring with suppressive energy.
+      image: ""
+
+    rune_of_suppression:
+      displayName: Rune of Suppression
+      manaCost: 15
+      cooldownMs: 15000
+      levelRequired: 5
+      targetType: ENEMY
+      requiredClass: BINDER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: suppression_silence
+      description: Inscribe a blazing rune in the air that seals the target's ability to cast spells.
+      image: ""
+
+    chain_pull:
+      displayName: Chain Pull
+      manaCost: 18
+      cooldownMs: 8000
+      levelRequired: 10
+      targetType: ENEMY
+      requiredClass: BINDER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 10
+        maxDamage: 20
+        flatThreat: 60.0
+        margin: 10.0
+      description: Hurl a rune-etched chain that wraps around the target and yanks them toward you.
+      image: ""
+
+    spellbreak:
+      displayName: Spellbreak
+      manaCost: 25
+      cooldownMs: 12000
+      levelRequired: 15
+      targetType: ENEMY
+      requiredClass: BINDER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: spellbreak_debuff
+      description: Shatter the target's magical barriers, stripping away buffs and leaving them exposed.
+      image: ""
+
+    runic_barrier:
+      displayName: Runic Barrier
+      manaCost: 30
+      cooldownMs: 18000
+      levelRequired: 20
+      targetType: SELF
+      requiredClass: BINDER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: runic_barrier_shield
+      description: Erect a dome of interlocking runes that absorb magical damage and reflect a portion back.
+      image: ""
+
+    chains_of_judgment:
+      displayName: Chains of Judgment
+      manaCost: 38
+      cooldownMs: 15000
+      levelRequired: 25
+      targetType: ALL_ENEMIES
+      requiredClass: BINDER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 22
+        maxDamage: 40
+        margin: 12.0
+      description: Golden chains erupt from the ground beneath every enemy, lashing and burning with runic fire.
+      image: ""
+
+    mana_burn:
+      displayName: Mana Burn
+      manaCost: 42
+      cooldownMs: 12000
+      levelRequired: 30
+      targetType: ENEMY
+      requiredClass: BINDER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 40
+        maxDamage: 62
+        margin: 15.0
+      description: Ignite the magical energy within the target, causing their own mana to combust and burn them from within.
+      image: ""
+
+    binding_circle:
+      displayName: Binding Circle
+      manaCost: 50
+      cooldownMs: 25000
+      levelRequired: 35
+      targetType: ALL_ENEMIES
+      requiredClass: BINDER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: binding_circle_root
+      description: Trace a massive runic circle on the ground that chains all enemies within it to the earth.
+      image: ""
+
+    inquisitors_gaze:
+      displayName: Inquisitor's Gaze
+      manaCost: 55
+      cooldownMs: 20000
+      levelRequired: 40
+      targetType: ENEMY
+      requiredClass: BINDER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: inquisitor_debuff
+      description: Fix the target with the Binder's judgment — their magic unravels, their defenses crumble, their will falters.
+      image: ""
+
+    absolute_seal:
+      displayName: Absolute Seal
+      manaCost: 85
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: BINDER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 65
+        maxDamage: 108
+        margin: 25.0
+      description: Unleash the ultimate binding — a cataclysmic eruption of chains and runes that seals all magic in the area and crushes everything beneath their weight.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  STORMBLADE — Lightning Warrior
+    # ═══════════════════════════════════════════
+    spark_strike:
+      displayName: Spark Strike
+      manaCost: 5
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: STORMBLADE
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 6
+        maxDamage: 14
+        margin: 10.0
+      description: Channel lightning through your blade and deliver an electrifying slash that arcs on contact.
+      image: ""
+
+    lightning_dash:
+      displayName: Lightning Dash
+      manaCost: 12
+      cooldownMs: 6000
+      levelRequired: 5
+      targetType: ENEMY
+      requiredClass: STORMBLADE
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 10
+        maxDamage: 20
+        margin: 12.0
+      description: Transform into a bolt of lightning, streaking to the target in an instant and striking on arrival.
+      image: ""
+
+    static_charge:
+      displayName: Static Charge
+      manaCost: 18
+      cooldownMs: 15000
+      levelRequired: 10
+      targetType: SELF
+      requiredClass: STORMBLADE
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: static_charge_buff
+      description: Build up an electric field around your body that empowers your strikes with chain lightning.
+      image: ""
+
+    thunder_cleave:
+      displayName: Thunder Cleave
+      manaCost: 28
+      cooldownMs: 10000
+      levelRequired: 15
+      targetType: ALL_ENEMIES
+      requiredClass: STORMBLADE
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 16
+        maxDamage: 30
+        margin: 12.0
+      description: Bring your blade down with thunderous force, sending a shockwave of lightning across the ground.
+      image: ""
+
+    storm_shield:
+      displayName: Storm Shield
+      manaCost: 30
+      cooldownMs: 20000
+      levelRequired: 20
+      targetType: SELF
+      requiredClass: STORMBLADE
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: storm_shield_effect
+      description: Surround yourself with a crackling barrier of lightning that shocks anything that strikes you.
+      image: ""
+
+    ball_lightning:
+      displayName: Ball Lightning
+      manaCost: 35
+      cooldownMs: 10000
+      levelRequired: 25
+      targetType: ENEMY
+      requiredClass: STORMBLADE
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 32
+        maxDamage: 52
+        margin: 15.0
+      description: Conjure a hovering sphere of concentrated lightning and hurl it — it detonates on impact with devastating force.
+      image: ""
+
+    tempest_fury:
+      displayName: Tempest Fury
+      manaCost: 42
+      cooldownMs: 15000
+      levelRequired: 30
+      targetType: ALL_ENEMIES
+      requiredClass: STORMBLADE
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 30
+        maxDamage: 52
+        margin: 15.0
+      description: Call down a localized storm — wind, rain, and lightning hammering all enemies in a furious tempest.
+      image: ""
+
+    chain_lightning:
+      displayName: Chain Lightning
+      manaCost: 50
+      cooldownMs: 18000
+      levelRequired: 35
+      targetType: ALL_ENEMIES
+      requiredClass: STORMBLADE
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 40
+        maxDamage: 65
+        margin: 18.0
+      description: A bolt of lightning leaps from your blade to the nearest enemy, then arcs to the next, and the next, and the next.
+      image: ""
+
+    eye_of_the_storm:
+      displayName: Eye of the Storm
+      manaCost: 55
+      cooldownMs: 30000
+      levelRequired: 40
+      targetType: SELF
+      requiredClass: STORMBLADE
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: eye_of_storm_buff
+      description: Become the calm center of a raging electrical storm — attacks miss you while lightning devastates those nearby.
+      image: ""
+
+    cataclysm:
+      displayName: Cataclysm
+      manaCost: 90
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: STORMBLADE
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 75
+        maxDamage: 120
+        margin: 25.0
+      description: Call upon the full wrath of the sky — a pillar of white lightning obliterates everything, leaving only the smell of ozone and silence.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  HERALD — Divine Cleric
+    # ═══════════════════════════════════════════
+    holy_strike:
+      displayName: Holy Strike
+      manaCost: 8
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: HERALD
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 5
+        maxDamage: 12
+        margin: 8.0
+      description: Channel divine light through your mace, delivering a blow that sears the unholy.
+      image: ""
+
+    mending_light:
+      displayName: Mending Light
+      manaCost: 12
+      cooldownMs: 5000
+      levelRequired: 5
+      targetType: ALLY
+      requiredClass: HERALD
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 18
+        maxHeal: 28
+      description: Bathe an ally in warm golden light that mends wounds and eases pain.
+      image: ""
+
+    blessing_of_radiance:
+      displayName: Blessing of Radiance
+      manaCost: 20
+      cooldownMs: 18000
+      levelRequired: 10
+      targetType: ALLY
+      requiredClass: HERALD
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: radiance_buff
+      description: Bestow a divine blessing that wraps the target in a halo of protective light.
+      image: ""
+
+    smite:
+      displayName: Smite
+      manaCost: 25
+      cooldownMs: 8000
+      levelRequired: 15
+      targetType: ENEMY
+      requiredClass: HERALD
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 22
+        maxDamage: 38
+        margin: 12.0
+      description: Call down a pillar of sacred fire upon the target — the light burns, but only the wicked.
+      image: ""
+
+    sacred_shield:
+      displayName: Sacred Shield
+      manaCost: 30
+      cooldownMs: 18000
+      levelRequired: 20
+      targetType: ALLY
+      requiredClass: HERALD
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: sacred_shield_effect
+      description: Manifest a glowing shield of divine energy around an ally that absorbs incoming damage.
+      image: ""
+
+    purify:
+      displayName: Purify
+      manaCost: 35
+      cooldownMs: 12000
+      levelRequired: 25
+      targetType: ALLY
+      requiredClass: HERALD
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 30
+        maxHeal: 50
+      description: Cleanse an ally of poisons, curses, and corruption while restoring their health with purifying light.
+      image: ""
+
+    divine_wrath:
+      displayName: Divine Wrath
+      manaCost: 42
+      cooldownMs: 15000
+      levelRequired: 30
+      targetType: ALL_ENEMIES
+      requiredClass: HERALD
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 25
+        maxDamage: 45
+        margin: 15.0
+      description: Raise your mace and call down divine judgment — beams of holy light strike every enemy in sight.
+      image: ""
+
+    resurrection_light:
+      displayName: Resurrection Light
+      manaCost: 55
+      cooldownMs: 25000
+      levelRequired: 35
+      targetType: ALLY
+      requiredClass: HERALD
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 60
+        maxHeal: 90
+      description: Pour all your divine power into a single blinding flash of healing light that can pull allies back from death's door.
+      image: ""
+
+    aura_of_devotion:
+      displayName: Aura of Devotion
+      manaCost: 60
+      cooldownMs: 30000
+      levelRequired: 40
+      targetType: ALL_ALLIES
+      requiredClass: HERALD
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: devotion_aura_buff
+      description: Radiate an aura of divine devotion that strengthens and protects all allies within its warm embrace.
+      image: ""
+
+    divine_judgment:
+      displayName: Divine Judgment
+      manaCost: 85
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: HERALD
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 70
+        maxDamage: 110
+        margin: 25.0
+      description: The heavens open and a column of pure divine light descends — all who stand against you are judged and found wanting.
+      image: ""
+
+    # ═══════════════════════════════════════════
+    #  STARWEAVER — Cosmic Mage
+    # ═══════════════════════════════════════════
+    starfire:
+      displayName: Starfire
+      manaCost: 8
+      cooldownMs: 0
+      levelRequired: 1
+      targetType: ENEMY
+      requiredClass: STARWEAVER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 7
+        maxDamage: 15
+        margin: 8.0
+      description: Hurl a shard of crystallized starlight that burns with the cold fire of distant suns.
+      image: ""
+
+    cosmic_shield:
+      displayName: Cosmic Shield
+      manaCost: 15
+      cooldownMs: 12000
+      levelRequired: 5
+      targetType: SELF
+      requiredClass: STARWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: cosmic_shield_effect
+      description: Weave a barrier of compressed starlight around yourself, a miniature nebula that absorbs harm.
+      image: ""
+
+    gravity_well:
+      displayName: Gravity Well
+      manaCost: 22
+      cooldownMs: 15000
+      levelRequired: 10
+      targetType: ENEMY
+      requiredClass: STARWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: gravity_slow
+      description: Bend gravity around the target, crushing them under their own weight and slowing their movements.
+      image: ""
+
+    nebula_burst:
+      displayName: Nebula Burst
+      manaCost: 28
+      cooldownMs: 10000
+      levelRequired: 15
+      targetType: ALL_ENEMIES
+      requiredClass: STARWEAVER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 15
+        maxDamage: 28
+        margin: 10.0
+      description: Detonate a pocket nebula that expands rapidly, burning all enemies with stellar radiation.
+      image: ""
+
+    starlight_mend:
+      displayName: Starlight Mend
+      manaCost: 30
+      cooldownMs: 8000
+      levelRequired: 20
+      targetType: ALLY
+      requiredClass: STARWEAVER
+      effect:
+        type: DIRECT_HEAL
+        minHeal: 30
+        maxHeal: 48
+      description: Weave threads of starlight into wounds, mending flesh with the gentle warmth of a distant constellation.
+      image: ""
+
+    constellation:
+      displayName: Constellation
+      manaCost: 35
+      cooldownMs: 20000
+      levelRequired: 25
+      targetType: ALLY
+      requiredClass: STARWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: constellation_buff
+      description: Trace a constellation in the air above an ally, its starpoints bestowing power and protection.
+      image: ""
+
+    meteor_shower:
+      displayName: Meteor Shower
+      manaCost: 45
+      cooldownMs: 18000
+      levelRequired: 30
+      targetType: ALL_ENEMIES
+      requiredClass: STARWEAVER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 30
+        maxDamage: 55
+        margin: 15.0
+      description: Tear chunks of celestial rock from the cosmic web and rain them down upon all enemies.
+      image: ""
+
+    void_collapse:
+      displayName: Void Collapse
+      manaCost: 55
+      cooldownMs: 15000
+      levelRequired: 35
+      targetType: ENEMY
+      requiredClass: STARWEAVER
+      effect:
+        type: DIRECT_DAMAGE
+        minDamage: 55
+        maxDamage: 85
+        margin: 20.0
+      description: Collapse a point of space-time onto the target — reality folds inward, crushing them in a brief, terrifying singularity.
+      image: ""
+
+    cosmic_weave:
+      displayName: Cosmic Weave
+      manaCost: 60
+      cooldownMs: 30000
+      levelRequired: 40
+      targetType: ALL_ALLIES
+      requiredClass: STARWEAVER
+      effect:
+        type: APPLY_STATUS
+        statusEffectId: cosmic_weave_buff
+      description: Weave a shimmering tapestry of cosmic energy that connects all allies, sharing strength and resilience.
+      image: ""
+
+    supernova:
+      displayName: Supernova
+      manaCost: 90
+      cooldownMs: 60000
+      levelRequired: 50
+      targetType: ALL_ENEMIES
+      requiredClass: STARWEAVER
+      effect:
+        type: AREA_DAMAGE
+        minDamage: 80
+        maxDamage: 125
+        margin: 25.0
+      description: Channel the death of a star — a blinding explosion of cosmic energy that annihilates everything in a spectacular burst of light and fury.
+      image: ""
+
+statusEffects:
+  definitions:
+    # Bulwark
+    iron_wall_shield:
+      displayName: Iron Wall
+      effectType: SHIELD
+      durationMs: 10000
+      shieldAmount: 80
+      stackBehavior: REFRESH
+
+    fortress_stance_buff:
+      displayName: Fortress Stance
+      effectType: BUFF
+      durationMs: 15000
+      stackBehavior: REFRESH
+
+    aegis_shield:
+      displayName: Aegis of Steel
+      effectType: SHIELD
+      durationMs: 12000
+      shieldAmount: 120
+      stackBehavior: REFRESH
+
+    unbreakable_will_buff:
+      displayName: Unbreakable Will
+      effectType: BUFF
+      durationMs: 8000
+      stackBehavior: REFRESH
+
+    bastion_eternal_shield:
+      displayName: Bastion Eternal
+      effectType: SHIELD
+      durationMs: 15000
+      shieldAmount: 300
+      stackBehavior: REFRESH
+
+    # Warden
+    battle_fury_buff:
+      displayName: Battle Fury
+      effectType: BUFF
+      durationMs: 12000
+      stackBehavior: REFRESH
+
+    savage_roar_buff:
+      displayName: Savage Roar
+      effectType: BUFF
+      durationMs: 10000
+      stackBehavior: REFRESH
+
+    bleed_dot:
+      displayName: Bleeding
+      effectType: DOT
+      durationMs: 12000
+      tickIntervalMs: 2000
+      tickMinValue: 5
+      tickMaxValue: 10
+      stackBehavior: STACK
+      maxStacks: 3
+
+    primal_rage_buff:
+      displayName: Primal Rage
+      effectType: BUFF
+      durationMs: 10000
+      stackBehavior: REFRESH
+
+    # Arcanist
+    mana_shield_effect:
+      displayName: Mana Shield
+      effectType: SHIELD
+      durationMs: 15000
+      shieldAmount: 90
+      stackBehavior: REFRESH
+
+    arcane_stun:
+      displayName: Arcane Binding
+      effectType: STUN
+      durationMs: 3000
+      stackBehavior: REFRESH
+
+    arcane_surge_buff:
+      displayName: Arcane Surge
+      effectType: BUFF
+      durationMs: 10000
+      stackBehavior: REFRESH
+
+    spellweave_debuff:
+      displayName: Spellwoven
+      effectType: DEBUFF
+      durationMs: 12000
+      stackBehavior: REFRESH
+
+    # Faeweaver
+    vine_root:
+      displayName: Vine Snare
+      effectType: ROOT
+      durationMs: 4000
+      stackBehavior: REFRESH
+
+    barkskin_shield:
+      displayName: Barkskin
+      effectType: SHIELD
+      durationMs: 15000
+      shieldAmount: 100
+      stackBehavior: REFRESH
+
+    wildgrowth_hot:
+      displayName: Wildgrowth
+      effectType: HOT
+      durationMs: 15000
+      tickIntervalMs: 3000
+      tickMinValue: 8
+      tickMaxValue: 14
+      stackBehavior: REFRESH
+
+    # Necromancer
+    clockwork_servant_buff:
+      displayName: Clockwork Servant
+      effectType: BUFF
+      durationMs: 30000
+      stackBehavior: REFRESH
+
+    gear_grind_dot:
+      displayName: Gear Grind
+      effectType: DOT
+      durationMs: 10000
+      tickIntervalMs: 2000
+      tickMinValue: 6
+      tickMaxValue: 12
+      stackBehavior: REFRESH
+
+    bone_cage_root:
+      displayName: Bone Cage
+      effectType: ROOT
+      durationMs: 4000
+      stackBehavior: REFRESH
+
+    automaton_shield_effect:
+      displayName: Automaton Shield
+      effectType: SHIELD
+      durationMs: 12000
+      shieldAmount: 100
+      stackBehavior: REFRESH
+
+    plague_gears_dot:
+      displayName: Plague of Gears
+      effectType: DOT
+      durationMs: 15000
+      tickIntervalMs: 3000
+      tickMinValue: 8
+      tickMaxValue: 15
+      stackBehavior: REFRESH
+
+    # Veil
+    vanish_stealth:
+      displayName: Vanished
+      effectType: BUFF
+      durationMs: 15000
+      stackBehavior: REFRESH
+
+    poison_dot:
+      displayName: Poisoned
+      effectType: DOT
+      durationMs: 12000
+      tickIntervalMs: 2000
+      tickMinValue: 4
+      tickMaxValue: 8
+      stackBehavior: STACK
+      maxStacks: 3
+
+    smoke_blind:
+      displayName: Blinded
+      effectType: DEBUFF
+      durationMs: 4000
+      stackBehavior: REFRESH
+
+    venom_nova_dot:
+      displayName: Venomous
+      effectType: DOT
+      durationMs: 10000
+      tickIntervalMs: 2000
+      tickMinValue: 8
+      tickMaxValue: 14
+      stackBehavior: REFRESH
+
+    shadow_cloak_buff:
+      displayName: Cloak of Shadows
+      effectType: BUFF
+      durationMs: 10000
+      stackBehavior: REFRESH
+
+    # Binder
+    suppression_silence:
+      displayName: Suppressed
+      effectType: SILENCE
+      durationMs: 4000
+      stackBehavior: REFRESH
+
+    spellbreak_debuff:
+      displayName: Spellbroken
+      effectType: DEBUFF
+      durationMs: 10000
+      stackBehavior: REFRESH
+
+    runic_barrier_shield:
+      displayName: Runic Barrier
+      effectType: SHIELD
+      durationMs: 12000
+      shieldAmount: 110
+      stackBehavior: REFRESH
+
+    binding_circle_root:
+      displayName: Bound
+      effectType: ROOT
+      durationMs: 5000
+      stackBehavior: REFRESH
+
+    inquisitor_debuff:
+      displayName: Inquisitor's Mark
+      effectType: DEBUFF
+      durationMs: 15000
+      stackBehavior: REFRESH
+
+    # Stormblade
+    static_charge_buff:
+      displayName: Static Charge
+      effectType: BUFF
+      durationMs: 12000
+      stackBehavior: STACK
+      maxStacks: 5
+
+    storm_shield_effect:
+      displayName: Storm Shield
+      effectType: SHIELD
+      durationMs: 10000
+      shieldAmount: 90
+      stackBehavior: REFRESH
+
+    eye_of_storm_buff:
+      displayName: Eye of the Storm
+      effectType: BUFF
+      durationMs: 10000
+      stackBehavior: REFRESH
+
+    # Herald
+    radiance_buff:
+      displayName: Blessing of Radiance
+      effectType: BUFF
+      durationMs: 20000
+      stackBehavior: REFRESH
+
+    sacred_shield_effect:
+      displayName: Sacred Shield
+      effectType: SHIELD
+      durationMs: 12000
+      shieldAmount: 100
+      stackBehavior: REFRESH
+
+    devotion_aura_buff:
+      displayName: Aura of Devotion
+      effectType: BUFF
+      durationMs: 15000
+      stackBehavior: REFRESH
+
+    # Starweaver
+    cosmic_shield_effect:
+      displayName: Cosmic Shield
+      effectType: SHIELD
+      durationMs: 12000
+      shieldAmount: 85
+      stackBehavior: REFRESH
+
+    gravity_slow:
+      displayName: Gravity Well
+      effectType: SLOW
+      durationMs: 6000
+      stackBehavior: REFRESH
+
+    constellation_buff:
+      displayName: Constellation
+      effectType: BUFF
+      durationMs: 15000
+      stackBehavior: REFRESH
+
+    cosmic_weave_buff:
+      displayName: Cosmic Weave
+      effectType: BUFF
+      durationMs: 15000
+      stackBehavior: REFRESH
