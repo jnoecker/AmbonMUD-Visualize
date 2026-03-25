@@ -1,9 +1,11 @@
 # AmbonMUD Design System: Surreal Gentle Magic
 
+> **Note:** This document was written for the AmbonMUD web client (`web-v3`). It is used here as the canonical design reference for AmbonMUD-Visualize's UI and image prompt engineering. Sections about `web-v3` file structure, component roadmap, and web client phases describe the MUD client, not this app. The color palette, typography, animation, interactive states, and design tokens sections apply directly.
+
 **Version:** surreal_softmagic_v1
 **Last Updated:** February 26, 2026
 **Scope:** Unified aesthetic for UI components, world rendering, and interactive experiences
-**Implementation:** Dark-mode theme implemented in `web-v3/src/styles.css` (design tokens + component styles). Canvas/SVG decorative elements and world rendering are planned (Phase 5 of the roadmap).
+**Implementation:** Dark-mode theme implemented in `web-v3/src/styles.css` (design tokens + component styles) and ported to AmbonMUD-Visualize in `src/styles/tokens.css`.
 
 ---
 

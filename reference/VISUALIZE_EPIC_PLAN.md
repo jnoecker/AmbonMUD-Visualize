@@ -2,7 +2,9 @@
 
 **Epic Plan — March 2026**
 
-A standalone desktop application for generating style-consistent images for AmbonMUD zones: room backgrounds, mob sprites, and item icons. Uses an LLM (Claude API) to transform zone YAML descriptions into optimized image generation prompts, then calls an image generation API to produce assets that conform to the "Surreal Gentle Magic" (surreal_softmagic_v1) design system.
+> **Status:** Core pipeline (rooms, mobs, items, sprites, portraits, abilities) is implemented and working. See the [README](../README.md) for current features.
+
+A standalone desktop application for generating style-consistent images for AmbonMUD zones: room backgrounds, mob sprites, item icons, ability icons, player sprites, and character creation portraits. Uses Claude API to transform zone YAML descriptions into optimized image generation prompts, then calls Runware (FLUX Dev / FLUX 2) to produce assets conforming to the "Surreal Gentle Magic" (surreal_softmagic_v1) design system.
 
 ---
 
@@ -29,10 +31,10 @@ A standalone desktop application for generating style-consistent images for Ambo
 │              AmbonMUD-Visualize (Desktop App)             │
 │                                                           │
 │  ┌───────────┐   ┌──────────────┐   ┌─────────────────┐  │
-│  │ Zone YAML │   │  Claude API  │   │ Image Gen API   │  │
-│  │ Parser    │──▶│  (prompt     │──▶│ (pluggable:     │  │
-│  │           │   │   builder)   │   │  Flux/DALL-E/   │  │
-│  │           │   │              │   │  SD3/Ideogram)  │  │
+│  │ Zone YAML │   │  Claude API  │   │ Runware.AI      │  │
+│  │ Parser    │──▶│  (prompt     │──▶│ (FLUX Dev /     │  │
+│  │           │   │   builder)   │   │  FLUX 2)        │  │
+│  │           │   │              │   │                 │  │
 │  └───────────┘   └──────────────┘   └─────────────────┘  │
 │       │                │                    │             │
 │       ▼                ▼                    ▼             │
@@ -80,13 +82,14 @@ A standalone desktop application for generating style-consistent images for Ambo
 
 | Component | Technology | Rationale |
 |-----------|-----------|-----------|
-| Desktop wrapper | **Tauri** (preferred) or Electron | Lightweight native wrapper; Tauri is ~10x smaller than Electron |
-| Frontend | **React + TypeScript + Vite** | Reuse web-v3 design tokens and Surreal Gentle Magic CSS |
-| Styling | web-v3 `styles.css` design tokens | Consistent look with the MUD client; the tool itself should feel on-brand |
-| YAML parsing | `js-yaml` or `yaml` npm package | Parse zone YAML files client-side |
+| Desktop wrapper | **Tauri 2** | Lightweight native wrapper; ~10x smaller than Electron |
+| Frontend | **React 19 + TypeScript + Vite 7** | Reuse web-v3 design tokens and Surreal Gentle Magic CSS |
+| Styling | CSS design tokens in `src/styles/tokens.css` | Consistent look with the MUD client; the tool itself should feel on-brand |
+| YAML parsing | `yaml` npm package | Parse zone YAML files client-side |
 | LLM API | **Anthropic Claude API** (`@anthropic-ai/sdk`) | Prompt generation (description → image prompt) |
-| Image Gen API | **Pluggable** — start with one, add others | See [Image Generation Model Research](#image-generation-model-research) |
-| State management | React state + local JSON project files | No backend needed; project state saved to disk |
+| Image Gen API | **Runware.AI** (`@runware/sdk-js`) | FLUX Dev for general assets, FLUX 2 for sprites/portraits |
+| Background removal | `@imgly/background-removal` | Client-side BG removal for sprites and items |
+| State management | React Context + local JSON project files | No backend needed; project state saved to disk |
 | Package manager | **Bun** | Matches web-v3 tooling |
 
 ### Separate Repo
@@ -167,66 +170,40 @@ rooms:
 
 ## Image Generation
 
-### Model Requirements
+### Asset Specs (Actual)
 
-| Requirement | Room Backgrounds | Mob Sprites | Item Icons |
-|-------------|-----------------|-------------|------------|
-| Aspect ratio | 16:9 landscape | 1:1 square | 1:1 square |
-| Transparency | No | Yes (PNG alpha) | Yes (PNG alpha) |
-| Resolution | 1920x1080 or 1280x720 | 512x512 or 1024x1024 | 256x256 or 512x512 |
-| Format | PNG | PNG | PNG |
+| Type | Aspect | Gen Size | Output Size | Format | Model |
+|------|--------|----------|-------------|--------|-------|
+| Room backgrounds | 16:9 | 1024x576 | 1024x576 | PNG | FLUX Dev |
+| Mob sprites | 1:1 | 1024x1024 | 512x512 | PNG | FLUX Dev |
+| Item icons | 1:1 | 1024x1024 | 256x256 | PNG | FLUX Dev |
+| Ability icons | 1:1 | 1024x1024 | 256x256 | PNG | FLUX Dev |
+| Player sprites | 1:1 | 1024x1024 | 512x512 | PNG | FLUX Dev (base) / FLUX 2 (class) |
+| Character portraits | 2:3 | 768x1152 | 768x1152 | JPEG | FLUX 2 |
 
-### Pluggable Backend Interface
+### Image Generation Backend — Runware.AI (Decided)
 
-```typescript
-interface ImageGenerator {
-  name: string
-  generate(prompt: string, options: GenerateOptions): Promise<GeneratedImage[]>
-  supportsTransparency: boolean
-}
+After a comparison spike (DALL-E 3 vs Stable Diffusion 3.5 — see `spike/`), Runware.AI was selected as the image generation backend using their FLUX models:
 
-interface GenerateOptions {
-  aspectRatio: "16:9" | "1:1"
-  width: number
-  height: number
-  count: number          // how many variants to generate (configurable)
-  transparent: boolean   // request transparent background
-  negativePrompt?: string
-}
+| Model | Runware ID | Cost | Use Case |
+|-------|-----------|------|----------|
+| FLUX Dev | `runware:101@1` | $0.0038/img | General assets (rooms, mobs, items, abilities), base sprites |
+| FLUX 2 | `runware:400@2` | $0.0006/img | Player sprites (class tiers), character portraits |
+| FLUX Schnell | `runware:100@1` | $0.0006/img | Available as budget option |
 
-interface GeneratedImage {
-  data: Buffer           // raw PNG bytes
-  revisedPrompt?: string // some APIs revise the prompt
-  seed?: string          // for reproducibility
-  metadata: Record<string, unknown>
-}
-```
+The Runware SDK (`@runware/sdk-js`) uses WebSocket connections. The response field for base64 image data is `imageBase64Data`.
 
-### Candidate Models (Research Spike Needed)
+### Transparency Handling
 
-| Model | API | Transparency | Cost/image | Notes |
-|-------|-----|-------------|-----------|-------|
-| Flux 1.1 Pro | Replicate / BFL | Post-process | ~$0.04 | Strong style consistency |
-| DALL-E 3 | OpenAI API | Post-process | $0.04-0.08 | Good prompt adherence |
-| Stable Diffusion 3.5 | Stability API | Post-process | $0.03-0.06 | Self-host option |
-| Ideogram 2.0 | Ideogram API | Native | $0.02-0.08 | Native transparency |
-| Google Imagen 3 | Vertex AI | Post-process | ~$0.04 | Good quality |
+Mob/item sprites are generated on a solid pale lavender (`#d8d0e8`) background, then background is removed client-side using `@imgly/background-removal`. This produces cleaner results than prompting for transparent backgrounds.
 
-**Transparency handling:** Most models don't natively support transparent backgrounds. For mob/item sprites, the pipeline should:
-1. Generate on a solid color background (e.g., pure green/magenta)
-2. Auto-remove background using a background removal step (rembg, or an API like remove.bg)
+### Cost (Actual)
 
-### Cost Estimation
-
-For the PBrae zone alone:
-- ~55 rooms × $0.05 = ~$2.75
-- ~18 mobs × $0.05 = ~$0.90
-- ~8 items × $0.05 = ~$0.40
-- **Total per zone: ~$4** (single generation, no variants)
-- With 4 variants each: ~$16/zone
-- Claude API for prompt generation: negligible (~$0.10/zone)
-
-For all ~200 rooms + 100 mobs/items across the game: **~$20-80** depending on variant count.
+At FLUX Dev pricing ($0.0038/img):
+- PBrae zone (~80 entities): ~$0.30 per generation pass
+- Full 384-sprite set (FLUX 2): ~$0.23
+- 22 character portraits (FLUX 2): ~$0.01
+- Claude API for prompt generation: negligible
 
 ---
 
@@ -386,81 +363,68 @@ Creator copies this to `data/images/` in the MUD repo (this directory is outside
 
 ## Phased Implementation Plan
 
-### Phase 1: Room Backgrounds MVP
+### Phase 1: Room Backgrounds MVP — COMPLETE
 
-**Goal:** Full end-to-end pipeline for room backgrounds only.
+Full end-to-end pipeline for room backgrounds.
 
-**1.1 — Project Scaffolding**
-- [ ] Initialize Tauri + React + TypeScript + Vite project with Bun
-- [ ] Port Surreal Gentle Magic design tokens from web-v3 `styles.css`
-- [ ] Basic app shell: sidebar + main panel + settings
-- [ ] Zone YAML parser (rooms, mobs, items)
-- [ ] Project file management (create, open, save)
+- [x] Tauri 2 + React 19 + TypeScript + Vite project with Bun
+- [x] Surreal Gentle Magic design tokens ported to `src/styles/tokens.css`
+- [x] App shell: sidebar + main panel + settings
+- [x] Zone YAML parser (rooms, mobs, items)
+- [x] Project file management (create, open, save)
+- [x] Claude API integration + zone vibe generation
+- [x] Per-room prompt construction + editable prompt field
+- [x] Runware FLUX Dev image generation
+- [x] Variant management + approve/reject workflow
+- [x] Export (YAML modification + image files)
 
-**1.2 — Zone Vibe Generation**
-- [ ] Claude API integration (`@anthropic-ai/sdk`)
-- [ ] Zone vibe prompt construction
-- [ ] Zone vibe display + editing in UI
-- [ ] API key configuration in settings
+### Phase 2: Mob Sprites — COMPLETE
 
-**1.3 — Room Prompt Generation**
-- [ ] Style guide template integration
-- [ ] Per-room prompt construction (title + description + exits + mobs → Claude → prompt)
-- [ ] Editable prompt field
-- [ ] Prompt storage in project
+- [x] 1:1 aspect ratio generation (1024x1024 → 512x512 output)
+- [x] Background removal via `@imgly/background-removal`
+- [x] Mob-specific prompt construction
+- [x] Mob gallery in sidebar
+- [x] Export with mob images
 
-**1.4 — Image Generation (First Model)**
-- [ ] Image generation model research spike (see below)
-- [ ] First backend implementation (likely Flux or DALL-E 3)
-- [ ] Configurable variant count (1-4)
-- [ ] Image display and variant selection
+### Phase 3: Item Icons — COMPLETE
 
-**1.5 — Approve/Reject Workflow**
-- [ ] Per-room approval status tracking
-- [ ] Variant comparison view
-- [ ] Progress tracking (X/Y rooms approved)
+- [x] Item icon generation (1024x1024 → 256x256 output)
+- [x] Item-specific prompt construction
+- [x] Item gallery in sidebar
+- [x] Export with item images
 
-**1.6 — Export**
-- [ ] Zone YAML modification (add `image:` fields)
-- [ ] Zone vibe + prompts as YAML comments
-- [ ] Image file export to organized directory
-- [ ] Swarm/duplicate detection for training zones
+### Phase 4: Batch Operations & Polish — COMPLETE
 
-### Phase 2: Mob Sprites
+- [x] Batch generation with concurrent processing + progress tracking
+- [x] Batch approve (auto-approve single-variant entities)
+- [x] Batch recompress and batch BG removal dialogs
+- [x] Default images (fallback room/mob/item per zone)
+- [x] Image reconciliation (recover untracked variants from disk)
+- [x] Entity field editing
+- [x] Custom asset generation dialog
 
-- [ ] 1:1 aspect ratio generation
-- [ ] Transparent background pipeline (background removal post-processing)
-- [ ] Mob-specific prompt construction (name, tier, behavior, room context)
-- [ ] Mob gallery in sidebar
-- [ ] Export with mob images
+### Phase 5: Extended Asset Types — COMPLETE
 
-### Phase 3: Item Icons
+- [x] Player sprites — 384-sprite paper-doll system (see `PLAYER_SPRITE_SPEC.md`)
+- [x] Character creation portraits — 22 cinematic race/class portraits (see `CHARACTER_PORTRAIT_SPEC.md`)
+- [x] Ability icons — 100 abilities across 10 classes with class-specific colors
 
-- [ ] Small icon generation (256x256)
-- [ ] Item-specific prompt construction (displayName, description, slot type)
-- [ ] Item gallery in sidebar
-- [ ] Export with item images
+### Phase 6: Multimedia (In Progress)
 
-### Phase 4: Batch Operations & Polish
+- [x] Zone music generation
+- [x] Zone video generation (zone intros, boss reveals, item reveals)
 
-- [ ] "Generate all missing" batch mode with progress bar and rate limiting
-- [ ] Prompt history and regeneration tracking
-- [ ] Multiple image generation backends (add 2nd and 3rd model)
-- [ ] Image post-processing (vignette overlay, color correction toward palette)
-- [ ] Keyboard shortcuts for rapid approve/reject workflow
-- [ ] Undo/redo for approvals
-
-### Phase 5: Advanced Features
+### Future
 
 - [ ] Style variant support (surreal_softmagic_v2, _night, _feycourt, etc.)
-- [ ] Side-by-side comparison of same scene across style variants
-- [ ] Cost tracking dashboard (total API spend)
-- [ ] Template prompts for common room types (forest clearing, cave, town square)
-- [ ] Import existing images (skip generation for hand-crafted assets)
+- [ ] Cost tracking dashboard
+- [ ] Template prompts for common room types
 
 ---
 
 ## MUD Server Changes (AmbonMUD repo)
+
+> **Note:** This section describes planned changes to the **AmbonMUD server repo**, not this app. Included here for context on how exported assets integrate with the MUD.
 
 These changes happen in the main AmbonMUD repo after the Visualize tool produces its first outputs.
 
@@ -563,6 +527,8 @@ This directory is `.gitignore`-d like `data/players/`. Images are deployed separ
 
 ## Web Client Changes (AmbonMUD repo)
 
+> **Note:** This section describes planned changes to the **AmbonMUD web client**, not this app.
+
 ### Room Illustration Panel
 
 Add a new panel or section to `PlayPanel.tsx` — a room illustration area that displays the current room's background image.
@@ -590,55 +556,34 @@ In `applyGmcpPackage.ts`, extract `imageUrl` from existing packages and store in
 
 ---
 
-## Image Generation Model Research
+## Image Generation Model Research — COMPLETE
 
-### Research Spike Plan
+A comparison spike tested DALL-E 3 and Stable Diffusion 3.5 against 18 entities across two zones (pbrae, wesleyalis), covering rooms, mobs, and items. See `spike/` for the original comparison code and output images.
 
-Before committing to a model, run a comparison test:
+**Decision:** Runware.AI with FLUX models was selected for:
+- Strong style consistency with the Surreal Gentle Magic aesthetic
+- Low cost (FLUX Dev at $0.0038/img, FLUX 2 at $0.0006/img)
+- WebSocket-based SDK with good developer experience
+- Support for multiple aspect ratios and img2img workflows
 
-1. Take 5-6 room descriptions from `pbrae.yaml` spanning different vibes:
-   - `mountain_summit` (dramatic landscape)
-   - `kitchen_main` (cozy domestic)
-   - `braelynn_penguin_palace` (whimsical fantasy)
-   - `peanut_nether` (dark game world)
-   - `coop_henhouse` (warm farmyard)
-   - `forest_trail` (nature)
-
-2. Use Claude to generate optimized prompts for each (with style guide suffix)
-
-3. Send the same prompts to 2-3 candidate models
-
-4. Compare on:
-   - Style consistency across the batch
-   - Adherence to the Surreal Gentle Magic aesthetic
-   - Quality at target resolution
-   - Color palette compliance (lavender, pale blue, dusty rose, moss green, soft gold)
-   - Cost per image
-   - API ease of use
-   - Generation speed
-
-5. Document findings and select primary model
-
-### Transparency Research
-
-For Phase 2 (mob sprites), separately evaluate:
-- Which models handle "transparent background" prompts natively
-- Background removal post-processing quality (rembg library, remove.bg API)
-- Whether generating on a solid color + removing produces better results than native transparency
+**Transparency approach:** Generate on solid pale lavender (`#d8d0e8`) background, then remove background client-side with `@imgly/background-removal`. This produces cleaner results than native transparency prompting.
 
 ---
 
 ## Reference Material
 
-The following documents from the AmbonMUD repo should be copied to or referenced from the Visualize repo:
+Documents from the AmbonMUD repo, now in `reference/`:
 
-| Document | Purpose | Copy to Visualize? |
-|----------|---------|-------------------|
-| `docs/STYLE_GUIDE.md` | Full Surreal Gentle Magic design system, color palette, prompt template | **Yes** — primary reference for prompt generation |
-| `docs/WORLD_YAML_SPEC.md` | Zone YAML schema for parser implementation | **Yes** — needed for YAML parsing |
-| `src/main/resources/world/pbrae.yaml` | First test zone | **Yes** — initial test data |
-| `docs/GMCP_PROTOCOL.md` | GMCP package definitions (for understanding integration points) | No — reference only |
-| `web-v3/src/styles.css` | Design tokens for the Visualize app's own UI | **Yes** — port tokens |
+| Document | Purpose | Status |
+|----------|---------|--------|
+| `reference/STYLE_GUIDE.md` | Surreal Gentle Magic design system, color palette, prompt template | Copied, used for prompt engineering + UI design |
+| `reference/WORLD_YAML_SPEC.md` | Zone YAML schema for parser implementation | Copied, used for YAML parsing |
+| `reference/styles.css` | Original CSS design tokens from web-v3 | Ported to `src/styles/tokens.css` |
+| `reference/PLAYER_SPRITE_SPEC.md` | Paper-doll sprite system specification | Written for this app |
+| `reference/CHARACTER_PORTRAIT_SPEC.md` | Character creation portrait specification | Written for this app |
+| `reference/pbrae.yaml`, `wesleyalis.yaml`, `trailey.yaml` | Test zone files | Copied from MUD server |
+| `reference/player_sprites.yaml`, `character_portraits.yaml` | Test zone files for sprite/portrait generation | Written for this app |
+| `reference/abilities.yaml` | Ability definitions (100 abilities, 41 status effects) | Written for this app |
 
 ### Key Style Guide Excerpts for Prompt Engineering
 
