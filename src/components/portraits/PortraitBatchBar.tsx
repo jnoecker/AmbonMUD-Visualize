@@ -48,7 +48,7 @@ export function PortraitBatchBar({
 
   const handleGenerateTemplate = useCallback(async () => {
     if (!settings.anthropicApiKey) {
-      setTemplateError("Anthropic API key not set. Open Settings.");
+      setTemplateError("Anthropic API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     if (!zoneVibe) {
@@ -79,7 +79,7 @@ export function PortraitBatchBar({
       if (!portraitTemplate) return;
       const template: PortraitPromptTemplate = portraitTemplate;
       if (!settings.runwareApiKey) {
-        setTemplateError("Runware API key not set. Open Settings.");
+        setTemplateError("Runware API key not set — open Settings (Ctrl+,) to add it.");
         return;
       }
 

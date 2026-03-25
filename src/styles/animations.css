@@ -7,13 +7,83 @@
   }
 }
 
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.4;
+/* Ambient mote particles — floating points of light */
+@keyframes mote-float {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: var(--mote-opacity, 0.3);
+  }
+  25% {
+    transform: translate(var(--mote-dx1, 8px), var(--mote-dy1, -12px)) scale(1.1);
+    opacity: calc(var(--mote-opacity, 0.3) * 1.4);
   }
   50% {
-    opacity: 0.7;
+    transform: translate(var(--mote-dx2, -4px), var(--mote-dy2, -20px)) scale(0.9);
+    opacity: var(--mote-opacity, 0.3);
+  }
+  75% {
+    transform: translate(var(--mote-dx3, 12px), var(--mote-dy3, -8px)) scale(1.15);
+    opacity: calc(var(--mote-opacity, 0.3) * 1.2);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: var(--mote-opacity, 0.3);
+  }
+}
+
+/* Image reveal — radial wipe with glow bloom */
+@keyframes image-reveal {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+    filter: brightness(1.4) blur(4px);
+  }
+  60% {
+    clip-path: circle(75% at 50% 50%);
+    filter: brightness(1.1) blur(1px);
+  }
+  100% {
+    clip-path: circle(100% at 50% 50%);
+    filter: brightness(1) blur(0px);
+  }
+}
+
+@keyframes reveal-glow {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+
+/* Entity content entry — crossfade with subtle rise */
+@keyframes detail-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Badge pulse on selection */
+@keyframes badge-pulse {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% {
+    box-shadow: 0 0 8px 2px currentColor;
+  }
+  100% {
+    box-shadow: 0 0 0 0 currentColor;
   }
 }
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { useProject } from "../../context/ProjectContext";
+import { useDialogA11y } from "../../hooks/a11y";
 
 interface BlankProjectDialogProps {
   onClose: () => void;
@@ -45,10 +46,12 @@ export function BlankProjectDialog({ onClose }: BlankProjectDialogProps) {
     }
   };
 
+  const dialogRef = useDialogA11y(onClose);
+
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">New Blank Project</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="blank-project-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="blank-project-dialog-title">New Blank Project</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginBottom: 16 }}>
           Create a project for standalone assets — menu bars, icons, UI elements, and
           other art that conforms to the Surreal Gentle Magic style.

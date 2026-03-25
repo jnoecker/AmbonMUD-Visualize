@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { onClickKeyDown } from "../../hooks/a11y";
 import type { ImageVariant } from "../../types/project";
 
 interface VariantStripProps {
@@ -69,7 +70,16 @@ function VariantThumb({
     .join(" ");
 
   return (
-    <div className={cls} onClick={onClick} title={`v${index + 1} - ${variant.generatedAt}`}>
+    <div
+      className={cls}
+      role="button"
+      tabIndex={0}
+      aria-label={`Variant ${index + 1}${approved ? " (approved)" : ""}`}
+      aria-pressed={selected}
+      onClick={onClick}
+      onKeyDown={onClickKeyDown(onClick)}
+      title={`v${index + 1} - ${variant.generatedAt}`}
+    >
       {src ? (
         <img src={src} alt={`Variant ${index + 1}`} />
       ) : (

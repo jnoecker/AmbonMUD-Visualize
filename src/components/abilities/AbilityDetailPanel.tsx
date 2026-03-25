@@ -78,7 +78,7 @@ export function AbilityDetailPanel({
   const handleGeneratePrompt = () => {
     if (!entity) return;
     if (!settings.anthropicApiKey) {
-      setLocalError("Anthropic API key not set. Open Settings.");
+      setLocalError("Anthropic API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);
@@ -91,7 +91,7 @@ export function AbilityDetailPanel({
   const handleGenerateImage = () => {
     if (!entity || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);
@@ -102,7 +102,7 @@ export function AbilityDetailPanel({
   const handleGenerateMultiImage = () => {
     if (!entity || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);
@@ -117,7 +117,7 @@ export function AbilityDetailPanel({
   const handleRemoveBackground = async () => {
     if (!currentVariant) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);
@@ -182,7 +182,7 @@ export function AbilityDetailPanel({
           </span>
         )}
         {statusEffect && (
-          <span className="ability-detail-meta" style={{ color: "#8da97b" }}>
+          <span className="ability-detail-meta" style={{ color: "var(--color-moss-green)" }}>
             Status Effect &middot; {statusEffect.effectType}
             {statusEffect.durationMs ? ` \u00b7 ${(statusEffect.durationMs / 1000).toFixed(0)}s` : ""}
           </span>

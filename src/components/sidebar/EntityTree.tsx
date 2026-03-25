@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { EntityTreeItem } from "./EntityTreeItem";
 import { useGeneration } from "../../context/GenerationContext";
+import { onClickKeyDown } from "../../hooks/a11y";
 import type { Entity, EntityType } from "../../types/entities";
 import type { AssetEntry } from "../../types/project";
 
@@ -38,7 +39,14 @@ function TreeSection({
 
   return (
     <div className="entity-tree-section">
-      <div className="entity-tree-header" onClick={() => setOpen(!open)}>
+      <div
+        className="entity-tree-header"
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        onKeyDown={onClickKeyDown(() => setOpen(!open))}
+      >
         <span className={`entity-tree-header-arrow${open ? " entity-tree-header-arrow--open" : ""}`}>
           &#9654;
         </span>
@@ -46,7 +54,7 @@ function TreeSection({
         <span className="entity-tree-header-count">{entities.length}</span>
       </div>
       {open && (
-        <ul className="entity-tree-list">
+        <ul className="entity-tree-list" role="tree">
           {entities.map((entity) => {
             const asset = assets[entity.id];
             return (
@@ -67,7 +75,10 @@ function TreeSection({
 }
 
 export function EntityTree({ zoneKey, entities, assets, selectedEntityId, onSelectEntity }: EntityTreeProps) {
-  const customAssets = Object.values(assets).filter((a) => a.customDescription);
+  const customAssets = useMemo(
+    () => Object.values(assets).filter((a) => a.customDescription),
+    [assets]
+  );
 
   return (
     <div>
@@ -114,7 +125,14 @@ function CustomSection({
 
   return (
     <div className="entity-tree-section">
-      <div className="entity-tree-header" onClick={() => setOpen(!open)}>
+      <div
+        className="entity-tree-header"
+        role="button"
+        tabIndex={0}
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+        onKeyDown={onClickKeyDown(() => setOpen(!open))}
+      >
         <span className={`entity-tree-header-arrow${open ? " entity-tree-header-arrow--open" : ""}`}>
           &#9654;
         </span>
@@ -122,7 +140,7 @@ function CustomSection({
         <span className="entity-tree-header-count">{customAssets.length}</span>
       </div>
       {open && (
-        <ul className="entity-tree-list">
+        <ul className="entity-tree-list" role="tree">
           {customAssets.map((asset) => (
             <EntityTreeItem
               key={asset.entityId}

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import type { EntityType } from "../../types/entities";
 
 interface ImagePreviewProps {
@@ -8,6 +9,24 @@ interface ImagePreviewProps {
 
 export function ImagePreview({ src, entityType, loading }: ImagePreviewProps) {
   const isSquare = entityType !== "room";
+  const [revealing, setRevealing] = useState(false);
+  const prevSrcRef = useRef<string | null>(null);
+
+  // Detect when src transitions from null/different to a new value → trigger reveal
+  useEffect(() => {
+    if (src && src !== prevSrcRef.current) {
+      // Only animate if we had no image or a different image before
+      if (prevSrcRef.current !== src) {
+        setRevealing(true);
+        const timer = setTimeout(() => setRevealing(false), 700);
+        prevSrcRef.current = src;
+        return () => clearTimeout(timer);
+      }
+    }
+    if (!src) {
+      prevSrcRef.current = null;
+    }
+  }, [src]);
 
   return (
     <div className={`image-preview${isSquare ? " image-preview--square" : ""}`}>
@@ -21,7 +40,10 @@ export function ImagePreview({ src, entityType, loading }: ImagePreviewProps) {
         </div>
       ) : src ? (
         <>
-          <img src={src} alt="Generated preview" />
+          <div className={`image-reveal-container${revealing ? " image-reveal-container--revealing" : ""}`}>
+            <img src={src} alt="Generated preview" />
+            {revealing && <div className="image-reveal-glow" />}
+          </div>
           {loading && (
             <div className="image-preview-generating-overlay">
               <div className="spinner spinner--small" />

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
+import { useDialogA11y } from "../../hooks/a11y";
 import { exportProject, type ExportProgress } from "../../lib/export";
 
 interface ExportDialogProps {
@@ -64,37 +65,18 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
     ? exportDir
     : "Source YAML directory (in-place)";
 
+  const dialogRef = useDialogA11y(exporting ? undefined : onClose);
+
   return (
     <div className="dialog-overlay" onClick={exporting ? undefined : onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">Export to World</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="export-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="export-dialog-title">Export to World</h2>
 
         {!done && !exporting && (
-          <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-            <p style={{ marginBottom: 8 }}>Export directory:</p>
-            <div
-              style={{
-                display: "flex",
-                gap: "var(--space-2)",
-                alignItems: "center",
-                marginBottom: 12,
-              }}
-            >
-              <div
-                style={{
-                  flex: 1,
-                  padding: "var(--space-2) var(--space-3)",
-                  background: "var(--surface-subpanel)",
-                  borderRadius: "var(--radius-md)",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.78rem",
-                  color: exportDir ? "var(--text-primary)" : "var(--text-disabled)",
-                  wordBreak: "break-all",
-                  minHeight: 32,
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+          <div className="export-config">
+            <p className="export-config-label">Export directory:</p>
+            <div className="export-dir-row">
+              <div className={`export-dir-path${exportDir ? "" : " export-dir-path--empty"}`}>
                 {targetDescription}
               </div>
               <button className="soft-button" onClick={handlePickDir}>
@@ -112,7 +94,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
             </div>
 
             <p>This will:</p>
-            <ul style={{ paddingLeft: 20, marginTop: 8 }}>
+            <ul className="export-summary-list">
               <li>
                 {exportDir
                   ? <>Write zone YAML files to the export directory</>
@@ -147,7 +129,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
         )}
 
         {done && (
-          <div style={{ color: "var(--color-success)", fontSize: "0.85rem" }}>
+          <div className="inline-success">
             Export complete!
             {exportDir
               ? ` Files written to ${exportDir}`
@@ -156,9 +138,7 @@ export function ExportDialog({ onClose }: ExportDialogProps) {
         )}
 
         {error && (
-          <div style={{ color: "var(--color-error)", fontSize: "0.85rem" }}>
-            {error}
-          </div>
+          <div className="inline-error">{error}</div>
         )}
 
         <div className="dialog-actions">

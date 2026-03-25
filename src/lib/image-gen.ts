@@ -93,7 +93,6 @@ export async function generateImage(
         : `data:image/png;base64,${options.seedImage}`;
       requestParams.seedImage = seedValue;
       requestParams.strength = options.seedStrength ?? 0.65;
-      console.log(`[image-gen] using seed image (strength=${requestParams.strength}, prefix=${seedValue.slice(0, 30)}...)`);
     }
 
     images = await runware.requestImages(requestParams as any);
@@ -105,9 +104,7 @@ export async function generateImage(
   }
 
   const image = images?.[0] as any;
-  if (image) {
-    console.log("[image-gen] response keys:", Object.keys(image).join(", "));
-  } else {
+  if (!image) {
     console.error("[image-gen] empty response array:", images);
   }
   const b64: string | undefined = image?.imageBase64Data;
@@ -146,11 +143,12 @@ export async function generateImage(
 
 /** Convert image bytes to a base64 string (no data URI prefix). */
 export function bytesToBase64(bytes: Uint8Array): string {
-  let binary = "";
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
+  const CHUNK = 0x8000;
+  const parts: string[] = [];
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    parts.push(String.fromCharCode(...bytes.subarray(i, i + CHUNK)));
   }
-  return btoa(binary);
+  return btoa(parts.join(""));
 }
 
 function base64ToBytes(b64: string): Uint8Array {
@@ -169,13 +167,11 @@ export async function removeImageBackground(
   entityType?: EntityType
 ): Promise<Uint8Array> {
   const t0 = performance.now();
-  console.log(`[BG removal] starting local removal — payload ${(imageBytes.length / 1024).toFixed(0)}KB`);
   try {
     let result = await _removeBackgroundLocal(imageBytes);
     if (entityType) {
       result = await recompressForEntityType(result, entityType);
     }
-    console.log(`[BG removal] done in ${((performance.now() - t0) / 1000).toFixed(1)}s — output ${(result.length / 1024).toFixed(0)}KB`);
     return result;
   } catch (err) {
     console.error(`[BG removal] failed after ${((performance.now() - t0) / 1000).toFixed(1)}s:`, err);

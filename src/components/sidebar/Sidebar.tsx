@@ -3,7 +3,7 @@ import { EntityTree } from "./EntityTree";
 import { ZoneVibePanel } from "./ZoneVibePanel";
 import { ZoneMusicPanel } from "../music/ZoneMusicPanel";
 import { ZoneVideoPanel } from "../video/ZoneVideoPanel";
-import type { ZoneData } from "../../types/project";
+import { EntitySummary } from "../shared/EntitySummary";
 
 export function Sidebar() {
   const { project, parsedZones, selectedEntityId, selectedZone, selectEntity } = useProject();
@@ -31,27 +31,35 @@ export function Sidebar() {
         const isPortraitZone = !!zone.portraitConfig;
 
         return (
-          <div key={zoneKey}>
-            <div className="glass-panel" style={{ marginBottom: "var(--space-3)" }}>
+          <div key={zoneKey} className="sidebar-zone">
+            <div className="glass-panel">
               <div className="glass-panel-header">
                 <span className="glass-panel-title">
                   {isBlankZone ? "Custom Assets" : zone.zoneName}
                 </span>
               </div>
               {isSpriteZone ? (
-                <SpriteSummary
+                <EntitySummary
+                  label="Player Sprites"
+                  entityType="mob"
                   zone={zone}
                   selected={selectedZone === zoneKey}
                   onSelect={() => selectEntity(zoneKey, "")}
+                  templateReady={!!zone.spriteTemplate}
                 />
               ) : isPortraitZone ? (
-                <PortraitSummary
+                <EntitySummary
+                  label="Character Portraits"
+                  entityType="mob"
                   zone={zone}
                   selected={selectedZone === zoneKey}
                   onSelect={() => selectEntity(zoneKey, "")}
+                  templateReady={!!zone.portraitTemplate}
                 />
               ) : isAbilityZone ? (
-                <AbilitySummary
+                <EntitySummary
+                  label="Ability Icons"
+                  entityType="ability"
                   zone={zone}
                   selected={selectedZone === zoneKey}
                   onSelect={() => selectEntity(zoneKey, "")}
@@ -96,140 +104,3 @@ export function Sidebar() {
   );
 }
 
-function SpriteSummary({
-  zone,
-  selected,
-  onSelect,
-}: {
-  zone: ZoneData;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const assets = Object.values(zone.assets);
-  const mobs = assets.filter((a) => a.entityType === "mob");
-  const approved = mobs.filter((a) => a.status === "approved").length;
-  const generated = mobs.filter((a) => a.status === "generated" || a.status === "approved").length;
-
-  return (
-    <div
-      className={`sprite-summary${selected ? " sprite-summary--selected" : ""}`}
-      onClick={onSelect}
-    >
-      <div className="sprite-summary-label">
-        Player Sprites
-        <span className="sprite-summary-count">{mobs.length}</span>
-      </div>
-      <div className="sprite-summary-stats">
-        {approved > 0 && (
-          <span className="sprite-summary-stat sprite-summary-stat--approved">
-            {approved} approved
-          </span>
-        )}
-        {generated > approved && (
-          <span className="sprite-summary-stat sprite-summary-stat--generated">
-            {generated - approved} generated
-          </span>
-        )}
-        {mobs.length - generated > 0 && (
-          <span className="sprite-summary-stat sprite-summary-stat--pending">
-            {mobs.length - generated} pending
-          </span>
-        )}
-      </div>
-      {zone.spriteTemplate && (
-        <div className="sprite-summary-template">Template ready</div>
-      )}
-    </div>
-  );
-}
-
-function PortraitSummary({
-  zone,
-  selected,
-  onSelect,
-}: {
-  zone: ZoneData;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const assets = Object.values(zone.assets);
-  const mobs = assets.filter((a) => a.entityType === "mob");
-  const approved = mobs.filter((a) => a.status === "approved").length;
-  const generated = mobs.filter((a) => a.status === "generated" || a.status === "approved").length;
-
-  return (
-    <div
-      className={`sprite-summary${selected ? " sprite-summary--selected" : ""}`}
-      onClick={onSelect}
-    >
-      <div className="sprite-summary-label">
-        Character Portraits
-        <span className="sprite-summary-count">{mobs.length}</span>
-      </div>
-      <div className="sprite-summary-stats">
-        {approved > 0 && (
-          <span className="sprite-summary-stat sprite-summary-stat--approved">
-            {approved} approved
-          </span>
-        )}
-        {generated > approved && (
-          <span className="sprite-summary-stat sprite-summary-stat--generated">
-            {generated - approved} generated
-          </span>
-        )}
-        {mobs.length - generated > 0 && (
-          <span className="sprite-summary-stat sprite-summary-stat--pending">
-            {mobs.length - generated} pending
-          </span>
-        )}
-      </div>
-      {zone.portraitTemplate && (
-        <div className="sprite-summary-template">Template ready</div>
-      )}
-    </div>
-  );
-}
-
-function AbilitySummary({
-  zone,
-  selected,
-  onSelect,
-}: {
-  zone: ZoneData;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const assets = Object.values(zone.assets);
-  const abilities = assets.filter((a) => a.entityType === "ability");
-  const approved = abilities.filter((a) => a.status === "approved").length;
-  const generated = abilities.filter((a) => a.status === "generated" || a.status === "approved").length;
-
-  return (
-    <div
-      className={`sprite-summary${selected ? " sprite-summary--selected" : ""}`}
-      onClick={onSelect}
-    >
-      <div className="sprite-summary-label">
-        Ability Icons
-        <span className="sprite-summary-count">{abilities.length}</span>
-      </div>
-      <div className="sprite-summary-stats">
-        {approved > 0 && (
-          <span className="sprite-summary-stat sprite-summary-stat--approved">
-            {approved} approved
-          </span>
-        )}
-        {generated > approved && (
-          <span className="sprite-summary-stat sprite-summary-stat--generated">
-            {generated - approved} generated
-          </span>
-        )}
-        {abilities.length - generated > 0 && (
-          <span className="sprite-summary-stat sprite-summary-stat--pending">
-            {abilities.length - generated} pending
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}

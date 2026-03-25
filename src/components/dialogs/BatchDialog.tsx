@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
+import { useDialogA11y } from "../../hooks/a11y";
 import { runBatch, type BatchProgress } from "../../lib/batch";
 import { generateEntityPrompt } from "../../lib/prompt-gen";
 import { generateImage, getAspectRatio } from "../../lib/image-gen";
@@ -149,26 +150,28 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
     );
   }
 
+  const dialogRef = useDialogA11y(running && !done ? undefined : onClose, !minimized);
+
   return (
     <div className="dialog-overlay" onClick={running && !done ? undefined : onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">Batch Generate</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="batch-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="batch-dialog-title">Batch Generate</h2>
 
         {!running && !done && (
           <>
             {missingVibe && (
-              <div style={{ color: "var(--color-warning)", fontSize: "0.85rem", marginBottom: 12 }}>
+              <div className="inline-warning">
                 Some zones are missing vibes. Generate zone vibes first.
               </div>
             )}
 
             {!settings.runwareApiKey && (
-              <div style={{ color: "var(--color-error)", fontSize: "0.85rem", marginBottom: 12 }}>
+              <div className="inline-warning" style={{ color: "var(--color-error)" }}>
                 Runware API key must be configured in Settings.
               </div>
             )}
             {settings.promptLlm === "claude" && !settings.anthropicApiKey && (
-              <div style={{ color: "var(--color-error)", fontSize: "0.85rem", marginBottom: 12 }}>
+              <div className="inline-warning" style={{ color: "var(--color-error)" }}>
                 Anthropic API key required when using Claude for prompt generation.
               </div>
             )}
@@ -183,23 +186,17 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
               Skip entities that already have images
             </label>
 
-            <div
-              style={{
-                marginTop: 12,
-                fontSize: "0.85rem",
-                color: "var(--text-secondary)",
-              }}
-            >
+            <div className="dialog-hint" style={{ marginTop: "var(--space-3)" }}>
               {totalToProcess} entities to process (concurrency: {settings.batchConcurrency})
             </div>
           </>
         )}
 
         {done && !running && (
-          <div style={{ color: "var(--color-success)", fontSize: "0.85rem" }}>
+          <div className="inline-success">
             Batch generation complete!
             {progress && progress.errors.length > 0 && (
-              <span style={{ color: "var(--color-error)", marginLeft: 8 }}>
+              <span className="inline-error" style={{ marginLeft: "var(--space-2)", padding: 0, background: "none" }}>
                 ({progress.errors.length} error{progress.errors.length !== 1 ? "s" : ""})
               </span>
             )}
@@ -214,7 +211,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <div style={{ fontSize: "0.85rem", color: "var(--text-primary)" }}>
+            <div className="batch-progress-count">
               {progress.completed} / {progress.total} completed
             </div>
             {progress.currentEntity && (
@@ -223,7 +220,7 @@ export function BatchDialog({ onClose }: BatchDialogProps) {
               </div>
             )}
             {progress.errors.length > 0 && (
-              <div style={{ color: "var(--color-error)", fontSize: "0.82rem" }}>
+              <div className="zone-vibe-error">
                 {progress.errors.length} error{progress.errors.length !== 1 ? "s" : ""}
               </div>
             )}

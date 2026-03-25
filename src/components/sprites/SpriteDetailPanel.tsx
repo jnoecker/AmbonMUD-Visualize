@@ -82,13 +82,13 @@ export function SpriteDetailPanel({
     }
 
     // No template yet — need to generate one first
-    setLocalError("Generate a prompt template first using the batch bar.");
+    setLocalError("Generate a prompt template first — use \"Generate Template\" at the top of this view.");
   };
 
   const handleGenerateImage = () => {
     if (!entity || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);
@@ -99,7 +99,7 @@ export function SpriteDetailPanel({
   const handleGenerateMultiImage = () => {
     if (!entity || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);
@@ -114,7 +114,7 @@ export function SpriteDetailPanel({
   const handleRemoveBackground = async () => {
     if (!currentVariant) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);

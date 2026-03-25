@@ -172,10 +172,12 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
       ) : (<>
 
       {/* Class tabs */}
-      <div className="sprite-class-tabs">
+      <div className="sprite-class-tabs" role="tablist" aria-label="Sprite classes">
         {sortedClasses.map((cls) => (
           <button
             key={cls}
+            role="tab"
+            aria-selected={cls === activeClass}
             className={`sprite-class-tab${cls === activeClass ? " sprite-class-tab--active" : ""}`}
             onClick={() => setActiveClass(cls)}
           >
@@ -190,7 +192,7 @@ export function SpriteGrid({ zoneKey, zone, entities, spriteConfig }: SpriteGrid
       </div>
 
       {/* Grid: rows = races, columns = tiers */}
-      <div className="sprite-grid">
+      <div className="sprite-grid" role="tabpanel" aria-label={classLabel(activeClass)}>
         {/* Column headers */}
         <div className="sprite-grid-header">
           <div className="sprite-grid-corner" />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSettings } from "../../context/SettingsContext";
+import { useDialogA11y } from "../../hooks/a11y";
 import { RUNWARE_MODEL_PRESETS, VIDEO_MODEL_PRESETS, OPENROUTER_MODEL_PRESETS } from "../../types/settings";
 
 interface SettingsDialogProps {
@@ -44,10 +45,12 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
     onClose();
   };
 
+  const dialogRef = useDialogA11y(onClose);
+
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">Settings</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="settings-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="settings-dialog-title">Settings</h2>
 
         <div className="dialog-field">
           <label className="dialog-label">Anthropic API Key</label>
@@ -122,7 +125,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
             <option value="openrouter">OpenRouter</option>
             <option value="runware">Runware Text Inference</option>
           </select>
-          <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+          <div className="dialog-hint">
             Which LLM generates image/music/video prompts.
           </div>
         </div>
@@ -175,7 +178,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
               onChange={(e) => setRunwareLlmModel(e.target.value)}
               placeholder="e.g. openai:gpt-4o-mini"
             />
-            <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+            <div className="dialog-hint">
               A text-only instruct model ID from Runware's model catalog.
             </div>
           </div>
@@ -191,7 +194,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
             />
             Enhance image prompts (Runware Prompt Enhancer)
           </label>
-          <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+          <div className="dialog-hint">
             Post-processes LLM-generated image prompts through Runware's free Prompt Enhancer (Llama 3.1 8B).
           </div>
         </div>
@@ -221,7 +224,7 @@ export function SettingsDialog({ onClose }: SettingsDialogProps) {
             />
             Remove background (mobs & items)
           </label>
-          <div style={{ fontSize: "0.78rem", color: "var(--text-disabled)", marginTop: 4 }}>
+          <div className="dialog-hint">
             Produces transparent PNGs via Runware background removal. Adds ~$0.004/image.
           </div>
         </div>

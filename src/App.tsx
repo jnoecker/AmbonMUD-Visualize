@@ -31,6 +31,7 @@ function AppInner() {
   const [showBatchRemoveBg, setShowBatchRemoveBg] = useState(false);
   const [showRecompress, setShowRecompress] = useState(false);
   const [showBlankProject, setShowBlankProject] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Reopen last project on launch
   useEffect(() => {
@@ -71,6 +72,11 @@ function AppInner() {
         e.preventDefault();
         setShowSettings(true);
       }
+      // Ctrl+B to toggle sidebar
+      if (e.ctrlKey && e.key === "b") {
+        e.preventDefault();
+        setSidebarCollapsed((prev) => !prev);
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
@@ -79,12 +85,15 @@ function AppInner() {
   return (
     <>
       <AppShell
+        sidebarCollapsed={!project ? false : sidebarCollapsed}
         titleBar={
           <TitleBar
             onSettingsClick={() => setShowSettings(true)}
             onReloadClick={project ? reloadProject : undefined}
             onOpenClick={project ? handleOpenProject : undefined}
             onCloseClick={project ? handleCloseProject : undefined}
+            onToggleSidebar={project ? () => setSidebarCollapsed((p) => !p) : undefined}
+            sidebarCollapsed={sidebarCollapsed}
             projectName={project?.name}
           />
         }

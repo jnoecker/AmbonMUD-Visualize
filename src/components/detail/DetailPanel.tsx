@@ -94,7 +94,7 @@ export function DetailPanel() {
     if (!entity || !selectedZone || !project) return;
     const zone = project.zones[selectedZone];
     if (!settings.anthropicApiKey) {
-      setLocalError("Anthropic API key not set. Open Settings.");
+      setLocalError("Anthropic API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
 
@@ -111,7 +111,7 @@ export function DetailPanel() {
       );
     } else {
       if (!zone?.vibe) {
-        setLocalError("Generate a zone vibe first before generating prompts.");
+        setLocalError("Generate a zone vibe first — click \"Generate Vibe\" in the sidebar.");
         return;
       }
       setLocalError(null);
@@ -123,7 +123,7 @@ export function DetailPanel() {
   const handleGenerateImage = () => {
     if (!entity || !selectedZone || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
 
@@ -139,7 +139,7 @@ export function DetailPanel() {
   const handleGenerateMultiImage = () => {
     if (!entity || !selectedZone || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
 
@@ -156,7 +156,7 @@ export function DetailPanel() {
   const handleRemoveBackground = async () => {
     if (!selectedZone || !selectedEntityId || !currentVariant) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
 
@@ -247,18 +247,14 @@ export function DetailPanel() {
   }
 
   if (!entity || !asset) {
-    return (
-      <div className="detail-panel" style={{ alignItems: "center", justifyContent: "center" }}>
-        <p style={{ color: "var(--text-disabled)" }}>Select an entity from the sidebar</p>
-      </div>
-    );
+    return <ProjectOverview />;
   }
 
   const isApproved =
     asset.status === "approved" && asset.approvedVariantIndex === viewingVariantIndex;
 
   return (
-    <div className="detail-panel">
+    <div className="detail-panel" key={entity.id}>
       <div className="glass-panel">
         <div className="detail-entity-header">
           <h2 className="detail-entity-title">{entity.title}</h2>
@@ -277,17 +273,7 @@ export function DetailPanel() {
       </div>
 
       {error && (
-        <div
-          style={{
-            color: "var(--color-error)",
-            fontSize: "0.85rem",
-            padding: "var(--space-2) var(--space-3)",
-            background: "rgb(197 168 168 / 10%)",
-            borderRadius: "var(--radius-md)",
-          }}
-        >
-          {error}
-        </div>
+        <div className="inline-error">{error}</div>
       )}
 
       <div className="glass-panel">
@@ -331,6 +317,118 @@ export function DetailPanel() {
           onFlipHorizontal={handleFlipHorizontal}
         />
       </div>
+    </div>
+  );
+}
+
+/** Contextual project overview shown when no entity is selected. */
+function ProjectOverview() {
+  const { project, parsedZones } = useProject();
+  const { settings } = useSettings();
+
+  if (!project) return null;
+
+  // Compute per-zone stats
+  const zoneStats = Object.entries(project.zones).map(([key, zone]) => {
+    const parsed = parsedZones[key];
+    const entities = parsed?.entities ?? [];
+    const assets = Object.values(zone.assets);
+    const rooms = entities.filter((e) => e.type === "room").length;
+    const mobs = entities.filter((e) => e.type === "mob").length;
+    const items = entities.filter((e) => e.type === "item").length;
+    const needsPrompt = assets.filter((a) => !a.currentPrompt).length;
+    const needsImage = assets.filter((a) => a.currentPrompt && a.variants.length === 0).length;
+    const needsApproval = assets.filter((a) => a.variants.length > 0 && a.status !== "approved").length;
+    const approved = assets.filter((a) => a.status === "approved").length;
+    const total = assets.length;
+    return { key, zone, rooms, mobs, items, needsPrompt, needsImage, needsApproval, approved, total, hasVibe: !!zone.vibe };
+  });
+
+  // Determine the next recommended action across the whole project
+  const missingKeys = !settings.anthropicApiKey || !settings.runwareApiKey;
+  const zonesNeedVibe = zoneStats.filter((z) => !z.hasVibe && !z.zone.spriteConfig && !z.zone.abilityConfig && !z.zone.portraitConfig);
+  const totalNeedsPrompt = zoneStats.reduce((n, z) => n + z.needsPrompt, 0);
+  const totalNeedsImage = zoneStats.reduce((n, z) => n + z.needsImage, 0);
+  const totalNeedsApproval = zoneStats.reduce((n, z) => n + z.needsApproval, 0);
+  const totalApproved = zoneStats.reduce((n, z) => n + z.approved, 0);
+  const totalAssets = zoneStats.reduce((n, z) => n + z.total, 0);
+
+  let nextStep: { label: string; detail: string } | null = null;
+
+  if (missingKeys) {
+    nextStep = { label: "Configure API Keys", detail: "Open Settings (Ctrl+,) to add your Anthropic and Runware API keys." };
+  } else if (zonesNeedVibe.length > 0) {
+    nextStep = { label: "Generate Zone Vibes", detail: `${zonesNeedVibe.length} zone${zonesNeedVibe.length > 1 ? "s need" : " needs"} a vibe summary. Click "Generate Vibe" in the sidebar.` };
+  } else if (totalNeedsPrompt > 0) {
+    nextStep = { label: "Generate Prompts", detail: `${totalNeedsPrompt} entit${totalNeedsPrompt === 1 ? "y needs a" : "ies need"} prompt. Select entities or use Batch Generate.` };
+  } else if (totalNeedsImage > 0) {
+    nextStep = { label: "Generate Images", detail: `${totalNeedsImage} entit${totalNeedsImage === 1 ? "y has a" : "ies have"} prompt but no image. Select entities or use Batch Generate.` };
+  } else if (totalNeedsApproval > 0) {
+    nextStep = { label: "Review & Approve", detail: `${totalNeedsApproval} entit${totalNeedsApproval === 1 ? "y has" : "ies have"} generated images waiting for approval.` };
+  } else if (totalApproved > 0) {
+    nextStep = { label: "Ready to Export", detail: `All ${totalApproved} approved images are ready. Click Export to write them to your zone files.` };
+  }
+
+  return (
+    <div className="detail-panel detail-panel--empty">
+      <div className="project-overview">
+        <h2 className="project-overview-title">{project.name}</h2>
+
+        {/* Pipeline summary */}
+        {totalAssets > 0 && (
+          <div className="project-overview-pipeline">
+            <PipelineStage label="Needs Prompt" count={totalNeedsPrompt} total={totalAssets} color="var(--text-disabled)" />
+            <PipelineStage label="Needs Image" count={totalNeedsImage} total={totalAssets} color="var(--color-primary-pale-blue)" />
+            <PipelineStage label="Needs Approval" count={totalNeedsApproval} total={totalAssets} color="var(--color-primary-soft-gold)" />
+            <PipelineStage label="Approved" count={totalApproved} total={totalAssets} color="var(--color-primary-moss-green)" />
+          </div>
+        )}
+
+        {/* Next step guidance */}
+        {nextStep && (
+          <div className="project-overview-next">
+            <span className="project-overview-next-label">Next step</span>
+            <strong>{nextStep.label}</strong>
+            <span className="project-overview-next-detail">{nextStep.detail}</span>
+          </div>
+        )}
+
+        {/* Zone breakdown */}
+        {zoneStats.length > 0 && (
+          <div className="project-overview-zones">
+            {zoneStats.map((z) => (
+              <div key={z.key} className="project-overview-zone">
+                <span className="project-overview-zone-name">{z.zone.zoneName}</span>
+                <span className="project-overview-zone-counts">
+                  {z.rooms > 0 && `${z.rooms} rooms`}
+                  {z.mobs > 0 && `${z.rooms > 0 ? ", " : ""}${z.mobs} mobs`}
+                  {z.items > 0 && `${z.rooms > 0 || z.mobs > 0 ? ", " : ""}${z.items} items`}
+                  {z.total === 0 && "no entities"}
+                </span>
+                <span className="project-overview-zone-status">
+                  {z.approved}/{z.total} approved
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p className="project-overview-hint">
+          Select an entity from the sidebar to view and edit its image.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function PipelineStage({ label, count, total, color }: { label: string; count: number; total: number; color: string }) {
+  if (count === 0) return null;
+  const pct = total > 0 ? (count / total) * 100 : 0;
+  return (
+    <div className="pipeline-stage">
+      <div className="pipeline-stage-bar" style={{ width: `${pct}%`, background: color }} />
+      <span className="pipeline-stage-label" style={{ color }}>{count}</span>
+      <span className="pipeline-stage-text">{label}</span>
     </div>
   );
 }

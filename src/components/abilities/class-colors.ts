@@ -14,5 +14,5 @@ const CLASS_COLORS: Record<string, string> = {
 
 /** Case-insensitive class color lookup. */
 export function getClassColor(className: string): string {
-  return CLASS_COLORS[className] || CLASS_COLORS[className.toUpperCase()] || "var(--color-lavender)";
+  return CLASS_COLORS[className] || CLASS_COLORS[className.toUpperCase()] || "var(--color-primary-lavender)";
 }

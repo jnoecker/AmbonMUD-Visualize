@@ -3,20 +3,37 @@ interface TitleBarProps {
   onReloadClick?: () => void;
   onOpenClick?: () => void;
   onCloseClick?: () => void;
+  onToggleSidebar?: () => void;
+  sidebarCollapsed?: boolean;
   projectName?: string | null;
 }
 
-export function TitleBar({ onSettingsClick, onReloadClick, onOpenClick, onCloseClick, projectName }: TitleBarProps) {
+export function TitleBar({ onSettingsClick, onReloadClick, onOpenClick, onCloseClick, onToggleSidebar, sidebarCollapsed, projectName }: TitleBarProps) {
   return (
     <header className="title-bar">
-      <h1 className="title-bar-title">
-        AmbonMUD Visualize
-        {projectName && (
-          <span style={{ fontWeight: 500, opacity: 0.6, fontSize: "0.7em", marginLeft: 12 }}>
-            {projectName}
-          </span>
+      <div className="title-bar-left">
+        {onToggleSidebar && (
+          <button
+            className="soft-button soft-button--icon"
+            onClick={onToggleSidebar}
+            title={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+            aria-label={sidebarCollapsed ? "Show sidebar" : "Hide sidebar"}
+            aria-expanded={!sidebarCollapsed}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M2 4.5h14M2 9h14M2 13.5h14" />
+            </svg>
+          </button>
         )}
-      </h1>
+        <h1 className="title-bar-title">
+          AmbonMUD Visualize
+          {projectName && (
+            <span className="title-bar-project-name">
+              {projectName}
+            </span>
+          )}
+        </h1>
+      </div>
       <div className="title-bar-actions">
         {onOpenClick && (
           <button className="soft-button soft-button--icon" onClick={onOpenClick} title="Open project">

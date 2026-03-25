@@ -80,13 +80,13 @@ export function PortraitDetailPanel({
         return;
       }
     }
-    setLocalError("Generate a prompt template first using the batch bar.");
+    setLocalError("Generate a prompt template first — use \"Generate Template\" at the top of this view.");
   };
 
   const handleGenerateImage = async () => {
     if (!entity || !asset?.currentPrompt) return;
     if (!settings.runwareApiKey) {
-      setLocalError("Runware API key not set. Open Settings.");
+      setLocalError("Runware API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     setLocalError(null);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { open as openDialog, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { useProject } from "../../context/ProjectContext";
+import { useDialogA11y } from "../../hooks/a11y";
 
 interface NewProjectDialogProps {
   onClose: () => void;
@@ -62,10 +63,12 @@ export function NewProjectDialog({ onClose }: NewProjectDialogProps) {
     }
   };
 
+  const dialogRef = useDialogA11y(onClose);
+
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">New Project</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="new-project-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="new-project-dialog-title">New Project</h2>
 
         <div className="dialog-field">
           <label className="dialog-label">Project Name</label>

@@ -18,7 +18,7 @@ interface AbilityGridProps {
 }
 
 const STATUS_EFFECTS_TAB = "__STATUS_EFFECTS__";
-const STATUS_EFFECTS_COLOR = "#8da97b";
+const STATUS_EFFECTS_COLOR = "var(--color-moss-green)";
 
 function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
@@ -148,15 +148,21 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
     }
   }, [visibleEntities, zoneKey, getAsset, settings.runwareApiKey, startImageGeneration]);
 
-  const promptsNeeded = visibleEntities.filter((e) => {
-    const a = getAsset(zoneKey, e.id);
-    return a && !a.currentPrompt;
-  }).length;
+  const promptsNeeded = useMemo(
+    () => visibleEntities.filter((e) => {
+      const a = getAsset(zoneKey, e.id);
+      return a && !a.currentPrompt;
+    }).length,
+    [visibleEntities, zoneKey, getAsset]
+  );
 
-  const imagesNeeded = visibleEntities.filter((e) => {
-    const a = getAsset(zoneKey, e.id);
-    return a?.currentPrompt && a.variants.length === 0;
-  }).length;
+  const imagesNeeded = useMemo(
+    () => visibleEntities.filter((e) => {
+      const a = getAsset(zoneKey, e.id);
+      return a?.currentPrompt && a.variants.length === 0;
+    }).length,
+    [visibleEntities, zoneKey, getAsset]
+  );
 
   const tabLabel =
     activeTab === STATUS_EFFECTS_TAB ? "Status Effects" : `${capitalize(activeTab)} Abilities`;
@@ -212,7 +218,7 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
       ) : (
         <>
           {/* Class + status effect tabs */}
-          <div className="ability-class-tabs">
+          <div className="ability-class-tabs" role="tablist" aria-label="Ability classes">
             {tabs.map((tab) => {
               const isStatusTab = tab === STATUS_EFFECTS_TAB;
               const label = isStatusTab ? "Status Effects" : capitalize(tab);
@@ -223,6 +229,8 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
               return (
                 <button
                   key={tab}
+                  role="tab"
+                  aria-selected={tab === activeTab}
                   className={`ability-class-tab${tab === activeTab ? " ability-class-tab--active" : ""}`}
                   onClick={() => setActiveTab(tab)}
                   style={tab === activeTab ? { borderBottomColor: getTabColor(tab) } : undefined}
@@ -235,7 +243,7 @@ export function AbilityGrid({ zoneKey, entities, abilityConfig }: AbilityGridPro
           </div>
 
           {/* Grid of cells */}
-          <div className="ability-grid">
+          <div className="ability-grid" role="tabpanel" aria-label={tabLabel}>
             {visibleEntities.map((entity) => {
               const raw = entity.rawYaml as Record<string, unknown>;
               const label = (raw.displayName as string) || entity.title;

@@ -49,11 +49,7 @@ export async function generateMusic(
     throw new Error(`Runware audio API error: ${msg}`);
   }
 
-  console.log("[audio-gen] response type:", typeof results, Array.isArray(results) ? "array" : "");
   const result = Array.isArray(results) ? results[0] : results;
-  if (result) {
-    console.log("[audio-gen] response keys:", Object.keys(result).join(", "));
-  }
 
   const b64: string | undefined =
     result?.audioBase64Data ??

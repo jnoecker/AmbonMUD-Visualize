@@ -58,7 +58,7 @@ export function SpriteBatchBar({
 
   const handleGenerateTemplate = useCallback(async () => {
     if (!settings.anthropicApiKey) {
-      setTemplateError("Anthropic API key not set. Open Settings.");
+      setTemplateError("Anthropic API key not set — open Settings (Ctrl+,) to add it.");
       return;
     }
     if (!zoneVibe) {
@@ -79,14 +79,12 @@ export function SpriteBatchBar({
         if (entity) sampleNames[tier] = entity.title;
       }
 
-      console.log("[sprites] generating new template with races:", spriteConfig.races, "classes:", spriteConfig.classes);
       const template = await generateSpriteTemplate(
         settings.anthropicApiKey,
         spriteConfig,
         sampleNames,
         zoneVibe
       );
-      console.log("[sprites] template generated, raceDescriptions keys:", Object.keys(template.raceDescriptions || {}));
       await onTemplateGenerated(template);
       setTemplateSuccess(`Template regenerated at ${new Date().toLocaleTimeString()}. Re-generate prompts to apply.`);
     } catch (err) {
@@ -170,10 +168,6 @@ export function SpriteBatchBar({
         }
       }
 
-      console.log(`[sprites] batch: ${baseIds.length} base, ${classedIds.length} classed (from ${entityIds.length} input, regenerate=${regenerate})`);
-      if (baseIds.length > 0) console.log("[sprites] base IDs:", baseIds.slice(0, 5).join(", "), baseIds.length > 5 ? `... +${baseIds.length - 5}` : "");
-      if (classedIds.length > 0) console.log("[sprites] classed IDs:", classedIds.slice(0, 5).join(", "), classedIds.length > 5 ? `... +${classedIds.length - 5}` : "");
-
       const totalCount = baseIds.length + classedIds.length;
       const progress: BatchProgress = {
         total: totalCount,
@@ -235,7 +229,6 @@ export function SpriteBatchBar({
               if (isBase) model = SPRITE_MODEL_BASE;
               else if (useImg2Img) model = SPRITE_MODEL_I2I;
 
-              console.log(`[sprites] generating ${entityId} with model=${model} img2img=${useImg2Img}`);
               const result = await generateImage(
                 settings.runwareApiKey!,
                 prompt,

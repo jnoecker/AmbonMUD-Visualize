@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
+import { useDialogA11y } from "../../hooks/a11y";
 import { recompressForEntityType } from "../../lib/image-gen";
 import type { EntityType } from "../../types/entities";
 
@@ -129,10 +130,12 @@ export function BatchRecompressDialog({ onClose }: BatchRecompressDialogProps) {
       ? (progress.completed / progress.total) * 100
       : 0;
 
+  const dialogRef = useDialogA11y(running && !done ? undefined : onClose);
+
   return (
     <div className="dialog-overlay" onClick={running && !done ? undefined : onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">Recompress Images</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="recompress-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="recompress-dialog-title">Recompress Images</h2>
 
         {!running && !done && (
           <>

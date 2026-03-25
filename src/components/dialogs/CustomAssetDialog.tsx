@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useProject } from "../../context/ProjectContext";
+import { useDialogA11y } from "../../hooks/a11y";
 import type { EntityType } from "../../types/entities";
 
 interface CustomAssetDialogProps {
@@ -55,10 +56,12 @@ export function CustomAssetDialog({ onClose }: CustomAssetDialogProps) {
     }
   };
 
+  const dialogRef = useDialogA11y(onClose);
+
   return (
     <div className="dialog-overlay" onClick={onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">New Custom Asset</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="custom-asset-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="custom-asset-dialog-title">New Custom Asset</h2>
 
         <div className="dialog-field">
           <label className="dialog-label">Title</label>
@@ -116,7 +119,7 @@ export function CustomAssetDialog({ onClose }: CustomAssetDialogProps) {
 
         {zoneKeys.length > 1 && (
           <div className="dialog-field">
-            <label className="dialog-label">Zone (for vibe context)</label>
+            <label className="dialog-label">Zone (matches art style)</label>
             <select
               className="dialog-input"
               value={zoneKey}

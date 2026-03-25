@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
+import { useDialogA11y } from "../../hooks/a11y";
 import { removeImageBackground, imageHasTransparency } from "../../lib/image-gen";
 import type { EntityType } from "../../types/entities";
 
@@ -95,7 +96,6 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
 
           // Skip images that already have transparency (BG already removed)
           if (await imageHasTransparency(bytes)) {
-            console.log(`[BG removal] skipping ${item.title} — already transparent`);
             prog.skipped++;
             prog.completed++;
             setProgress({ ...prog });
@@ -170,10 +170,12 @@ export function BatchRemoveBgDialog({ onClose }: BatchRemoveBgDialogProps) {
     );
   }
 
+  const dialogRef = useDialogA11y(running && !done ? undefined : onClose, !minimized);
+
   return (
     <div className="dialog-overlay" onClick={running && !done ? undefined : onClose}>
-      <div className="dialog" onClick={(e) => e.stopPropagation()}>
-        <h2 className="dialog-title">Batch Remove Backgrounds</h2>
+      <div className="dialog" role="dialog" aria-modal="true" aria-labelledby="batch-bg-dialog-title" ref={dialogRef} onClick={(e) => e.stopPropagation()}>
+        <h2 className="dialog-title" id="batch-bg-dialog-title">Batch Remove Backgrounds</h2>
 
         {!running && !done && (
           <>

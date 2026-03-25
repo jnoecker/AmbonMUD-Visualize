@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useProject } from "../../context/ProjectContext";
 import { useSettings } from "../../context/SettingsContext";
 import { generateZoneVibe, generateDefaultImagePrompt } from "../../lib/prompt-gen";
-import { generateImage, getAspectRatio } from "../../lib/image-gen";
+import { generateImage, getAspectRatio, bytesToBase64 } from "../../lib/image-gen";
 import { runwareEnhancePrompt } from "../../lib/runware-llm";
 import type { LlmCallOptions } from "../../lib/llm";
 import type { DefaultImageEntry, DefaultImageEntityType } from "../../types/project";
@@ -82,11 +82,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
         await updateDefaultImage(zoneName, entityType, result.bytes, prompt);
 
         // Update thumbnail from the raw bytes
-        let binary = "";
-        for (let i = 0; i < result.bytes.length; i++) {
-          binary += String.fromCharCode(result.bytes[i]);
-        }
-        const dataUrl = `data:image/png;base64,${btoa(binary)}`;
+        const dataUrl = `data:image/png;base64,${bytesToBase64(result.bytes)}`;
         setDefaultThumbnails((prev) => ({ ...prev, [entityType]: dataUrl }));
       } catch (err) {
         setDefaultError(
@@ -102,7 +98,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
   const generateAllDefaults = useCallback(
     async (vibeText: string) => {
       if (!settings.runwareApiKey) {
-        setDefaultError("API keys not set. Open Settings to configure.");
+        setDefaultError("API keys not set — open Settings (Ctrl+,) to add them.");
         return;
       }
       setDefaultError(null);
@@ -143,7 +139,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
     <div className="glass-panel">
       <div className="glass-panel-header">
         <span className="glass-panel-title">Zone Vibe</span>
-        <div style={{ display: "flex", gap: 6 }}>
+        <div className="zone-vibe-actions">
           {vibe && !editing && (
             <button
               className="soft-button soft-button--small"
@@ -164,7 +160,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
       </div>
 
       {error && (
-        <div style={{ color: "var(--color-error)", fontSize: "0.82rem" }}>{error}</div>
+        <div className="zone-vibe-error">{error}</div>
       )}
 
       {editing ? (
@@ -174,7 +170,7 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
           />
-          <div style={{ display: "flex", gap: 6, marginTop: 8 }}>
+          <div className="zone-vibe-actions">
             <button className="soft-button soft-button--small soft-button--success" onClick={handleSave}>
               Save
             </button>
@@ -186,16 +182,16 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
       ) : vibe ? (
         <p className="zone-vibe-text">{vibe}</p>
       ) : (
-        <p className="zone-vibe-text" style={{ fontStyle: "normal", opacity: 0.5 }}>
+        <p className="zone-vibe-text zone-vibe-text--empty">
           No vibe generated yet. Click "Generate Vibe" to create one.
         </p>
       )}
 
       {/* Default images section — shown when vibe exists */}
       {vibe && (
-        <div style={{ marginTop: 12 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: "0.82rem", fontWeight: 600, opacity: 0.7 }}>Default Images</span>
+        <div className="zone-defaults">
+          <div className="zone-defaults-header">
+            <span className="zone-defaults-label">Default Images</span>
             <button
               className="soft-button soft-button--small"
               onClick={() => generateAllDefaults(vibe)}
@@ -207,29 +203,17 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
           </div>
 
           {defaultError && (
-            <div style={{ color: "var(--color-error)", fontSize: "0.78rem", marginBottom: 6 }}>{defaultError}</div>
+            <div className="zone-vibe-error">{defaultError}</div>
           )}
 
-          <div style={{ display: "flex", gap: 8 }}>
+          <div className="zone-defaults-row">
             {DEFAULT_TYPES.map((entityType) => (
               <div
                 key={entityType}
-                style={{
-                  flex: entityType === "room" ? "1.5" : "1",
-                  textAlign: "center",
-                }}
+                className={`zone-default-card ${entityType === "room" ? "zone-default-card--room" : "zone-default-card--square"}`}
               >
                 <div
-                  style={{
-                    aspectRatio: entityType === "room" ? "16/9" : "1",
-                    backgroundColor: "var(--bg-deepest)",
-                    borderRadius: 6,
-                    overflow: "hidden",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "1px solid var(--border-subtle)",
-                  }}
+                  className={`zone-default-thumb ${entityType === "room" ? "zone-default-thumb--landscape" : "zone-default-thumb--square"}`}
                 >
                   {generatingDefaults[entityType] ? (
                     <span className="spinner spinner--small" />
@@ -237,13 +221,12 @@ export function ZoneVibePanel({ zoneName, vibe, defaultImages, allRoomDescriptio
                     <img
                       src={defaultThumbnails[entityType]!}
                       alt={`Default ${entityType}`}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   ) : (
-                    <span style={{ opacity: 0.3, fontSize: "0.72rem" }}>--</span>
+                    <span className="zone-default-thumb-placeholder">--</span>
                   )}
                 </div>
-                <div style={{ fontSize: "0.72rem", marginTop: 3, opacity: 0.6, textTransform: "capitalize" }}>
+                <div className="zone-default-label">
                   {entityType}
                 </div>
               </div>

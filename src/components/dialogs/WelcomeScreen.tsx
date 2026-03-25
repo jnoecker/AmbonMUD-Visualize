@@ -15,7 +15,7 @@ export function WelcomeScreen({ onNewProject, onNewBlankProject, onOpenProject }
         <button className="soft-button soft-button--primary" onClick={onNewProject}>
           New Zone Project
         </button>
-        <button className="soft-button soft-button--primary" onClick={onNewBlankProject}>
+        <button className="soft-button" onClick={onNewBlankProject}>
           New Blank Project
         </button>
         <button className="soft-button" onClick={onOpenProject}>
